@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+      name="description"
+      content="교육 운영 요구사항을 바탕으로 노션 대시보드 설계 샘플을 확인하는 정적 프로토타입"
+    >
+    <title>AI 노션 빌더 | 요구사항 입력</title>
+    <link rel="stylesheet" href="css/style.css">
+  </head>
+  <body data-page="input">
+    <header class="site-header">
+      <a class="brand" href="index.html" aria-label="AI 노션 빌더 요구사항 입력으로 이동">
+        <span class="brand-logo-crop" aria-hidden="true">
+          <img class="brand-logo" src="assets/logo_1.png" alt="">
+        </span>
+      </a>
+      <span class="prototype-badge">Mock 프로토타입</span>
+    </header>
+
+    <main class="page-shell input-page">
+      <section class="intro" aria-labelledby="page-title">
+        <p class="eyebrow">교육별 노션 설계 도우미</p>
+        <h1 id="page-title">새 교육의 대시보드 구조를<br>한 번에 설계해 보세요.</h1>
+        <p class="intro-copy">
+          만들고 싶은 교육 운영 방식을 입력하면 데이터베이스, 관계형 설정, 계산 수식과
+          구축 순서가 포함된 샘플 설계안을 보여드립니다.
+        </p>
+        <div class="scope-note">
+          <strong>첫 번째 버전 안내</strong>
+          <p>
+            실제 AI나 노션 계정에 연결하지 않습니다. 선택한 관리 항목에 맞춰 미리 준비된
+            Mock 설계 결과를 보여주는 정적 프로토타입입니다.
+          </p>
+        </div>
+      </section>
+
+      <section class="form-card" aria-labelledby="form-title">
+        <div class="section-heading">
+          <p class="step-label">01. 요구사항 입력</p>
+          <h2 id="form-title">교육 정보를 알려주세요.</h2>
+          <p>노션 용어를 몰라도 괜찮습니다. 운영하려는 내용을 기준으로 작성해 주세요.</p>
+        </div>
+
+        <form id="requirement-form" novalidate>
+          <div class="field-group">
+            <label for="education-name">교육명 <span class="required">필수</span></label>
+            <input
+              id="education-name"
+              name="educationName"
+              type="text"
+              maxlength="80"
+              placeholder="예: 2026 신입 매니저 온보딩"
+              aria-describedby="education-name-help education-name-error"
+              required
+            >
+            <p id="education-name-help" class="field-help">설계 결과의 제목으로 사용됩니다.</p>
+            <p id="education-name-error" class="field-error" aria-live="polite"></p>
+          </div>
+
+          <div class="field-group">
+            <label for="dashboard-purpose">대시보드 사용 목적</label>
+            <textarea
+              id="dashboard-purpose"
+              name="purpose"
+              rows="4"
+              maxlength="500"
+              placeholder="예: 교육생 출결과 전체 교육 진행 상황을 한 화면에서 확인하고 싶어요."
+            ></textarea>
+          </div>
+
+          <fieldset class="field-group">
+            <legend>기본 관리 항목</legend>
+            <p class="field-help">교육 운영에 필요한 기본 항목을 선택하세요.</p>
+            <div class="option-grid option-grid-basic">
+              <label class="check-option">
+                <input type="checkbox" name="basicItems" value="students" checked>
+                <span><strong>교육생</strong><small>교육생 명단과 상태</small></span>
+              </label>
+              <label class="check-option">
+                <input type="checkbox" name="basicItems" value="attendance" checked>
+                <span><strong>출결</strong><small>회차별 출석 기록</small></span>
+              </label>
+              <label class="check-option">
+                <input type="checkbox" name="basicItems" value="schedule" checked>
+                <span><strong>일정</strong><small>교육 일정과 진행 상태</small></span>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset class="field-group">
+            <legend>추가 관리 항목</legend>
+            <p class="field-help">이번 교육에 필요한 항목만 추가하세요.</p>
+            <div class="option-grid">
+              <label class="check-option compact">
+                <input type="checkbox" name="additionalItems" value="assignments">
+                <span><strong>과제</strong><small>제출 및 검토 상태</small></span>
+              </label>
+              <label class="check-option compact">
+                <input type="checkbox" name="additionalItems" value="evaluations">
+                <span><strong>평가</strong><small>평가 점수와 결과</small></span>
+              </label>
+              <label class="check-option compact">
+                <input type="checkbox" name="additionalItems" value="completion">
+                <span><strong>수료</strong><small>수료 기준과 판정</small></span>
+              </label>
+              <label class="check-option compact">
+                <input type="checkbox" name="additionalItems" value="instructors">
+                <span><strong>강사</strong><small>강사 정보와 담당 회차</small></span>
+              </label>
+              <label class="check-option compact">
+                <input type="checkbox" name="additionalItems" value="supplies">
+                <span><strong>운영 물품</strong><small>준비 수량과 상태</small></span>
+              </label>
+            </div>
+          </fieldset>
+
+          <div class="field-group">
+            <label for="additional-requirements">추가 요구사항</label>
+            <textarea
+              id="additional-requirements"
+              name="requirements"
+              rows="5"
+              maxlength="1000"
+              placeholder="예: 미제출 과제를 쉽게 확인하고, 강사별 담당 일정을 보고 싶어요."
+            ></textarea>
+            <p class="field-help">
+              이 내용은 결과에 그대로 표시되며, 현재 버전에서는 의미를 분석하지 않습니다.
+            </p>
+          </div>
+
+          <aside class="privacy-warning" aria-label="개인정보 입력 주의">
+            <span class="warning-icon" aria-hidden="true">!</span>
+            <div>
+              <strong>개인정보 및 내부 자료를 입력하지 마세요.</strong>
+              <p>
+                실제 교육생 이름, 연락처, 출석 내역과 회사 내부 자료 대신 일반적인 요구사항만
+                작성해 주세요.
+              </p>
+            </div>
+          </aside>
+
+          <button class="button button-primary button-large" type="submit">
+            AI 설계 생성
+            <span aria-hidden="true">→</span>
+          </button>
+        </form>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>AI 노션 빌더 · 외부 API와 사용자 데이터를 저장하지 않는 정적 데모</p>
+    </footer>
+
+    <script src="js/mock-data.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
