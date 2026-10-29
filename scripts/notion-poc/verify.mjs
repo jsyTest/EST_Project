@@ -40,6 +40,7 @@ export async function verifyRemote(client, state, { changed = state.attendanceCh
     relation('applications', row.id, '신청자', [pageId('applicants', row.applicant)]);
     relation('applications', row.id, '과정', [pageId('courses', row.course)]);
     check(`${row.id}: selection`, remote('applications', row.id)?.properties['선정 상태']?.select?.name, row.status);
+    check(`${row.id}: selected value`, numberValue(remote('applications', row.id)?.properties['선정 값']), row.status === '선정' ? 1 : 0);
     relation('applications', row.id, '수강', fixture.enrollments.filter(e => e.application === row.id).map(e => pageId('enrollments', e.id)));
   }
   for (const row of fixture.applicants) {
@@ -48,6 +49,12 @@ export async function verifyRemote(client, state, { changed = state.attendanceCh
     check(`${row.id}: applicant ID`, p?.['신청자 ID']?.rich_text?.map(t => t.plain_text ?? t.text?.content ?? '').join(''), row.id);
     check(`${row.id}: participant type`, p?.['참여자 유형']?.select?.name, row.type);
     check(`${row.id}: acquisition channel`, p?.['유입 경로']?.select?.name, row.channel);
+    const selectedCount = fixture.applications.filter(a => a.applicant === row.id && a.status === '선정').length;
+    const completedCount = fixture.enrollments.filter(e => e.applicant === row.id && e.completed).length;
+    check(`${row.id}: selected applications`, numberValue(p?.['선정 신청 건수']), selectedCount);
+    check(`${row.id}: completed enrollments`, numberValue(p?.['수료 수강 건수']), completedCount);
+    check(`${row.id}: selected person flag`, numberValue(p?.['선정 인원 값']), selectedCount > 0 ? 1 : 0);
+    check(`${row.id}: completed person flag`, numberValue(p?.['수료 인원 값']), completedCount > 0 ? 1 : 0);
     relation('applicants', row.id, '신청기록', fixture.applications.filter(a => a.applicant === row.id).map(a => pageId('applications', a.id)));
     relation('applicants', row.id, '수강', fixture.enrollments.filter(e => e.applicant === row.id).map(e => pageId('enrollments', e.id)));
   }

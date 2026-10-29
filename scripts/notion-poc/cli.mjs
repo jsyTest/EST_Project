@@ -4,20 +4,23 @@ import { NotionClient } from './client.mjs';
 import { RunStore } from './state.mjs';
 import { dryRun, runPoc } from './engine.mjs';
 import { verifyEventually } from './verify.mjs';
+import { preflight } from './preflight.mjs';
+import { validateViewProfile } from './schema.mjs';
 
 export function parseArgs(args) {
   const command = args[0] ?? 'dry-run';
-  if (!['dry-run', 'apply', 'inspect', 'verify', 'help', '--help'].includes(command)) throw new Error('명령은 dry-run / apply / inspect / verify / help 중 하나입니다.');
-  const options = { runId: 'nb-v2-002' };
+  if (!['dry-run', 'preflight', 'apply', 'repair-schema', 'inspect', 'verify', 'help', '--help'].includes(command)) throw new Error('명령은 dry-run / preflight / apply / repair-schema / inspect / verify / help 중 하나입니다.');
+  const options = { runId: 'nb-v2-002', viewProfile: 'full' };
   for (let i = 1; i < args.length; i += 2) {
     const key = args[i], value = args[i + 1];
-    if (!['--run-id', '--confirm-parent'].includes(key) || !value || value.startsWith('--')) throw new Error('잘못된 옵션 또는 옵션값 누락');
-    const name = key === '--run-id' ? 'runId' : 'confirmParent';
+    if (!['--run-id', '--confirm-parent', '--view-profile'].includes(key) || !value || value.startsWith('--')) throw new Error('잘못된 옵션 또는 옵션값 누락');
+    const name = key === '--run-id' ? 'runId' : key === '--view-profile' ? 'viewProfile' : 'confirmParent';
     if (options[`seen-${name}`]) throw new Error('중복 옵션');
     options[`seen-${name}`] = true;
     options[name] = value;
   }
   validateRunId(options.runId);
+  validateViewProfile(options.viewProfile);
   return { command, ...options };
 }
 
@@ -25,6 +28,8 @@ export function summarize(state) {
   return {
     taskId: state.taskId, runId: state.runId, status: state.status, apiVersion: state.apiVersion,
     reusedExistingRun: state.reusedExistingRun === true, parentId: state.parentId,
+    viewProfile: state.viewProfile, skippedByPlan: state.skippedByPlan ?? [],
+    schemaRepair: state.schemaRepair ?? null,
     page: state.page, databases: state.databases, rows: state.rows, views: state.views,
     verification: Object.fromEntries(Object.entries(state.verification).map(([key, result]) => [key, {
       ok: result.ok, phase: result.phase, expected: result.expected, actual: result.actual,
@@ -41,12 +46,14 @@ export async function main(args = process.argv.slice(2)) {
   if (['help', '--help'].includes(options.command)) {
     console.log('Node.js 22+ / 기본값은 네트워크 호출 없는 dry-run입니다.\n'
       + 'node scripts/notion-poc/cli.mjs dry-run\n'
+      + 'node --env-file=.env scripts/notion-poc/cli.mjs preflight --view-profile free\n'
       + 'node --env-file=.env scripts/notion-poc/cli.mjs apply --run-id nb-v2-002 --confirm-parent <승인한-테스트-페이지-UUID>\n'
+      + 'repair-schema: 알려진 NB-V2-002A 초기 400 스키마 오류만 조사 후 이어가기(일반 재시작 아님)\n'
       + 'node scripts/notion-poc/cli.mjs inspect --run-id nb-v2-002\n'
       + 'node --env-file=.env scripts/notion-poc/cli.mjs verify --run-id nb-v2-002');
     return;
   }
-  if (options.command === 'dry-run') { print(dryRun(readConfig())); return; }
+  if (options.command === 'dry-run') { print(dryRun(readConfig(), { viewProfile: options.viewProfile })); return; }
   const store = new RunStore(options.runId);
   if (options.command === 'inspect') {
     const state = await store.read();
@@ -56,6 +63,10 @@ export async function main(args = process.argv.slice(2)) {
   }
   const config = readConfig(process.env, { live: true });
   const client = new NotionClient({ token: config.token });
+  if (options.command === 'preflight') {
+    print({ ...await preflight(client, config.parentId), plan: dryRun(config, { viewProfile: options.viewProfile }) });
+    return;
+  }
   if (options.command === 'verify') {
     await store.lock();
     try {
@@ -69,7 +80,7 @@ export async function main(args = process.argv.slice(2)) {
     } finally { await store.unlock(); }
     return;
   }
-  const state = await runPoc({ config, client, store, runId: options.runId, confirmParent: options.confirmParent,
+  const state = await runPoc({ config, client, store, runId: options.runId, confirmParent: options.confirmParent, viewProfile: options.viewProfile, schemaRepair: options.command === 'repair-schema',
     onProgress: name => console.error(`[NB-V2-002] ${name}`) });
   print(summarize(state));
   if (state.status !== 'complete') process.exitCode = 2;

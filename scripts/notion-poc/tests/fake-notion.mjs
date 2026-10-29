@@ -109,6 +109,13 @@ export class FakeNotion {
         values['출석 인정 여부'] = { type: 'formula', formula: { type: 'boolean', boolean: accepted(original) } };
         set('출석 인정 값', accepted(original) ? 1 : 0);
       }
+      if (key === 'applications') set('선정 값', original.properties['선정 상태'].select.name === '선정' ? 1 : 0);
+      if (key === 'applicants') {
+        const selected = back(original, 'applications', '신청자').filter(p => p.properties['선정 상태'].select.name === '선정').length;
+        const passed = back(original, 'enrollments', '신청자').filter(completed).length;
+        set('선정 신청 건수', selected, 'rollup'); set('수료 수강 건수', passed, 'rollup');
+        set('선정 인원 값', selected > 0 ? 1 : 0); set('수료 인원 값', passed > 0 ? 1 : 0);
+      }
       if (key === 'enrollments') {
         const attendance = back(original, 'attendance', '수강');
         set('출석 건수', attendance.filter(accepted).length, 'rollup');
@@ -125,8 +132,8 @@ export class FakeNotion {
         const applicants = related(original, '신청자'), applications = related(original, '신청기록'), enrollments = related(original, '수강'), attendance = related(original, '출석기록');
         const countPeople = list => new Set(list.flatMap(p => forwardIds(p, '신청자'))).size;
         set('신청자 수', applicants.length); set('신청기록 수', applications.length);
-        set('선정 고유 인원', countPeople(applications.filter(p => p.properties['선정 상태'].select.name === '선정'))); set('수강기록 수', enrollments.length);
-        set('수료기록 수', enrollments.filter(completed).length, 'rollup'); set('수료인원', countPeople(enrollments.filter(completed)));
+        set('선정 고유 인원', countPeople(applications.filter(p => p.properties['선정 상태'].select.name === '선정')), 'rollup'); set('수강기록 수', enrollments.length);
+        set('수료기록 수', enrollments.filter(completed).length, 'rollup'); set('수료인원', countPeople(enrollments.filter(completed)), 'rollup');
         set('수료율', enrollments.filter(completed).length / enrollments.length * 100);
         set('출석 건수', attendance.filter(accepted).length, 'rollup'); set('예정 건수', attendance.length);
         set('출석률', this.options.wrongCalculation ? -1 : attendance.filter(accepted).length / attendance.length * 100);

@@ -13,6 +13,8 @@ import { dryRun, runPoc, assertConfiguration } from '../engine.mjs';
 import { verifyRemote } from '../verify.mjs';
 import { parseArgs } from '../cli.mjs';
 import { FakeNotion, PARENT_ID } from './fake-notion.mjs';
+import { preflight } from '../preflight.mjs';
+import { REPAIRABLE_SCHEMA_FINGERPRINT, validateSchemaRepairState } from '../schema-repair.mjs';
 
 const noSleep = async () => {};
 async function setup(t, fakeOptions = {}) {
@@ -39,6 +41,37 @@ test('dry run validates the plan without credentials or network', () => {
   assert.equal(plan.expectedBaseline.applications, 4);
   assert.equal(plan.expectedBaseline.completionRate, 50);
   assert.equal(plan.expectedBaseline.attendanceRate, 75);
+});
+test('free profile plans only one chart, three tables, no Dashboard', () => {
+  const plan = dryRun(readConfig({}), { viewProfile: 'free' });
+  assert.deepEqual(plan.views, { numberKpis: 0, recruitmentCharts: 1, courseChart: 0, tables: 3, dashboard: 0 });
+  assert.equal(plan.skippedByPlan.length, 2);
+  assert.equal(plan.networkRequests, 0);
+  assert.equal(parseArgs(['dry-run', '--view-profile', 'free']).viewProfile, 'free');
+  assert.throws(() => parseArgs(['apply', '--view-profile', 'unknown']), /view-profile/);
+});
+test('preflight reads exactly the explicit parent and returns no user or permission claims', async () => {
+  const client = new FakeNotion();
+  Object.assign(client.pages.get(PARENT_ID), {
+    properties: { title: { type: 'title', title: [{ plain_text: 'NB-V2-002A 개인 테스트' }] } },
+    created_by: { id: 'never-output-user' }, url: 'https://www.notion.so/test-only'
+  });
+  const result = await preflight(client, PARENT_ID);
+  assert.equal(result.parent.title, 'NB-V2-002A 개인 테스트');
+  assert.equal(result.mutations, 0);
+  assert.equal(result.readAccessVerified, true);
+  assert.match(result.insertUpdateCapabilities, /확인하지 못함/);
+  assert.ok(!JSON.stringify(result).includes('never-output-user'));
+  assert.deepEqual(client.calls.map(c => [c.method, c.path]), [['GET', `/v1/pages/${PARENT_ID}`]]);
+});
+test('preflight refuses a locked or mismatched parent without any write', async () => {
+  const client = new FakeNotion();
+  client.pages.get(PARENT_ID).is_locked = true;
+  await assert.rejects(preflight(client, PARENT_ID), /사용할 수 없습니다/);
+  client.pages.get(PARENT_ID).is_locked = false;
+  client.pages.get(PARENT_ID).id = '22222222-2222-4222-8222-222222222222';
+  await assert.rejects(preflight(client, PARENT_ID), /사용할 수 없습니다/);
+  assert.ok(client.calls.every(c => c.method === 'GET'));
 });
 test('CLI rejects unknown, duplicate, missing and path-traversal options', () => {
   assert.equal(parseArgs([]).command, 'dry-run');
@@ -79,7 +112,12 @@ test('selected people are counted from applications, not from created enrollment
   fixture.applications.find(r => r.id === 'AP04').status = '선정';
   assert.equal(expectedKpis(fixture).selectedPeople, 3);
   assert.equal(expectedKpis(fixture).enrollments, 2);
-  assert.ok(CALCULATIONS.find(b => b.properties['선정 고유 인원']).properties['선정 고유 인원'].formula.expression.startsWith('prop("신청기록")'));
+  const selected = CALCULATIONS.find(b => b.properties['선정 고유 인원']).properties['선정 고유 인원'].rollup;
+  assert.equal(selected.relation_property_name, '신청자');
+  assert.equal(selected.rollup_property_name, '선정 인원 값');
+  const perPerson = CALCULATIONS.find(b => b.properties['선정 신청 건수']).properties['선정 신청 건수'].rollup;
+  assert.equal(perPerson.relation_property_name, '신청기록');
+  assert.equal(perPerson.rollup_property_name, '선정 값');
 });
 test('view verification checks aggregation property IDs, not just chart type', () => {
   const expected = { type: 'chart', chart_type: 'number', value: { aggregator: 'sum', property_id: 'p1' } };
@@ -131,8 +169,38 @@ test('full simulated run verifies baseline, recalculation, six DBs and views', a
   assert.deepEqual(dashboard.configuration.rows.map(row => row.widgets.length), [4, 3, 3]);
   assert.equal((await verifyRemote(args.client, state)).ok, true);
   assert.equal(state.visualInspection, 'not_performed');
+  const tables = args.client.calls.filter(c => c.path === '/v1/views' && c.body.type === 'table');
+  assert.deepEqual(tables.map(c => c.body.name), ['신청자 관리', '과정별 신청기록', '수강 관리']);
   const mutations = args.client.calls.filter(c => c.method === 'PATCH' && c.path.startsWith('/v1/pages/'));
   assert.deepEqual(mutations.map(c => c.path), [`/v1/pages/${state.rows.attendance.AT04.id}`]);
+});
+test('free run verifies data but stays partial and never requests Dashboard or extra charts', async t => {
+  const args = await setup(t);
+  const state = await runPoc({ ...args, viewProfile: 'free' });
+  assert.equal(state.status, 'partial');
+  assert.equal(state.verification.baseline.actual.attendanceRate, 75);
+  assert.equal(state.verification.afterChange.actual.attendanceRate, 100);
+  const views = args.client.calls.filter(c => c.path === '/v1/views' && c.method === 'POST');
+  assert.equal(views.filter(c => c.body.type === 'chart').length, 1);
+  assert.equal(views.filter(c => c.body.type === 'dashboard').length, 0);
+  assert.equal(views.filter(c => c.body.type === 'table').length, 3);
+  assert.equal(state.skippedByPlan.length, 2);
+  assert.equal(state.steps.filter(s => s.status === 'failed').length, 0);
+  const count = args.client.calls.length;
+  await assert.rejects(runPoc({ ...args, viewProfile: 'full' }), /코드가 다릅니다/);
+  assert.equal(args.client.calls.length, count);
+});
+test('initial schema is checked before a second database can be created', async t => {
+  const args = await setup(t);
+  const get = args.client.get.bind(args.client);
+  args.client.get = async path => {
+    const value = await get(path);
+    if (path.startsWith('/v1/data_sources/')) value.properties = {};
+    return value;
+  };
+  await assert.rejects(runPoc(args), /초기 스키마 불일치/);
+  assert.equal(args.client.calls.filter(c => c.method === 'POST' && c.path === '/v1/databases').length, 1);
+  assert.equal((await args.store.read()).status, 'failed');
 });
 test('completed run is reused with zero additional API calls', async t => {
   const args = await setup(t); await runPoc(args);
@@ -150,6 +218,47 @@ test('failed run preserves object IDs and refuses to recreate anything', async t
   const count = args.client.calls.length;
   await assert.rejects(runPoc(args), /未|미완료/);
   assert.equal(args.client.calls.length, count);
+});
+async function prepareLegacySchemaFailure(t) {
+  const args = await setup(t, { failSeed: true });
+  await assert.rejects(runPoc({ ...args, viewProfile: 'free' }), /simulated seed/);
+  const state = await args.store.read();
+  state.fingerprint = REPAIRABLE_SCHEMA_FINGERPRINT;
+  Object.assign(state.steps.at(-1), { name: 'calculations: metrics batch 5', status: 'failed', error: { status: 400, code: 'validation_error', uncertain: false } });
+  state.schemaVerified = false;
+  await args.store.save(state);
+  args.client.options.failSeed = false;
+  return { args, state };
+}
+test('known schema repair reuses all six databases and never creates another education page', async t => {
+  const { args } = await prepareLegacySchemaFailure(t);
+  const dbCount = args.client.calls.filter(c => c.path === '/v1/databases' && c.method === 'POST').length;
+  const pageCount = args.client.calls.filter(c => c.path === '/v1/pages' && c.body?.parent?.page_id).length;
+  const result = await runPoc({ ...args, viewProfile: 'free', schemaRepair: true });
+  assert.equal(result.status, 'partial');
+  assert.ok(result.schemaRepair.verifiedAt);
+  assert.equal(result.requiresManualReview, false);
+  assert.equal(result.verification.afterChange.actual.attendanceRate, 100);
+  assert.equal(args.client.calls.filter(c => c.path === '/v1/databases' && c.method === 'POST').length, dbCount);
+  assert.equal(args.client.calls.filter(c => c.path === '/v1/pages' && c.body?.parent?.page_id).length, pageCount);
+});
+test('schema repair refuses unknown fingerprints, seeded rows and uncertain diagnostics', async t => {
+  const { state } = await prepareLegacySchemaFailure(t);
+  const context = { parentId: PARENT_ID, runId: state.runId, viewProfile: 'free' };
+  assert.doesNotThrow(() => validateSchemaRepairState(state, context));
+  const unknown = structuredClone(state); unknown.fingerprint = 'unknown';
+  assert.throws(() => validateSchemaRepairState(unknown, context), /400 스키마/);
+  const seeded = structuredClone(state); seeded.rows.applicants.A01 = { id: PARENT_ID };
+  assert.throws(() => validateSchemaRepairState(seeded, context), /데이터나 보기/);
+  const uncertain = structuredClone(state); uncertain.schemaDiagnostics = [{ status: 'uncertain' }];
+  assert.throws(() => validateSchemaRepairState(uncertain, context), /불확실/);
+});
+test('schema repair stops before writes if a previously empty remote database has a row', async t => {
+  const { args, state } = await prepareLegacySchemaFailure(t);
+  args.client.pages.set('33333333-3333-4333-8333-333333333333', { id: '33333333-3333-4333-8333-333333333333', parent: { data_source_id: state.databases.applicants.dataSourceId }, properties: {} });
+  const writes = args.client.calls.filter(c => ['POST', 'PATCH'].includes(c.method)).length;
+  await assert.rejects(runPoc({ ...args, viewProfile: 'free', schemaRepair: true }), /실제 데이터/);
+  assert.equal(args.client.calls.filter(c => ['POST', 'PATCH'].includes(c.method)).length, writes);
 });
 test('lost response after a creation marks uncertainty and prevents duplicate creation', async t => {
   const args = await setup(t);

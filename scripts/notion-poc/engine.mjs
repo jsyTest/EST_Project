@@ -1,17 +1,19 @@
 import { createHash } from 'node:crypto';
 import { API_VERSION, PAGE_TITLE, normalizeId, validateRunId } from './config.mjs';
-import { DATABASES, RELATIONS, CALCULATIONS, validatePlan, relationPayload, buildViewSpecs } from './schema.mjs';
+import { DATABASES, RELATIONS, CALCULATIONS, validatePlan, relationPayload, buildViewSpecs, validateViewProfile, viewCounts, selectViewSpecs } from './schema.mjs';
 import { makeFixture, validateFixture, expectedKpis } from './fixture.mjs';
 import { verifyEventually } from './verify.mjs';
 import { NotionError } from './client.mjs';
+import { validateSchemaRepairState, verifyRepairSkeleton } from './schema-repair.mjs';
 
 const richText = value => [{ type: 'text', text: { content: value } }];
 const title = value => ({ title: richText(value) });
 const text = value => ({ rich_text: richText(value) });
 const relation = ids => ({ relation: ids.map(id => ({ id })) });
-const fingerprint = () => createHash('sha256').update(JSON.stringify({ DATABASES, RELATIONS, CALCULATIONS, fixture: makeFixture(), API_VERSION })).digest('hex');
+const fingerprint = (viewProfile = 'full') => createHash('sha256').update(JSON.stringify({ DATABASES, RELATIONS, CALCULATIONS, fixture: makeFixture(), API_VERSION, viewProfile })).digest('hex');
 
-export function dryRun(config) {
+export function dryRun(config, { viewProfile = 'full' } = {}) {
+  validateViewProfile(viewProfile);
   validatePlan();
   const fixture = validateFixture(makeFixture());
   return {
@@ -20,7 +22,8 @@ export function dryRun(config) {
     databases: Object.entries(DATABASES).map(([key, value]) => ({ key, name: value.name, initialProperties: value.properties })),
     relations: RELATIONS, calculations: CALCULATIONS, fixtureCounts: Object.fromEntries(Object.entries(fixture).map(([key, rows]) => [key, rows.length])),
     expectedBaseline: expectedKpis(fixture), expectedAttendanceAfterChange: 100,
-    views: { numberKpis: 4, recruitmentCharts: 2, courseChart: 1, tables: 3, dashboard: 1 },
+    viewProfile, views: viewCounts(viewProfile),
+    skippedByPlan: viewProfile === 'free' ? ['Dashboard: Business/Enterprise 제공 안내에 따라 미실행', '숫자 차트 4개·나머지 차트 2개: Free 차트 1개 제한에 맞춰 미실행. KPI 값은 교육 KPI DB에서 검증.'] : [],
     additionalDatabaseReason: '교육 전체 KPI를 운영 DB의 단일 행 계산과 분리해 검증하기 위한 집계 DB 1개 추가',
     mutationTest: '생성한 AT04의 결석을 출석으로 변경. 최종 상태는 출석률 100%.',
     limitations: ['실제 API 및 요금제 미검증', '미리 생성한 출석 4건을 예정 분모로 사용하는 PoC', '표 하단 계산 설정 제외', '같은 run-id의 실패 실행은 자동 재생성하지 않음']
@@ -36,7 +39,8 @@ export function assertConfiguration(expected, actual, label = 'configuration') {
   }
 }
 
-export async function runPoc({ config, runId, confirmParent, client, store, onProgress = () => {}, verificationOptions }) {
+export async function runPoc({ config, runId, confirmParent, client, store, onProgress = () => {}, verificationOptions, viewProfile = 'full', schemaRepair = false }) {
+  validateViewProfile(viewProfile);
   validateRunId(runId);
   if (!config.parentId || !confirmParent || !sameId(config.parentId, confirmParent)) throw new Error('명시적 --confirm-parent 값이 테스트 상위 페이지와 일치해야 합니다.');
   validatePlan();
@@ -46,12 +50,22 @@ export async function runPoc({ config, runId, confirmParent, client, store, onPr
   try {
     const previous = await store.read();
     if (previous) {
-      if (previous.runId !== runId || !sameId(previous.parentId, config.parentId) || previous.fingerprint !== fingerprint()) throw new Error('기존 실행의 대상 또는 코드가 다릅니다. 상태를 보존하고 별도 검토하세요.');
-      if (['complete', 'partial'].includes(previous.status)) return { ...previous, reusedExistingRun: true };
-      throw new Error('이 run-id에 미완료 실행이 있습니다. 중복 생성 방지를 위해 중단합니다. inspect/verify로 확인하세요.');
+      if (schemaRepair && previous.status === 'failed') {
+        validateSchemaRepairState(previous, { parentId: config.parentId, runId, viewProfile });
+        onProgress('repair preflight: 기존 생성물 소유 관계·빈 DB 확인');
+        await verifyRepairSkeleton(client, previous);
+        state = previous;
+        state.schemaRepair = { startedAt: new Date().toISOString(), originalFingerprint: previous.fingerprint, originalFailure: structuredClone(previous.steps.at(-1)) };
+        state.status = 'running';
+      } else {
+        if (previous.runId !== runId || !sameId(previous.parentId, config.parentId) || previous.fingerprint !== fingerprint(viewProfile)) throw new Error('기존 실행의 대상 또는 코드가 다릅니다. 상태를 보존하고 별도 검토하세요.');
+        if (['complete', 'partial'].includes(previous.status)) return { ...previous, reusedExistingRun: true };
+        throw new Error('이 run-id에 미완료 실행이 있습니다. 중복 생성 방지를 위해 중단합니다. inspect/verify로 확인하세요.');
+      }
     }
-    state = {
-      taskId: 'NB-V2-002', runId, apiVersion: API_VERSION, parentId: config.parentId, fingerprint: fingerprint(),
+    if (schemaRepair && !previous) throw new Error('수정할 기존 실행 기록이 없습니다. 새 생성은 하지 않습니다.');
+    state ??= {
+      taskId: 'NB-V2-002', runId, apiVersion: API_VERSION, parentId: config.parentId, fingerprint: fingerprint(viewProfile), viewProfile,
       startedAt: new Date().toISOString(), status: 'running', steps: [], databases: {}, rows: {}, views: [], verification: {}, attendanceChanged: false
     };
     await store.save(state);
@@ -73,6 +87,7 @@ export async function runPoc({ config, runId, confirmParent, client, store, onPr
         throw error;
       }
     };
+    if (!schemaRepair) {
     await step('preflight: 지정한 상위 페이지 확인', async () => {
       const parent = await client.get(`/v1/pages/${config.parentId}`);
       if (parent.object !== 'page' || !sameId(parent.id, config.parentId) || parent.in_trash || parent.archived || parent.is_locked) throw new Error('테스트 상위 페이지를 사용할 수 없습니다.');
@@ -98,6 +113,14 @@ export async function runPoc({ config, runId, confirmParent, client, store, onPr
         state.rows[key] = {};
         const remoteDb = await client.get(`/v1/databases/${state.databases[key].databaseId}`);
         if (!sameId(remoteDb.parent?.page_id, state.page.id)) throw new Error('생성 DB의 부모 불일치');
+        // Verify the first (and every later) initial schema before creating another DB.
+        const initial = await client.get(`/v1/data_sources/${state.databases[key].dataSourceId}`);
+        if (!sameId(initial.parent?.database_id, state.databases[key].databaseId)) throw new Error('초기 데이터 소스 부모 불일치');
+        for (const [name, definition] of Object.entries(schema.properties)) {
+          const property = initial.properties?.[name];
+          if (!property?.id || property.type !== Object.keys(definition)[0]) throw new Error(`초기 스키마 불일치: ${key}.${name}`);
+          if (definition.select && JSON.stringify(property.select?.options?.map(o => o.name).sort()) !== JSON.stringify(definition.select.options.map(o => o.name).sort())) throw new Error(`초기 선택 옵션 불일치: ${key}.${name}`);
+        }
       });
     }
     for (const r of RELATIONS) {
@@ -110,6 +133,7 @@ export async function runPoc({ config, runId, confirmParent, client, store, onPr
           await client.patch(`/v1/data_sources/${state.databases[r.target].dataSourceId}`, { properties: { [reverseId]: { name: r.reverse } } });
         }
       });
+    }
     }
     for (const [index, batch] of CALCULATIONS.entries()) await step(`calculations: ${batch.database} batch ${index + 1}`, () => client.patch(`/v1/data_sources/${state.databases[batch.database].dataSourceId}`, { properties: batch.properties }));
 
@@ -134,6 +158,12 @@ export async function runPoc({ config, runId, confirmParent, client, store, onPr
         }
       }
       state.schemaVerified = true;
+      if (schemaRepair) {
+        const old = state.steps.find(s => s.name === 'calculations: metrics batch 5' && s.status === 'failed');
+        if (old) { old.status = 'repaired'; old.repairedAt = new Date().toISOString(); }
+        state.schemaRepair.verifiedAt = new Date().toISOString();
+        state.fingerprint = fingerprint(viewProfile);
+      }
     });
     const ref = (db, id) => {
       const row = state.rows[db][id];
@@ -176,7 +206,8 @@ export async function runPoc({ config, runId, confirmParent, client, store, onPr
       if (!state.verification.afterChange.ok) throw new Error('변경 후 관계/KPI 재검증 실패');
     });
     let dashboardId;
-    await step('view: Dashboard 생성', async () => {
+    state.skippedByPlan = dryRun(config, { viewProfile }).skippedByPlan;
+    if (viewProfile === 'full') await step('view: Dashboard 생성', async () => {
       const view = await client.post('/v1/views', { database_id: state.databases.metrics.databaseId, data_source_id: state.databases.metrics.dataSourceId, name: '교육 운영 대시보드', type: 'dashboard' });
       dashboardId = normalizeId(view.id);
       const record = { key: 'dashboard', id: dashboardId, type: 'dashboard', url: view.url ?? null, verified: false };
@@ -186,7 +217,7 @@ export async function runPoc({ config, runId, confirmParent, client, store, onPr
       record.verified = true;
     }, { optional: true });
     const groups = new Map();
-    for (const [index, spec] of buildViewSpecs(state.databases, schemas).entries()) {
+    for (const [index, spec] of selectViewSpecs(buildViewSpecs(state.databases, schemas), viewProfile).entries()) {
       await step(`view: ${spec.name}`, async () => {
         const bucket = index < 4 ? 0 : index < 7 ? 1 : 2;
         const existing = groups.has(bucket);
@@ -211,7 +242,8 @@ export async function runPoc({ config, runId, confirmParent, client, store, onPr
       for (const widget of state.views.filter(v => v.key !== 'dashboard')) if (!ids.includes(widget.id)) throw new Error('생성한 위젯이 Dashboard에 없습니다.');
       state.dashboardLayoutVerified = true;
     });
-    state.status = state.steps.some(event => event.status === 'failed') ? 'partial' : 'complete';
+    state.status = state.steps.some(event => event.status === 'failed') || state.skippedByPlan.length ? 'partial' : 'complete';
+    state.requiresManualReview = state.steps.some(event => ['failed', 'uncertain'].includes(event.status));
     state.endedAt = new Date().toISOString();
     state.visualInspection = 'not_performed';
     await store.save(state);

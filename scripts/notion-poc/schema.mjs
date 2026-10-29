@@ -35,6 +35,9 @@ export const CALCULATIONS = [
     '출석 인정 여부': formula('prop("출석 상태") == "출석"'),
     '출석 인정 값': formula('if(prop("출석 상태") == "출석", 1, 0)')
   } },
+  { database: 'applications', properties: {
+    '선정 값': formula('if(prop("선정 상태") == "선정", 1, 0)')
+  } },
   { database: 'enrollments', properties: {
     '출석 건수': rollup('출석기록', '출석 인정 값'),
     '예정 건수': formula('prop("출석기록").length()'),
@@ -43,6 +46,14 @@ export const CALCULATIONS = [
   { database: 'enrollments', properties: {
     '출석률': formula('if(prop("예정 건수") == 0, 0, prop("출석 건수") / prop("예정 건수") * 100)')
   } },
+  { database: 'applicants', properties: {
+    '선정 신청 건수': rollup('신청기록', '선정 값'),
+    '수료 수강 건수': rollup('수강', '수료 값')
+  } },
+  { database: 'applicants', properties: {
+    '선정 인원 값': formula('if(prop("선정 신청 건수") > 0, 1, 0)'),
+    '수료 인원 값': formula('if(prop("수료 수강 건수") > 0, 1, 0)')
+  } },
   { database: 'courses', properties: {
     '수강인원': formula('prop("수강").length()'),
     '수료건수': rollup('수강', '수료 값')
@@ -50,10 +61,10 @@ export const CALCULATIONS = [
   { database: 'metrics', properties: {
     '신청자 수': formula('prop("신청자").length()'),
     '신청기록 수': formula('prop("신청기록").length()'),
-    '선정 고유 인원': formula('prop("신청기록").filter(current.prop("선정 상태") == "선정").map(current.prop("신청자")).flat().unique().length()'),
+    '선정 고유 인원': rollup('신청자', '선정 인원 값'),
     '수강기록 수': formula('prop("수강").length()'),
     '수료기록 수': rollup('수강', '수료 값'),
-    '수료인원': formula('prop("수강").filter(current.prop("수료")).map(current.prop("신청자")).flat().unique().length()'),
+    '수료인원': rollup('신청자', '수료 인원 값'),
     '출석 건수': rollup('출석기록', '출석 인정 값'),
     '예정 건수': formula('prop("출석기록").length()')
   } },
@@ -68,6 +79,23 @@ export const METRIC_PROPERTIES = {
   enrollments: '수강기록 수', completions: '수료기록 수', completedPeople: '수료인원',
   completionRate: '수료율', attendanceCount: '출석 건수', attendanceTotal: '예정 건수', attendanceRate: '출석률'
 };
+
+export function validateViewProfile(profile) {
+  if (!['full', 'free'].includes(profile)) throw new Error('view-profile은 full 또는 free여야 합니다.');
+  return profile;
+}
+
+export function viewCounts(profile = 'full') {
+  validateViewProfile(profile);
+  return profile === 'free'
+    ? { numberKpis: 0, recruitmentCharts: 1, courseChart: 0, tables: 3, dashboard: 0 }
+    : { numberKpis: 4, recruitmentCharts: 2, courseChart: 1, tables: 3, dashboard: 1 };
+}
+
+export function selectViewSpecs(specs, profile = 'full') {
+  validateViewProfile(profile);
+  return profile === 'free' ? specs.filter(spec => spec.type === 'table' || spec.key === 'type-chart') : specs;
+}
 
 export function relationPayload(relation, databases) {
   const dataSourceId = normalizeId(databases[relation.target]?.dataSourceId, '관계 대상 data_source_id');
@@ -130,8 +158,8 @@ export function buildViewSpecs(databases, schemas) {
     { key: 'course-chart', database: 'courses', name: '과정별 수강 현황', type: 'chart', configuration: {
       type: 'chart', chart_type: 'column', x_axis_property_id: id('courses', '과정명'), y_axis_property_id: id('courses', '수강인원')
     } },
-    { key: 'courses-table', database: 'courses', name: '교육 운영 현황', type: 'table' },
+    { key: 'applicants-table', database: 'applicants', name: '신청자 관리', type: 'table' },
+    { key: 'applications-table', database: 'applications', name: '과정별 신청기록', type: 'table' },
     { key: 'enrollments-table', database: 'enrollments', name: '수강 관리', type: 'table' },
-    { key: 'attendance-table', database: 'attendance', name: '출석 관리', type: 'table' }
   ].map(spec => ({ ...spec, data_source_id: normalizeId(databases[spec.database].dataSourceId) }));
 }
