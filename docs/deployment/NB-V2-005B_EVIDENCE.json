@@ -1,0 +1,461 @@
+{
+  "task": "NB-V2-005B",
+  "date": "2026-10-29",
+  "timezone": "Asia/Seoul",
+  "baseline": {
+    "branch": "main",
+    "head": "2432420f36368331228283dcb93000b2f90f89a8",
+    "workingTreeInitiallyClean": true,
+    "previousReportCommit": "4bff220",
+    "remoteMainVerifiedByLsRemote": "2432420f36368331228283dcb93000b2f90f89a8"
+  },
+  "vercel": {
+    "projectId": "prj_5Bxefw0g4RQLUSDXjui5do4tfC9n",
+    "team": "pplus1",
+    "name": "pplus",
+    "framework": null,
+    "nodeVersion": "24.x",
+    "productionDomain": "https://pplus-rouge.vercel.app",
+    "deploymentId": "dpl_EdowT9ZBoD5QnBogx67YFsWNdwv9",
+    "deploymentUrl": "https://pplus-d1cvf58v9-pplus1.vercel.app",
+    "status": "READY",
+    "source": "git",
+    "branch": "main",
+    "commit": "2432420f36368331228283dcb93000b2f90f89a8",
+    "createdAtKst": "2026-10-29 16:23:01",
+    "rootDirectory": "empty (repository root); read in authenticated dashboard",
+    "projectBuildOverride": false,
+    "projectOutputOverride": false,
+    "productionBuildCommand": "node scripts/deployment/build-static.mjs",
+    "productionOutputDirectory": "public-dist",
+    "protection": {
+      "enabled": true,
+      "deploymentType": "all_except_custom_domains"
+    },
+    "previewListCount": 0,
+    "newPreviewCreated": false,
+    "newProductionCreated": false,
+    "settingsChanged": false,
+    "buildLogEvidence": [
+      "Cloning github.com/jsyTest/EST_Project (Branch: main, Commit: 2432420)",
+      "  \"outputDirectory\": \"public-dist\",",
+      "  \"count\": 18",
+      "Build Completed in /vercel/output [113ms]"
+    ]
+  },
+  "supabase": {
+    "projectRef": "pxkjxcryceqtjomgxyfe",
+    "method": "Authenticated dashboard, new tab requery; read-only",
+    "siteUrl": "https://pplus-rouge.vercel.app",
+    "redirectUrls": [
+      "https://pplus-rouge.vercel.app/login.html?confirmed=1",
+      "http://127.0.0.1:8766/login.html?confirmed=1"
+    ],
+    "totalUrls": 2,
+    "matchesRequested": true,
+    "changed": false
+  },
+  "tests": {
+    "command": "node --test scripts/notion-poc/tests/*.test.mjs",
+    "pass": 103,
+    "fail": 0,
+    "skipped": 0
+  },
+  "cdn": {
+    "url": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2",
+    "httpStatus": 200,
+    "version": "2.118.0",
+    "changed": false
+  },
+  "browserChecks": {
+    "target": "Production; not Preview",
+    "method": "Native Chrome UI using existing signed-in session",
+    "existingSessionMainLoad": "passed",
+    "resultGeneration": "passed; synthetic education NB-V2-005B",
+    "resultRefreshSessionAndResult": "passed",
+    "editRestoresName": "passed",
+    "mappingLoad": "passed",
+    "formSample": "passed; 5 questions",
+    "csvHeaderMapping": "passed; synthetic UTF-8 BOM CSV, 3 columns mapped",
+    "optionColorEdit": "passed; base-selection option-0 blue to purple before re-analysis",
+    "logout": "passed",
+    "logoutThenBack": "passed; login page",
+    "logoutOtherTab": "passed; already-open main tab moved to login",
+    "anonymousDirectMapping": "passed; login page",
+    "mobileEmulation": "400 x 689 viewport; main intro/header, mapping CSV controls, login form visually inspected",
+    "mobilePhysicalDevice": "unverified; user confirmation pending",
+    "freshPasswordLogin": "unverified this task; user confirmation pending",
+    "newSignupEmailReturn": "unverified after URL change; user confirmation pending",
+    "fullCsvSchemaExport": "not retested end-to-end; automatic tests cover compilation",
+    "finalBrowserState": "Logged out; login page displayed in both service tabs; DevTools closed"
+  },
+  "mutations": {
+    "commit": false,
+    "push": false,
+    "deploy": false,
+    "remoteSettings": false,
+    "productCode": false
+  },
+  "verifiedAtKst": "2026-10-29T16:30:21+09:00",
+  "productionHttp": [
+    {
+      "path": "index.html",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "sha256": "8596c39567a7a1235541aecbacc634073857addf6590bf6b4a08b284e2aa7743",
+      "matchesBuild": true
+    },
+    {
+      "path": "login.html",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "sha256": "ca4dbb9265ea3ba7a176b99bc8f5a19845af0133bd02f01345001b88afb9de02",
+      "matchesBuild": true
+    },
+    {
+      "path": "result.html",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "sha256": "dc5cd0c325a1840cdf11f0015fa1d85a7f5a7c611c7bc4ee27ca579e73a43165",
+      "matchesBuild": true
+    },
+    {
+      "path": "mapping.html",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "sha256": "2101d0a7f88982875942a55ec3ef00bb0772ccbfddcaaeb23971b14541891277",
+      "matchesBuild": true
+    },
+    {
+      "path": "css/style.css",
+      "status": 200,
+      "contentType": "text/css; charset=utf-8",
+      "sha256": "82d7b5054e7d7360b67f068cc033f9d487e6a9aa2be3858a1e8577cac1b6ca3b",
+      "matchesBuild": true
+    },
+    {
+      "path": "css/auth.css",
+      "status": 200,
+      "contentType": "text/css; charset=utf-8",
+      "sha256": "175daa3c21e6785f0381bc5b0de9c7b522c6eb7fd0be8d189278140829096be1",
+      "matchesBuild": true
+    },
+    {
+      "path": "css/mapping.css",
+      "status": 200,
+      "contentType": "text/css; charset=utf-8",
+      "sha256": "e28ae091e8ff8e5dfe2bd353dca53c58ef5eff3353813c622405ad213a5dc4bb",
+      "matchesBuild": true
+    },
+    {
+      "path": "js/app.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=utf-8",
+      "sha256": "1417b937995d59a1597c058e5a0651a659f78102a21b60a24a0b841226eca45e",
+      "matchesBuild": true
+    },
+    {
+      "path": "js/mock-data.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=utf-8",
+      "sha256": "184375fa93d9983db1b627e34bd047c59897cc96e22ec6b2e8435529470ed7cd",
+      "matchesBuild": true
+    },
+    {
+      "path": "js/supabase-client.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=utf-8",
+      "sha256": "908abdd9c1d03a44a400f1728d8e4b5c22beec995be9c2e24ef8fcb145a1831c",
+      "matchesBuild": true
+    },
+    {
+      "path": "js/auth-bootstrap.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=utf-8",
+      "sha256": "f5be50cebf87ab9b61e2f35d5aec3b47b5df25c4e835b508f5718661ff045741",
+      "matchesBuild": true
+    },
+    {
+      "path": "js/auth-core.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=utf-8",
+      "sha256": "a39527385aa267f2792e919927697c31b7f3d4c50eca28af14831aee5a0df9ff",
+      "matchesBuild": true
+    },
+    {
+      "path": "js/auth.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=utf-8",
+      "sha256": "d75810bf493d01b7c302ea5559e35ff80fab4f33edf92a4289defd69012fb2d2",
+      "matchesBuild": true
+    },
+    {
+      "path": "js/mapping-ui.mjs",
+      "status": 200,
+      "contentType": "application/javascript; charset=utf-8",
+      "sha256": "69f528f4c4b03d59a5184c5203d29d27ca58d2291ec64278085a5377e61c3045",
+      "matchesBuild": true
+    },
+    {
+      "path": "js/mapping/model.mjs",
+      "status": 200,
+      "contentType": "application/javascript; charset=utf-8",
+      "sha256": "2134702e5694d9e63ce28a97cc863f673e179f6fbbdbaa46043a8b97fb568b9d",
+      "matchesBuild": true
+    },
+    {
+      "path": "js/mapping/parse.mjs",
+      "status": 200,
+      "contentType": "application/javascript; charset=utf-8",
+      "sha256": "d501c29731a64f39b9dcb1ac94aac7b2d6c0d6ecda27ff59d84517c70e480de2",
+      "matchesBuild": true
+    },
+    {
+      "path": "js/mapping/csv.mjs",
+      "status": 200,
+      "contentType": "application/javascript; charset=utf-8",
+      "sha256": "f2928144577a695cb52e71d63864fcf2c550539370008a460fb584af6e66b0dc",
+      "matchesBuild": true
+    },
+    {
+      "path": "assets/logo_1.png",
+      "status": 200,
+      "contentType": "image/png",
+      "sha256": "4622dba3f82ac8fd5745aa0f5a46899b67fd781e4ae8fa0daa7f179fd2080605",
+      "matchesBuild": true
+    },
+    {
+      "path": "scripts/notion-poc/cli.mjs",
+      "status": 404,
+      "contentType": "text/plain; charset=utf-8"
+    },
+    {
+      "path": "docs/auth/NB-V2-005_REPORT.md",
+      "status": 404,
+      "contentType": "text/plain; charset=utf-8"
+    },
+    {
+      "path": ".env",
+      "status": 404,
+      "contentType": "text/plain; charset=utf-8"
+    },
+    {
+      "path": ".git/config",
+      "status": 404,
+      "contentType": "text/plain; charset=utf-8"
+    },
+    {
+      "path": ".notion-poc-state/nb-v2-002a.json",
+      "status": 404,
+      "contentType": "text/plain; charset=utf-8"
+    },
+    {
+      "path": "scripts/notion-poc/tests/deployment.test.mjs",
+      "status": 404,
+      "contentType": "text/plain; charset=utf-8"
+    },
+    {
+      "path": "vercel.json",
+      "status": 404,
+      "contentType": "text/plain; charset=utf-8"
+    }
+  ],
+  "localBuildAudit": {
+    "fileCount": 18,
+    "checkedReferences": 46,
+    "missingReferences": 0,
+    "symlinks": 0,
+    "knownSecretDetected": false,
+    "dependencyReferences": [
+      {
+        "source": "index.html",
+        "target": "css/style.css"
+      },
+      {
+        "source": "index.html",
+        "target": "css/auth.css"
+      },
+      {
+        "source": "index.html",
+        "target": "js/auth-bootstrap.js"
+      },
+      {
+        "source": "index.html",
+        "target": "login.html"
+      },
+      {
+        "source": "index.html",
+        "target": "index.html"
+      },
+      {
+        "source": "index.html",
+        "target": "assets/logo_1.png"
+      },
+      {
+        "source": "index.html",
+        "target": "mapping.html"
+      },
+      {
+        "source": "index.html",
+        "target": "js/supabase-client.js"
+      },
+      {
+        "source": "index.html",
+        "target": "js/auth-core.js"
+      },
+      {
+        "source": "index.html",
+        "target": "js/auth.js"
+      },
+      {
+        "source": "index.html",
+        "target": "js/mock-data.js"
+      },
+      {
+        "source": "index.html",
+        "target": "js/app.js"
+      },
+      {
+        "source": "js/mapping-ui.mjs",
+        "target": "js/mapping/model.mjs"
+      },
+      {
+        "source": "js/mapping-ui.mjs",
+        "target": "js/mapping/parse.mjs"
+      },
+      {
+        "source": "js/mapping-ui.mjs",
+        "target": "js/mapping/csv.mjs"
+      },
+      {
+        "source": "js/mapping/csv.mjs",
+        "target": "js/mapping/model.mjs"
+      },
+      {
+        "source": "js/mapping/parse.mjs",
+        "target": "js/mapping/model.mjs"
+      },
+      {
+        "source": "login.html",
+        "target": "css/style.css"
+      },
+      {
+        "source": "login.html",
+        "target": "css/auth.css"
+      },
+      {
+        "source": "login.html",
+        "target": "js/auth-bootstrap.js"
+      },
+      {
+        "source": "login.html",
+        "target": "assets/logo_1.png"
+      },
+      {
+        "source": "login.html",
+        "target": "js/supabase-client.js"
+      },
+      {
+        "source": "login.html",
+        "target": "js/auth-core.js"
+      },
+      {
+        "source": "login.html",
+        "target": "js/auth.js"
+      },
+      {
+        "source": "mapping.html",
+        "target": "css/style.css"
+      },
+      {
+        "source": "mapping.html",
+        "target": "css/mapping.css"
+      },
+      {
+        "source": "mapping.html",
+        "target": "css/auth.css"
+      },
+      {
+        "source": "mapping.html",
+        "target": "js/auth-bootstrap.js"
+      },
+      {
+        "source": "mapping.html",
+        "target": "login.html"
+      },
+      {
+        "source": "mapping.html",
+        "target": "index.html"
+      },
+      {
+        "source": "mapping.html",
+        "target": "js/supabase-client.js"
+      },
+      {
+        "source": "mapping.html",
+        "target": "js/auth-core.js"
+      },
+      {
+        "source": "mapping.html",
+        "target": "js/auth.js"
+      },
+      {
+        "source": "mapping.html",
+        "target": "js/mapping-ui.mjs"
+      },
+      {
+        "source": "result.html",
+        "target": "css/style.css"
+      },
+      {
+        "source": "result.html",
+        "target": "css/auth.css"
+      },
+      {
+        "source": "result.html",
+        "target": "js/auth-bootstrap.js"
+      },
+      {
+        "source": "result.html",
+        "target": "login.html"
+      },
+      {
+        "source": "result.html",
+        "target": "index.html"
+      },
+      {
+        "source": "result.html",
+        "target": "assets/logo_1.png"
+      },
+      {
+        "source": "result.html",
+        "target": "index.html"
+      },
+      {
+        "source": "result.html",
+        "target": "js/supabase-client.js"
+      },
+      {
+        "source": "result.html",
+        "target": "js/auth-core.js"
+      },
+      {
+        "source": "result.html",
+        "target": "js/auth.js"
+      },
+      {
+        "source": "result.html",
+        "target": "js/mock-data.js"
+      },
+      {
+        "source": "result.html",
+        "target": "js/app.js"
+      }
+    ]
+  },
+  "previousDeploymentProbe": {
+    "url": "https://pplus-f946o20jk-pplus1.vercel.app/scripts/notion-poc/cli.mjs",
+    "status": 302,
+    "redirectsToVercelSso": true
+  }
+}
