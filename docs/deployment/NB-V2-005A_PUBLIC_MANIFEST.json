@@ -1,0 +1,80 @@
+{
+  "task": "NB-V2-005A",
+  "baseCommit": "4bff220",
+  "outputDirectory": "public-dist",
+  "count": 18,
+  "files": [
+    {
+      "path": "index.html",
+      "sha256": "8596c39567a7a1235541aecbacc634073857addf6590bf6b4a08b284e2aa7743"
+    },
+    {
+      "path": "login.html",
+      "sha256": "ca4dbb9265ea3ba7a176b99bc8f5a19845af0133bd02f01345001b88afb9de02"
+    },
+    {
+      "path": "result.html",
+      "sha256": "dc5cd0c325a1840cdf11f0015fa1d85a7f5a7c611c7bc4ee27ca579e73a43165"
+    },
+    {
+      "path": "mapping.html",
+      "sha256": "2101d0a7f88982875942a55ec3ef00bb0772ccbfddcaaeb23971b14541891277"
+    },
+    {
+      "path": "css/style.css",
+      "sha256": "82d7b5054e7d7360b67f068cc033f9d487e6a9aa2be3858a1e8577cac1b6ca3b"
+    },
+    {
+      "path": "css/auth.css",
+      "sha256": "175daa3c21e6785f0381bc5b0de9c7b522c6eb7fd0be8d189278140829096be1"
+    },
+    {
+      "path": "css/mapping.css",
+      "sha256": "e28ae091e8ff8e5dfe2bd353dca53c58ef5eff3353813c622405ad213a5dc4bb"
+    },
+    {
+      "path": "js/app.js",
+      "sha256": "1417b937995d59a1597c058e5a0651a659f78102a21b60a24a0b841226eca45e"
+    },
+    {
+      "path": "js/mock-data.js",
+      "sha256": "184375fa93d9983db1b627e34bd047c59897cc96e22ec6b2e8435529470ed7cd"
+    },
+    {
+      "path": "js/supabase-client.js",
+      "sha256": "908abdd9c1d03a44a400f1728d8e4b5c22beec995be9c2e24ef8fcb145a1831c"
+    },
+    {
+      "path": "js/auth-bootstrap.js",
+      "sha256": "f5be50cebf87ab9b61e2f35d5aec3b47b5df25c4e835b508f5718661ff045741"
+    },
+    {
+      "path": "js/auth-core.js",
+      "sha256": "a39527385aa267f2792e919927697c31b7f3d4c50eca28af14831aee5a0df9ff"
+    },
+    {
+      "path": "js/auth.js",
+      "sha256": "d75810bf493d01b7c302ea5559e35ff80fab4f33edf92a4289defd69012fb2d2"
+    },
+    {
+      "path": "js/mapping-ui.mjs",
+      "sha256": "69f528f4c4b03d59a5184c5203d29d27ca58d2291ec64278085a5377e61c3045"
+    },
+    {
+      "path": "js/mapping/model.mjs",
+      "sha256": "2134702e5694d9e63ce28a97cc863f673e179f6fbbdbaa46043a8b97fb568b9d"
+    },
+    {
+      "path": "js/mapping/parse.mjs",
+      "sha256": "d501c29731a64f39b9dcb1ac94aac7b2d6c0d6ecda27ff59d84517c70e480de2"
+    },
+    {
+      "path": "js/mapping/csv.mjs",
+      "sha256": "f2928144577a695cb52e71d63864fcf2c550539370008a460fb584af6e66b0dc"
+    },
+    {
+      "path": "assets/logo_1.png",
+      "sha256": "4622dba3f82ac8fd5745aa0f5a46899b67fd781e4ae8fa0daa7f179fd2080605"
+    }
+  ]
+}

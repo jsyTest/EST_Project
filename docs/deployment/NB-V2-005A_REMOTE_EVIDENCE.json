@@ -1,0 +1,262 @@
+{
+  "task": "NB-V2-005A",
+  "checkedAtKst": "2026-10-29 15:54:52",
+  "production": "https://pplus-rouge.vercel.app",
+  "baseCommit": "4bff220",
+  "productionFiles": [
+    {
+      "path": "index.html",
+      "status": 200,
+      "deployedMatchesHead": true,
+      "deployedMatchesWorking": false,
+      "sha256": "9f663ade19aa0d8d22f94ef7c6272a5c416ff707e64bf6b438ab757066e03818"
+    },
+    {
+      "path": "login.html",
+      "status": 200,
+      "deployedMatchesHead": true,
+      "deployedMatchesWorking": true,
+      "sha256": "ca4dbb9265ea3ba7a176b99bc8f5a19845af0133bd02f01345001b88afb9de02"
+    },
+    {
+      "path": "result.html",
+      "status": 200,
+      "deployedMatchesHead": true,
+      "deployedMatchesWorking": false,
+      "sha256": "d781546db74e72a99cdbb35f97bbfcefd69cb23a48294d9371452b01eaf73e7b"
+    },
+    {
+      "path": "mapping.html",
+      "status": 200,
+      "deployedMatchesHead": true,
+      "deployedMatchesWorking": true,
+      "sha256": "2101d0a7f88982875942a55ec3ef00bb0772ccbfddcaaeb23971b14541891277"
+    },
+    {
+      "path": "css/style.css",
+      "status": 200,
+      "deployedMatchesHead": true,
+      "deployedMatchesWorking": true,
+      "sha256": "82d7b5054e7d7360b67f068cc033f9d487e6a9aa2be3858a1e8577cac1b6ca3b"
+    },
+    {
+      "path": "css/auth.css",
+      "status": 200,
+      "deployedMatchesHead": true,
+      "deployedMatchesWorking": true,
+      "sha256": "175daa3c21e6785f0381bc5b0de9c7b522c6eb7fd0be8d189278140829096be1"
+    },
+    {
+      "path": "css/mapping.css",
+      "status": 200,
+      "deployedMatchesHead": true,
+      "deployedMatchesWorking": true,
+      "sha256": "e28ae091e8ff8e5dfe2bd353dca53c58ef5eff3353813c622405ad213a5dc4bb"
+    },
+    {
+      "path": "js/app.js",
+      "status": 200,
+      "deployedMatchesHead": true,
+      "deployedMatchesWorking": false,
+      "sha256": "53aade617bb118ddbbe2c51966f0ebe5a84d3f571add68f8052f60663da623f4"
+    },
+    {
+      "path": "js/mock-data.js",
+      "status": 200,
+      "deployedMatchesHead": true,
+      "deployedMatchesWorking": true,
+      "sha256": "184375fa93d9983db1b627e34bd047c59897cc96e22ec6b2e8435529470ed7cd"
+    },
+    {
+      "path": "js/supabase-client.js",
+      "status": 200,
+      "deployedMatchesHead": true,
+      "deployedMatchesWorking": true,
+      "sha256": "908abdd9c1d03a44a400f1728d8e4b5c22beec995be9c2e24ef8fcb145a1831c"
+    },
+    {
+      "path": "js/auth-bootstrap.js",
+      "status": 200,
+      "deployedMatchesHead": true,
+      "deployedMatchesWorking": true,
+      "sha256": "f5be50cebf87ab9b61e2f35d5aec3b47b5df25c4e835b508f5718661ff045741"
+    },
+    {
+      "path": "js/auth-core.js",
+      "status": 200,
+      "deployedMatchesHead": true,
+      "deployedMatchesWorking": true,
+      "sha256": "a39527385aa267f2792e919927697c31b7f3d4c50eca28af14831aee5a0df9ff"
+    },
+    {
+      "path": "js/auth.js",
+      "status": 200,
+      "deployedMatchesHead": true,
+      "deployedMatchesWorking": true,
+      "sha256": "d75810bf493d01b7c302ea5559e35ff80fab4f33edf92a4289defd69012fb2d2"
+    },
+    {
+      "path": "js/mapping-ui.mjs",
+      "status": 200,
+      "deployedMatchesHead": true,
+      "deployedMatchesWorking": true,
+      "sha256": "69f528f4c4b03d59a5184c5203d29d27ca58d2291ec64278085a5377e61c3045"
+    },
+    {
+      "path": "js/mapping/model.mjs",
+      "status": 200,
+      "deployedMatchesHead": true,
+      "deployedMatchesWorking": true,
+      "sha256": "2134702e5694d9e63ce28a97cc863f673e179f6fbbdbaa46043a8b97fb568b9d"
+    },
+    {
+      "path": "js/mapping/parse.mjs",
+      "status": 200,
+      "deployedMatchesHead": true,
+      "deployedMatchesWorking": true,
+      "sha256": "d501c29731a64f39b9dcb1ac94aac7b2d6c0d6ecda27ff59d84517c70e480de2"
+    },
+    {
+      "path": "js/mapping/csv.mjs",
+      "status": 200,
+      "deployedMatchesHead": true,
+      "deployedMatchesWorking": true,
+      "sha256": "f2928144577a695cb52e71d63864fcf2c550539370008a460fb584af6e66b0dc"
+    },
+    {
+      "path": "assets/logo_1.png",
+      "status": 200,
+      "deployedMatchesHead": true,
+      "deployedMatchesWorking": true,
+      "sha256": "4622dba3f82ac8fd5745aa0f5a46899b67fd781e4ae8fa0daa7f179fd2080605"
+    }
+  ],
+  "oldDeploymentProbe": [
+    {
+      "path": "/",
+      "status": 302,
+      "redirectHost": "vercel.com",
+      "redirectPath": "/sso-api",
+      "title": null,
+      "authMarker": false,
+      "sameAsLocal": null
+    },
+    {
+      "path": "/login.html",
+      "status": 302,
+      "redirectHost": "vercel.com",
+      "redirectPath": "/sso-api",
+      "title": null,
+      "authMarker": false,
+      "sameAsLocal": null
+    },
+    {
+      "path": "/result.html",
+      "status": 302,
+      "redirectHost": "vercel.com",
+      "redirectPath": "/sso-api",
+      "title": null,
+      "authMarker": false,
+      "sameAsLocal": null
+    },
+    {
+      "path": "/mapping.html",
+      "status": 302,
+      "redirectHost": "vercel.com",
+      "redirectPath": "/sso-api",
+      "title": null,
+      "authMarker": false,
+      "sameAsLocal": null
+    }
+  ],
+  "securityProbe": {
+    "paths": [
+      {
+        "path": "/js/app.js",
+        "status": 200,
+        "contentType": "application/javascript; charset=utf-8",
+        "containsKnownNotionToken": false,
+        "secretKeyMarker": false,
+        "internalSourceServed": false,
+        "internalReportServed": false,
+        "stateManifestServed": false
+      },
+      {
+        "path": "/js/auth-bootstrap.js",
+        "status": 200,
+        "contentType": "application/javascript; charset=utf-8",
+        "containsKnownNotionToken": false,
+        "secretKeyMarker": false,
+        "internalSourceServed": false,
+        "internalReportServed": false,
+        "stateManifestServed": false
+      },
+      {
+        "path": "/js/mapping-ui.mjs",
+        "status": 200,
+        "contentType": "application/javascript; charset=utf-8",
+        "containsKnownNotionToken": false,
+        "secretKeyMarker": false,
+        "internalSourceServed": false,
+        "internalReportServed": false,
+        "stateManifestServed": false
+      },
+      {
+        "path": "/scripts/notion-poc/cli.mjs",
+        "status": 200,
+        "contentType": "application/javascript; charset=utf-8",
+        "containsKnownNotionToken": false,
+        "secretKeyMarker": false,
+        "internalSourceServed": true,
+        "internalReportServed": false,
+        "stateManifestServed": false
+      },
+      {
+        "path": "/docs/auth/NB-V2-005_REPORT.md",
+        "status": 200,
+        "contentType": "text/markdown; charset=utf-8",
+        "containsKnownNotionToken": false,
+        "secretKeyMarker": false,
+        "internalSourceServed": false,
+        "internalReportServed": true,
+        "stateManifestServed": false
+      },
+      {
+        "path": "/.env",
+        "status": 404,
+        "contentType": "text/plain; charset=utf-8",
+        "containsKnownNotionToken": false,
+        "secretKeyMarker": false,
+        "internalSourceServed": false,
+        "internalReportServed": false,
+        "stateManifestServed": false
+      },
+      {
+        "path": "/.git/config",
+        "status": 404,
+        "contentType": "text/plain; charset=utf-8",
+        "containsKnownNotionToken": false,
+        "secretKeyMarker": false,
+        "internalSourceServed": false,
+        "internalReportServed": false,
+        "stateManifestServed": false
+      },
+      {
+        "path": "/.notion-poc-state/nb-v2-002a.json",
+        "status": 404,
+        "contentType": "text/plain; charset=utf-8",
+        "containsKnownNotionToken": false,
+        "secretKeyMarker": false,
+        "internalSourceServed": false,
+        "internalReportServed": false,
+        "stateManifestServed": false
+      }
+    ],
+    "supabase": {
+      "status": 200,
+      "emailEnabled": true,
+      "signupDisabled": false,
+      "emailAutoConfirm": false
+    }
+  }
+}

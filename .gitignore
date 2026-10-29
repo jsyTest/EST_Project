@@ -3,3 +3,4 @@
 !.env.example
 .notion-poc-state/
 node_modules/
+public-dist/

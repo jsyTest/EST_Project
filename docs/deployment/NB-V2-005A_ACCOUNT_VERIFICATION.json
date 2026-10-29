@@ -1,0 +1,65 @@
+{
+  "task": "NB-V2-005A",
+  "verifiedAtKst": "2026-10-29 16:11:10",
+  "plugins": {
+    "Supabase": "installed confirmed",
+    "Vercel": "installed confirmed",
+    "GitHub": "installed confirmed",
+    "Notion": "installed confirmed",
+    "serviceToolsInCurrentChat": "not exposed; authenticated browser fallback used"
+  },
+  "supabase": {
+    "projectRef": "pxkjxcryceqtjomgxyfe",
+    "method": "Authenticated Supabase Dashboard via browser UI",
+    "before": {
+      "siteUrl": "http://localhost:3000",
+      "redirectUrls": []
+    },
+    "after": {
+      "siteUrl": "https://pplus-rouge.vercel.app",
+      "redirectUrls": [
+        "https://pplus-rouge.vercel.app/login.html?confirmed=1",
+        "http://127.0.0.1:8766/login.html?confirmed=1"
+      ]
+    },
+    "verification": "Fresh tab reloaded saved Site URL and Total URLs: 2; exact values matched",
+    "emailTemplateChanged": false,
+    "emailTemplate": "Default confirm-sign-up template; confirmation link uses {{ .ConfirmationURL }}; read-only inspection"
+  },
+  "vercel": {
+    "projectName": "pplus",
+    "projectId": "prj_5Bxefw0g4RQLUSDXjui5do4tfC9n",
+    "teamSlug": "pplus1",
+    "framework": "Other",
+    "rootDirectory": "empty (repository root)",
+    "nodeVersion": "24.x",
+    "connectedRepository": "jsyTest/EST_Project",
+    "deploymentCreatedByAgent": false,
+    "settingsChangedByAgent": false,
+    "productionDomain": "https://pplus-rouge.vercel.app",
+    "productionDeploymentUrl": "https://pplus-f946o20jk-pplus1.vercel.app",
+    "deploymentDashboardRef": "H8mMZAh6mBk4Vm2zdjktjUD5kdB8",
+    "deploymentDashboardUrl": "https://vercel.com/pplus1/pplus/H8mMZAh6mBk4Vm2zdjktjUD5kdB8",
+    "deploymentStatus": "Ready",
+    "sourceBranch": "main",
+    "sourceCommit": "4bff220355e63ee153fe6c947f09348fd2aa6ae2",
+    "gitDeploymentNotice": "To update your Production Deployment, push to the main branch.",
+    "oldDeployment": {
+      "url": "https://pplus-jr6959pvz-pplus1.vercel.app",
+      "environment": "Production (historical)",
+      "dashboardRef": "F7gyCrZfF3tj5KRrYUShEiECQzvG",
+      "sourceCommit": "8169eca795df22caef5ca70426bb035109703f11",
+      "sourceBranch": "main"
+    },
+    "productionCreatedAtKst": "2026-10-29 15:43:07 +09:00",
+    "oldDeploymentCreatedAtKst": "2026-10-29 14:30:50 +09:00",
+    "buildCommandAndOutputOverrides": "Not conclusively read; framework Other, empty Root Directory and Node 24.x were observed"
+  },
+  "userManualChecks": {
+    "loginShowsEducationInput": true,
+    "mockDesignResultShown": true,
+    "editRestoresEducationName": true,
+    "logoutThenBackShowsLogin": true,
+    "mobileCrossTab": "general uncertain feedback; not marked individually verified"
+  }
+}

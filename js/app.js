@@ -10,14 +10,32 @@
   function readSavedRequirements() {
     try {
       const saved = sessionStorage.getItem(STORAGE_KEY);
-      return saved ? JSON.parse(saved) : null;
+      if (!saved) return null;
+      const parsed = JSON.parse(saved);
+      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)
+          || typeof parsed.educationName !== "string" || !parsed.educationName.trim()
+          || !Array.isArray(parsed.basicItems) || !Array.isArray(parsed.additionalItems)
+          || !parsed.basicItems.every((id) => data.basicOrder.includes(id))
+          || !parsed.additionalItems.every((id) => data.additionalOrder.includes(id))) return null;
+      return {
+        educationName: parsed.educationName,
+        purpose: typeof parsed.purpose === "string" ? parsed.purpose : "",
+        requirements: typeof parsed.requirements === "string" ? parsed.requirements : "",
+        basicItems: parsed.basicItems,
+        additionalItems: parsed.additionalItems
+      };
     } catch (error) {
       return null;
     }
   }
 
   function saveRequirements(requirements) {
-    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(requirements));
+    try {
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(requirements));
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   function selectedValues(form, name) {
@@ -30,6 +48,7 @@
     const form = document.getElementById("requirement-form");
     const educationName = document.getElementById("education-name");
     const nameError = document.getElementById("education-name-error");
+    const saveError = document.getElementById("requirement-save-error");
     const saved = readSavedRequirements();
 
     if (saved) {
@@ -47,6 +66,7 @@
 
     form.addEventListener("submit", function (event) {
       event.preventDefault();
+      saveError.textContent = "";
       const name = educationName.value.trim();
 
       if (!name) {
@@ -64,7 +84,10 @@
         additionalItems: selectedValues(form, "additionalItems")
       };
 
-      saveRequirements(requirements);
+      if (!saveRequirements(requirements)) {
+        saveError.textContent = "입력 내용을 브라우저에 저장하지 못했습니다. 사이트 저장소를 허용하거나 여유 공간을 확인한 뒤 다시 시도해 주세요.";
+        return;
+      }
       window.location.href = "result.html";
     });
   }

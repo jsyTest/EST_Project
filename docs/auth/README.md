@@ -2,6 +2,8 @@
 
 기준일: 2026-10-29. 기존 Supabase v2 CDN·Project URL·Publishable Key·단일 `window.supabaseClient`를 재사용한다. 로그인 기능이 추가되었으며 기존 연결 단계의 세션 비활성화 설정은 이번에 변경했다. Notion 웹 생성·업무 테이블·권한 역할·배포는 추가하지 않는다.
 
+NB-V2-005A 최신 상태: 운영 Site URL과 Production/로컬 callback 2개는 승인 후 적용·재조회 완료했다. 현재 운영은 main/4bff220이며 기본 사용자 동선도 확인했다. 최신 결과는 [NB-V2-005A 보고서](../deployment/NB-V2-005A_REPORT.md)를 기준으로 한다. 아래 localhost 기록은 이전 확인 시점의 이력이다.
+
 ## 화면과 이동
 
 | 경로 | 용도 |
