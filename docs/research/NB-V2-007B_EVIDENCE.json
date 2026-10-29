@@ -1,0 +1,98 @@
+{
+  "task": "NB-V2-007B",
+  "date_kst": "2026-10-30",
+  "status": "preparation_complete_experiment_not_executed",
+  "git": {
+    "branch": "main",
+    "start_commit": "5a21bd2665910c17df625ed00499f80c259cc711",
+    "end_commit": "5a21bd2665910c17df625ed00499f80c259cc711",
+    "start_worktree": "clean",
+    "tracked_files_modified": false,
+    "commit_or_push_performed": false
+  },
+  "execution_gate": {
+    "test_workspace_b_available": false,
+    "user_answer": "별도 테스트 워크스페이스가 없어요",
+    "conditional_approval": "승인 — 별도 테스트 B 확인 후 원본 생성·검증",
+    "condition_satisfied": false,
+    "workspace_created": false,
+    "company_workspace_accessed": false
+  },
+  "actual_readonly_notion_checks": {
+    "scope": "Existing NB-V2-002A only; not a new NB-V2-007B source or copy",
+    "workspace_a_id": "10e1f60f-fdfa-8128-b201-00037feeb155",
+    "existing_parent_page_id": "4081f60f-fdfa-80dd-9435-dfd053c1d4b3",
+    "existing_education_page_id": "4081f60f-fdfa-818d-8a2a-e202f2531cc9",
+    "databases_read": 6,
+    "checks": 130,
+    "passed": 130,
+    "failed": 0,
+    "actual": {
+      "applicants": 3,
+      "applications": 4,
+      "selectedPeople": 2,
+      "enrollments": 2,
+      "completions": 1,
+      "completedPeople": 1,
+      "completionRate": 50,
+      "attendanceCount": 4,
+      "attendanceTotal": 4,
+      "attendanceRate": 100
+    },
+    "existing_manifest_updated": false,
+    "note": "Data source queries use read-only POST requests; no content mutations."
+  },
+  "planned_new_source_not_created": {
+    "general_pages": 2,
+    "databases": 3,
+    "data_sources": 3,
+    "fake_rows": 7,
+    "people": 2,
+    "programs": 2,
+    "applications": 3,
+    "two_way_relations": 2,
+    "rollups": 4,
+    "formulas": 4,
+    "expected_values_are_not_actual_notion_results": true
+  },
+  "local_verification": {
+    "command": "node --test --test-reporter=spec scripts/notion-poc/tests/*.test.mjs",
+    "node_tests": { "passed": 154, "failed": 0, "skipped": 0 },
+    "existing_tests": 143,
+    "new_mock_tests": 11,
+    "v1_mock_combinations_included": 256,
+    "dry_run_command": "node scripts/notion-poc/copy-experiment.mjs dry-run",
+    "dry_run_network_requests": 0,
+    "mock_formula_values_are_not_notion_formula_evaluation": true
+  },
+  "remote_changes": {
+    "notion_content_mutations": 0,
+    "new_source_created": false,
+    "cross_workspace_copy_performed": false,
+    "independence_mutations_performed": false,
+    "sharing_or_invitations_changed": false,
+    "supabase_changed": false,
+    "vercel_deployed": false
+  },
+  "unverified": [
+    "New source schema, Status, relation and computed values in actual Notion",
+    "Cross-workspace copy and copied database/data-source/page IDs",
+    "Copied option colors, Status groups and reverse relations",
+    "Copied Rollup and Formula references and actual values",
+    "Absence of original database references in the copy",
+    "Bidirectional original/copy independence",
+    "Actual user clicks, selections, logins and manual repairs",
+    "Fresh browser regression of the existing login and draft-saving flows during this task"
+  ],
+  "copy_technical_failure": "not_determined_no_attempt",
+  "next_condition": "A separate non-company test workspace B must be available before source creation under the conditional approval.",
+  "files_added": [
+    "scripts/notion-poc/copy-experiment.mjs",
+    "scripts/notion-poc/tests/copy-experiment.test.mjs",
+    "docs/research/NB-V2-007B_TEST_PLAN.md",
+    "docs/research/NB-V2-007B_MANUAL_TEST.md",
+    "docs/research/NB-V2-007B_REPORT.md",
+    "docs/research/NB-V2-007B_CHATGPT_HANDOFF.md",
+    "docs/research/NB-V2-007B_EVIDENCE.json"
+  ]
+}
