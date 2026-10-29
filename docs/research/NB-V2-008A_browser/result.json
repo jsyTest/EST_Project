@@ -1,0 +1,144 @@
+{
+  "backend": "mock Auth and in-browser mock education_drafts; all nonlocal network intercepted",
+  "checks": [
+    {
+      "name": "home opens unified input; advanced and V1 collapsed",
+      "passed": true
+    },
+    {
+      "name": "form-only real browser preview",
+      "passed": true
+    },
+    {
+      "name": "saving unanalysed CSV is blocked before mock data insert",
+      "passed": true
+    },
+    {
+      "name": "CSV text-only preview uses headers; no response in storage/model",
+      "passed": true
+    },
+    {
+      "name": "advanced details can close/open",
+      "passed": true
+    },
+    {
+      "name": "browser save retains education type and edited colors (mock server)",
+      "passed": true
+    },
+    {
+      "name": "cloud-open with local cache removed restores input/type/headers/colors (mock server)",
+      "passed": true
+    },
+    {
+      "name": "mapping route and refresh retain editor state",
+      "passed": true
+    },
+    {
+      "name": "combined source merges email and keeps extra Text column",
+      "passed": true
+    },
+    {
+      "name": "duplicate structural conflicts block preview and expose advanced",
+      "passed": true
+    },
+    {
+      "name": "malformed CSV failure is visible",
+      "passed": true
+    },
+    {
+      "name": "real browser CSV file-only header preview",
+      "passed": true
+    },
+    {
+      "name": "V1 result navigation preserved",
+      "passed": true
+    },
+    {
+      "name": "V1 edit returns to unified input without losing name/type",
+      "passed": true
+    },
+    {
+      "name": "logout clears workspace and direct protected route redirects (mock Auth)",
+      "passed": true
+    },
+    {
+      "name": "public build excludes scripts/notion-poc/cli.mjs",
+      "passed": true
+    },
+    {
+      "name": "public build excludes docs/research/NB-V2-008A_REPORT.md",
+      "passed": true
+    },
+    {
+      "name": "public build excludes .env",
+      "passed": true
+    }
+  ],
+  "widths": [
+    {
+      "width": 390,
+      "viewport": 390,
+      "scrollWidth": 390,
+      "introPosition": "static",
+      "headerHeight": 137,
+      "overflowControls": 0,
+      "controlOverlaps": 0,
+      "headerOverlaps": 0,
+      "hiddenDraftPanel": true,
+      "passed": true
+    },
+    {
+      "width": 768,
+      "viewport": 768,
+      "scrollWidth": 768,
+      "introPosition": "static",
+      "headerHeight": 92,
+      "overflowControls": 0,
+      "controlOverlaps": 0,
+      "headerOverlaps": 0,
+      "hiddenDraftPanel": true,
+      "passed": true
+    },
+    {
+      "width": 960,
+      "viewport": 960,
+      "scrollWidth": 960,
+      "introPosition": "static",
+      "headerHeight": 92,
+      "overflowControls": 0,
+      "controlOverlaps": 0,
+      "headerOverlaps": 0,
+      "hiddenDraftPanel": true,
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "viewport": 1280,
+      "scrollWidth": 1280,
+      "introPosition": "static",
+      "headerHeight": 92,
+      "overflowControls": 0,
+      "controlOverlaps": 0,
+      "headerOverlaps": 0,
+      "hiddenDraftPanel": true,
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "viewport": 1440,
+      "scrollWidth": 1440,
+      "introPosition": "static",
+      "headerHeight": 92,
+      "overflowControls": 0,
+      "controlOverlaps": 0,
+      "headerOverlaps": 0,
+      "hiddenDraftPanel": true,
+      "passed": true
+    }
+  ],
+  "notionWrites": 0,
+  "supabaseRequests": 0,
+  "runtimeErrors": [],
+  "blockedUnexpectedExternalRequests": [],
+  "passed": true
+}

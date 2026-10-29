@@ -58,6 +58,23 @@ export function compileSchema(model) {
  }
  return {version:1,mode:'new-data-sources-only',networkRequests:0,databases,warnings:validation.warnings,sourceModel:model};
 }
+export function summarizeModel(model,columns=[]) {
+ const properties=model.properties??[],included=properties.filter(p=>p.included);
+ const targets=new Set(included.map(p=>p.targetDb));
+ const implicitTitles=[...targets].filter(db=>!included.some(p=>p.targetDb===db&&p.type==='title')).length;
+ const validation=validateModel(model);
+ const needsReview=p=>p.mappingStatus==='review'||validation.errors.some(error=>error.startsWith(`${p.name||p.localId}:`));
+ return {
+  questions:properties.filter(p=>p.origin==='form').length,columns:columns.length,
+  recommended:included.length+implicitTitles,configured:included.length,implicitTitles,
+  base:included.filter(p=>p.origin==='base').length,
+  automatic:included.filter(p=>!needsReview(p)).length,
+  review:included.filter(needsReview).length,
+  excluded:properties.filter(p=>!p.included).length,
+  duplicates:properties.filter(p=>p.reviewReasons?.some(r=>/중복|충돌|모호/.test(r))||validation.errors.some(error=>error.startsWith(`${p.name||p.localId}:`)&&/중복|충돌|제목 속성은 하나/.test(error))).length,
+  validation
+ };
+}
 // Existing options must ALL be included in a Notion update. Internal IDs never go into API payloads.
 export function mergeExistingOptions(type, existing, desired) {
  if(!['select','multi_select','status'].includes(type)||!Array.isArray(existing?.options)||existing.options.some(o=>!o.id||!o.name))throw new Error('ID가 있는 기존 선택 스키마가 필요합니다.');

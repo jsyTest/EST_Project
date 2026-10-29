@@ -68,7 +68,7 @@ export function parseForm(text) {
  if(new Set(numbers).size!==numbers.length)properties.forEach(p=>{p.mappingStatus='review';p.reviewReasons.push('질문 번호 중복 확인');});
  return {properties,rawText:text,unparsed,warnings:[...(unparsed.length?['질문 앞 안내문은 속성으로 만들지 않았습니다. 원문을 확인하세요.']:[]),...(text.trim()&&!questions.length?['번호가 있는 질문을 찾지 못했습니다. 질문 번호와 원문을 확인하세요.']:[])]};
 }
-export function mergeSources(form,columns) {
+export function mergeSources(form,columns,{safeCsvDefaults=false}={}) {
  const error=formInputError(form);
  if(error)throw new Error(error);
  if(!form.properties?.length&&!columns.length)throw new Error('분석할 질문이나 CSV 컬럼이 없습니다. 폼 질문 또는 CSV 파일을 입력해 주세요. 기본 운영 속성은 질문 수에 포함하지 않습니다.');
@@ -86,7 +86,10 @@ export function mergeSources(form,columns) {
  }
  for(const c of columns.filter(c=>!used.has(c.index))) {
   const rec=recommend(c.original);
-  properties.push({localId:`csv-${c.index}`,origin:'csv',questionName:'',csvColumn:{...c},name:rec.name||`빈 컬럼 ${c.index+1}`,type:rec.type,targetDb:rec.targetDb,required:null,options:[],included:true,mappingStatus:'review',reviewReasons:[...(c.issues??[]),'CSV 헤더만으로 입력 유형·선택지를 확정할 수 없음']});
+  const type=safeCsvDefaults&&['select','multi_select','status'].includes(rec.type)?'rich_text':rec.type;
+  const safe=safeCsvDefaults&&!c.issues?.length;
+  const name=rec.name||`빈 컬럼 ${c.index+1}`;
+  properties.push({localId:`csv-${c.index}`,origin:'csv',questionName:'',csvColumn:{...c},name:safeCsvDefaults?name.slice(0,100):name,type,targetDb:rec.targetDb,required:null,options:[],included:true,mappingStatus:safe?'automatic':'review',reviewReasons:[...(c.issues??[]),...(safeCsvDefaults?[...(name.length>100?['추천 속성명은 100자로 줄였습니다. 원본 CSV 헤더는 보존합니다.']:[]),...(type==='rich_text'?['CSV 헤더만 사용: Text 권장, 선택지는 추정하지 않음']:[])]:['CSV 헤더만으로 입력 유형·선택지를 확정할 수 없음'])]});
  }
  // Operational defaults remain separate; a form's same-named field must be reviewed, never silently absorbed.
  const all=[...baseProperties(),...properties];

@@ -20,6 +20,7 @@
           || !parsed.additionalItems.every((id) => data.additionalOrder.includes(id))) return null;
       return {
         educationName: parsed.educationName,
+        educationType: parsed.educationType === 'hackathon' ? 'hackathon' : 'education',
         purpose: typeof parsed.purpose === "string" ? parsed.purpose : "",
         requirements: typeof parsed.requirements === "string" ? parsed.requirements : "",
         basicItems: parsed.basicItems,
@@ -48,12 +49,14 @@
   function initializeInputPage() {
     const form = document.getElementById("requirement-form");
     const educationName = document.getElementById("education-name");
+    const educationType = document.getElementById("education-type");
     const nameError = document.getElementById("education-name-error");
     const saveError = document.getElementById("requirement-save-error");
     const saved = drafts ? drafts.snapshot().configuration.requirements : readSavedRequirements();
 
     if (saved) {
       educationName.value = saved.educationName || "";
+      if (educationType) educationType.value = saved.educationType || 'education';
       form.elements.purpose.value = saved.purpose || "";
       form.elements.requirements.value = saved.requirements || "";
       restoreCheckboxes(form, "basicItems", saved.basicItems);
@@ -63,6 +66,7 @@
     function captureRequirements() {
       return {
         educationName: educationName.value,
+        educationType: educationType?.value || 'education',
         purpose: form.elements.purpose.value,
         requirements: form.elements.requirements.value,
         basicItems: selectedValues(form, "basicItems"),
@@ -77,6 +81,8 @@
       };
       form.addEventListener('input', update);
       form.addEventListener('change', update);
+      educationName.addEventListener('input', update);
+      if (educationType) educationType.addEventListener('change', update);
     }
 
     educationName.addEventListener("input", function () {
@@ -98,6 +104,7 @@
 
       const requirements = {
         educationName: name,
+        educationType: educationType?.value || 'education',
         purpose: form.elements.purpose.value.trim(),
         requirements: form.elements.requirements.value.trim(),
         basicItems: selectedValues(form, "basicItems"),

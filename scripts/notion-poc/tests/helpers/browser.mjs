@@ -28,10 +28,10 @@ export async function screen(page,st=storage(),{valid=true,drafts}={}) {
  const form=node('requirement-form');form.elements={purpose:node('dashboard-purpose'),requirements:node('additional-requirements')};
  form.querySelectorAll=selector=>{const group=selector.includes('basicItems')?basic:extra;return selector.endsWith(':checked')?group.filter(c=>c.checked):group;};
  const walk=nodes=>nodes.flatMap(n=>[n,...walk(n.children)]);
- const document={body:{dataset:{page}},documentElement:{dataset:{authRequired:'true',authState:valid?'authenticated':'anonymous'}},getElementById:node,createElement(tag){const e=new Element(tag);created.push(e);return e;},querySelector(selector){return selector==='[data-drafts-root]'?node('draft-root'):null;},querySelectorAll(selector){return created.filter(e=>e.className.split(' ').includes(selector.slice(1)));}};
+ const document={body:{dataset:{page:page==='unified'?'input':page}},documentElement:{dataset:{authRequired:'true',authState:valid?'authenticated':'anonymous'}},getElementById:node,createElement(tag){const e=new Element(tag);created.push(e);return e;},querySelector(selector){return selector==='[data-drafts-root]'?node('draft-root'):null;},querySelectorAll(selector){return created.filter(e=>e.className.split(' ').includes(selector.slice(1)));}};
  const context={document,sessionStorage:st,URL,Blob,TextDecoder,Promise,...model,...parsing,...csv,navigator:{clipboard:{async writeText(text){copied.push(text);}}},isSecureContext:true,location:{href:'https://education.example/'+(page==='input'?'index.html':page==='result'?'result.html':'mapping.html')},scrollTo(){},setTimeout:()=>1,clearTimeout(){},addEventListener(type,callback){(callbacks[type]??=[]).push(callback);},estAuth:{ready:Promise.resolve(valid)}};
  if(drafts)context.estDraftsReady=Promise.resolve(drafts);context.window=context;vm.createContext(context);vm.runInContext(mock,context);
- if(page==='mapping'){node('encoding').value='utf-8';vm.runInContext(mapping,context);}else vm.runInContext(app,context);
+ if(page==='mapping'||page==='unified'){node('encoding').value='utf-8';node('csv-mode').value='file';if(page==='unified')vm.runInContext(app,context);vm.runInContext(mapping,context);}else vm.runInContext(app,context);
  async function flush(){for(let i=0;i<8;i++)await Promise.resolve();}
  await flush();return {context,node,ids,created,basic,extra,st,copied,walk,flush,dispatch(type){for(const fn of callbacks[type]??[])fn();}};
 }

@@ -33,7 +33,9 @@ function modules(v, allowed, fallback) {
 export function normalizeRequirements(value = {}) {
   if (!object(value)) fail('invalid_configuration');
   return {
-    educationName: text(value.educationName, 80), purpose: text(value.purpose, 500),
+    educationName: text(value.educationName, 80),
+    educationType: enumValue(value.educationType, ['education', 'hackathon'], 'education'),
+    purpose: text(value.purpose, 500),
     requirements: text(value.requirements, 1000),
     basicItems: modules(value.basicItems, basic, basic),
     additionalItems: modules(value.additionalItems, additional, [])
@@ -108,6 +110,7 @@ export function forSave(value) {
 export function errorMessage(error) {
   const code = error?.code;
   if (code === 'title_required') return '교육 입력 화면에서 교육명을 입력한 뒤 저장해 주세요.';
+  if (code === 'analysis_required') return 'CSV 입력이 바뀌었습니다. 먼저 ‘입력 분석하기’를 누른 뒤 저장해 주세요. 응답 행은 저장하지 않습니다.';
   if (code === 'unsupported_version') return '지원하지 않는 저장 형식입니다. 현재 편집 내용은 유지했습니다.';
   if (code === 'invalid_configuration' || code === 'configuration_too_large') return '설정 형식이나 크기를 확인해 주세요. 현재 편집 내용은 유지했습니다.';
   if (code === 'conflict') return '다른 탭에서 이 설계가 변경됐습니다. 현재 내용을 복사하거나 새 설계로 저장한 뒤 최신 설계를 열어 주세요.';

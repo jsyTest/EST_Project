@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="폼 질문과 CSV 헤더를 교육 운영 Notion 속성으로 매핑하고 옵션 색상을 편집합니다.">
-<title>교육 속성 매핑 | 노션 빌더</title>
+<title>새 Notion DB 구성하기 | 노션 빌더</title>
 <link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/mapping.css">
   <link rel="stylesheet" href="css/auth.css">
     <link rel="stylesheet" href="css/drafts.css">
@@ -19,19 +19,30 @@
     <noscript><p>서비스를 이용하려면 JavaScript를 활성화하고 로그인해 주세요.</p></noscript>
   </section>
 
-<header data-auth-content class="site-header"><a class="brand" href="index.html">← 노션 빌더</a><span class="prototype-badge">교육 속성 설정</span></header>
-<section data-auth-content data-drafts-root class="draft-panel" aria-label="내 교육 설계"></section>
-<main data-auth-content class="page-shell mapping-page">
-<section class="intro"><p class="eyebrow">교육별 맞춤 속성</p><h1>질문과 컬럼을<br>노션 속성으로 연결하세요.</h1><p>폼 질문과 선택지를 붙여넣고, CSV의 컬럼명과 비교해 이름·유형·옵션 색상을 조정하세요.</p><div class="scope-note"><strong>질문과 헤더만 사용해 주세요.</strong><p>CSV는 브라우저에서 첫 레코드만 분석합니다. 응답 행은 업로드하거나 저장하지 않습니다. 교육 설계를 저장하면 질문·헤더·매핑·색상을 계정에서 다시 불러올 수 있습니다. 편집 중 내용은 현재 탭의 임시 저장소에 보관됩니다.</p></div></section>
-<section class="form-card" aria-labelledby="source-title"><h2 id="source-title">1. 입력 구조 가져오기</h2>
-<div class="source-grid"><div class="field-group"><label for="form-text">네이버 폼 질문·선택지</label><textarea id="form-text" rows="12" maxlength="100000" placeholder="1. 성명(*)&#10;단답형&#10;&#10;2. 참여자 유형&#10;단일 선택&#10;- 재직자&#10;- 구직자"></textarea><p class="field-help">번호가 있는 질문을 분석합니다. 복수 선택 여부가 불분명하면 확인이 필요합니다. 응답 내용은 붙여넣지 마세요.</p><button id="sample" class="button button-secondary" type="button">가상 예시 넣기</button></div>
-<div class="field-group"><label for="csv-file">CSV 파일 (헤더만 분석)</label><input id="csv-file" type="file" accept=".csv,text/csv"><label for="encoding">CSV 인코딩</label><select id="encoding"><option value="utf-8">UTF-8 / UTF-8 BOM</option><option value="euc-kr">EUC-KR / CP949</option></select><p class="field-help">한글 오류가 나오면 인코딩을 바꿔 다시 분석하세요. 헤더는 최대 64 KiB입니다.</p><pre id="csv-preview" aria-label="CSV 헤더 미리보기">선택된 CSV 없음</pre></div></div>
-<button id="clear-csv" class="button button-secondary" type="button">CSV 헤더 비우기</button>
-<button id="analyze" class="button button-primary" type="button">분석하고 매핑 추천</button><p id="feedback" role="status" aria-live="polite"></p><details><summary>원문·안내문 확인</summary><pre id="raw-preview">분석 전</pre></details>
+<header data-auth-content class="site-header"><a class="brand" href="index.html">← 노션 빌더</a><span class="prototype-badge">DB 구성 미리보기</span></header>
+<main data-auth-content class="page-shell mapping-page unified-page">
+<section class="intro" aria-labelledby="page-title"><p class="eyebrow">규칙 기반 · AI API 없음</p><h1 id="page-title">새 Notion DB 구성하기</h1><p>네이버 폼이나 CSV 중 하나만 입력해도 됩니다. 분석 결과를 확인하고 DB 구성을 미리 보세요.</p><p class="field-help">이번 화면은 미리보기 전용이며 실제 Notion DB를 생성하지 않습니다.</p></section>
+<section class="form-card" aria-labelledby="source-title">
+<h2 id="source-title">1. 입력하기</h2>
+<div class="source-grid setup-grid">
+<div class="field-group"><label for="education-name">설계 이름 <small>계정에 저장할 때 필요</small></label><input id="education-name" name="educationName" form="requirement-form" type="text" maxlength="80" placeholder="예: 가상 온보딩 교육"><p id="education-name-error" class="field-error" aria-live="polite"></p></div>
+<div class="field-group"><label for="education-type">교육 유형</label><select id="education-type"><option value="education">일반 교육</option><option value="hackathon">해커톤</option></select><p class="field-help">향후 모듈 추천에 사용할 값입니다. 현재 미리보기 구조는 동일합니다.</p></div>
+</div>
+<div class="source-grid">
+<div class="field-group"><label for="form-text">네이버 폼 질문·선택지 <small>선택</small></label><textarea id="form-text" rows="9" maxlength="100000" placeholder="1. 성명(*)&#10;단답형&#10;&#10;2. 참여자 유형&#10;단일 선택&#10;- 재직자&#10;- 구직자"></textarea><p class="field-help">번호가 있는 질문과 선택지를 붙여넣으세요. 실제 응답·개인정보는 입력하지 마세요.</p><button id="sample" class="button button-secondary" type="button">가상 예시 넣기</button></div>
+<div class="field-group"><label for="csv-mode">CSV 입력 <small>선택</small></label><select id="csv-mode"><option value="file">파일 첨부</option><option value="text">텍스트 붙여넣기</option></select>
+<div id="csv-file-fields"><label for="csv-file">CSV 파일</label><input id="csv-file" type="file" accept=".csv,text/csv"><label for="encoding">CSV 인코딩</label><select id="encoding"><option value="utf-8">UTF-8 / UTF-8 BOM</option><option value="euc-kr">EUC-KR / CP949</option></select></div>
+<div id="csv-text-fields" hidden><label for="csv-text">CSV 텍스트</label><textarea id="csv-text" rows="6" maxlength="1000000" placeholder='성명,이메일,"추가 설명"'></textarea></div>
+<p class="field-help">헤더만 있어도 됩니다. 브라우저에서 첫 레코드만 사용하고 응답 행과 파일은 저장·전송하지 않습니다. 붙여넣은 응답 행은 분석 성공 후 입력칸에서도 제거합니다. 한글이 깨진 파일은 인코딩을 바꾸세요. 헤더 최대 64 KiB. CSV 입력 변경 후에는 먼저 분석하고 저장해 주세요.</p><button id="clear-csv" class="button button-secondary" type="button">CSV 헤더 비우기</button>
+<details><summary>사용할 CSV 헤더 확인</summary><pre id="csv-preview">선택된 CSV 없음</pre></details></div>
+</div>
+<div class="analysis-actions"><button id="analyze" class="button button-primary" type="button">입력 분석하기</button><p class="field-help">폼만 · CSV만 · 두 입력 모두 가능</p></div>
+<p id="feedback" role="status" aria-live="polite"></p>
 </section>
-<section class="form-card" aria-labelledby="mapping-title"><h2 id="mapping-title">2. 속성과 색상 검토</h2><p>교육 운영 기본 속성과 폼·CSV 속성을 구분합니다. 확인이 필요한 행을 수정한 뒤 ‘확인 완료’를 선택하세요. 새로 분석하면 현재 편집 결과가 바뀝니다.</p><div id="mapping-rows"></div><button id="add-field" class="button button-secondary" type="button">속성 직접 추가</button></section>
-<section class="form-card" aria-labelledby="output-title"><h2 id="output-title">3. 결과 확인</h2><p>새 DB용 스키마 초안을 확인하고 저장할 수 있습니다. 이 화면에서 Notion에 생성하거나 기존 DB를 변경하지 않습니다.</p><button id="preview" class="button button-primary" type="button">검사하고 미리보기</button> <button id="download-model" class="button button-secondary" type="button">속성 모델 JSON 저장</button> <button id="download-schema" class="button button-secondary" type="button" disabled>검증한 스키마 JSON 저장</button><div id="validation" role="status" aria-live="polite"></div><pre id="schema-preview">매핑 결과를 검토한 뒤 미리보기를 눌러 주세요.</pre></section>
-</main><footer data-auth-content class="site-footer"><p>AI API 없이 브라우저에서 분석 · CSV 응답 행은 사용하지 않습니다.</p></footer>
+<section class="form-card" aria-labelledby="summary-title"><h2 id="summary-title">2. 분석 요약</h2><div id="analysis-summary" aria-live="polite"></div><p id="preview-state" role="status"></p><div id="review-items"></div></section>
+<details id="advanced-settings" class="form-card advanced-settings"><summary>고급 설정 · 속성, 매핑, 옵션 색상</summary><p>필요할 때만 펼쳐 수정하세요. 확인 필요 행은 수정 후 ‘확인 완료’를 선택하세요. 새로 분석하면 편집 결과가 바뀝니다.</p><div id="mapping-rows"></div><button id="add-field" class="button button-secondary" type="button">속성 직접 추가</button><details><summary>폼 원문·안내문 확인</summary><pre id="raw-preview">분석 전</pre></details></details>
+<section class="form-card" aria-labelledby="output-title"><h2 id="output-title">3. DB 구성 미리보기</h2><p>현재 구성의 속성을 확인합니다. 실제 Notion에 생성하거나 기존 DB를 변경하지 않습니다.</p><button id="preview" class="button button-primary" type="button">DB 구성 미리보기</button><div id="validation" role="status" aria-live="polite"></div><div id="db-preview" class="db-preview"></div><details><summary>개발용 JSON · 내려받기</summary><button id="download-model" class="button button-secondary" type="button">속성 모델 JSON 저장</button> <button id="download-schema" class="button button-secondary" type="button" disabled>검증한 스키마 JSON 저장</button><pre id="schema-preview">분석한 뒤 미리보기를 눌러 주세요.</pre></details></section>
+<p><a href="index.html#legacy-settings">기존 V1 설계안 미리보기로 이동 →</a></p><section data-drafts-root class="draft-panel" aria-label="내 교육 설계"></section></main><footer data-auth-content class="site-footer"><p>AI API 없이 브라우저에서 분석 · CSV 응답 행은 사용하지 않습니다.</p></footer>
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script defer src="js/supabase-client.js"></script>
 <script defer src="js/auth-core.js"></script>

@@ -38,9 +38,12 @@ export async function initializeDrafts() {
     if (busy || !discardApproved()) return;
     workspace.reset(); window.location.href = 'index.html';
   });
-  actions.append(save, copy, fresh, refresh);
-  root.append(heading, current, actions, status,
+  actions.append(save);
+  const extraActions = element('details');
+  const extraButtons = element('div', undefined, 'draft-actions'); extraButtons.append(copy, fresh, refresh);
+  extraActions.append(element('summary', '목록·복사본·새 설계'), extraButtons,
     element('p', '교육 설정·질문·CSV 헤더와 매핑만 저장합니다. 실제 응답·개인정보·토큰을 입력하지 마세요. 저장 버튼을 눌러야 계정에 보관됩니다.', 'draft-help'), listDetails);
+  root.append(heading, current, actions, status, extraActions);
   function show(message, failed = false) {
     if (disposed) return;
     status.textContent = message; status.classList.toggle('draft-error', failed);
@@ -54,12 +57,12 @@ export async function initializeDrafts() {
     busy = value; root.setAttribute('aria-busy', String(value));
     root.querySelectorAll('button').forEach(node => { node.disabled = value; });
   }
-  function capture() { for (const [section, read] of captures) workspace.update(section, read()); }
+  function capture(saving = false) { for (const [section, read] of captures) workspace.update(section, read({saving})); }
   function discardApproved() { capture(); return !workspace.snapshot().dirty || window.confirm('저장하지 않은 변경 내용이 있습니다. 현재 내용을 바꾸시겠습니까?'); }
   async function saveCurrent(asCopy) {
     if (busy || disposed) return;
     try {
-      capture(); const state = workspace.snapshot(); setBusy(true); show('교육 설계를 저장하고 있습니다…');
+      capture(true); const state = workspace.snapshot(); setBusy(true); show('교육 설계를 저장하고 있습니다…');
       const row = await repository.save(state.configuration, !asCopy && state.id ? state : null);
       if (disposed) return;
       workspace.saved(row, state.revision);

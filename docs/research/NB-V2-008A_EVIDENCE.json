@@ -1,0 +1,117 @@
+{
+  "task": "NB-V2-008A",
+  "date_kst": "2026-10-30",
+  "status": "implemented_locally_not_deployed",
+  "git": {
+    "branch": "main",
+    "start_commit": "22e71cc0185c35bd31631d06c2757d7b510b18f1",
+    "end_commit": "22e71cc0185c35bd31631d06c2757d7b510b18f1",
+    "start_worktree": "clean",
+    "commit_push": false
+  },
+  "node": {
+    "command": "node --test --test-reporter=spec scripts/notion-poc/tests/*.test.mjs",
+    "passed": 172,
+    "failed": 0,
+    "skipped": 0,
+    "existing_tests_preserved": 154,
+    "new_tests": 18,
+    "v1_mock_combinations": 256
+  },
+  "browser": {
+    "engine": "actual headless Google Chrome, isolated temporary profile",
+    "backend": "mock Auth and education_drafts; no remote data calls",
+    "functional_checks": 18,
+    "viewport_checks": 5,
+    "widths": [
+      390,
+      768,
+      960,
+      1280,
+      1440
+    ],
+    "runtime_exceptions": 0,
+    "source": "NB-V2-008A_browser/result.json",
+    "screenshots": 7,
+    "real_mobile_or_safari_tested": false
+  },
+  "storage": {
+    "schema_version": 1,
+    "optional_added_field": "requirements.educationType",
+    "default_when_missing": "education",
+    "mapping_shape_changed": false,
+    "actual_db_constraint_read": {
+      "rls": {
+        "forced": true,
+        "enabled": true
+      },
+      "constraints": [
+        {
+          "name": "education_drafts_configuration_shape",
+          "definition": "CHECK (COALESCE(((jsonb_typeof(configuration) = 'object'::text) AND ((configuration -> 'version'::text) = '1'::jsonb) AND (jsonb_typeof((configuration -> 'requirements'::text)) = 'object'::text) AND (jsonb_typeof((configuration -> 'mapping'::text)) = 'object'::text) AND (octet_length((configuration)::text) <= 524288)), false))"
+        },
+        {
+          "name": "education_drafts_pkey",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "education_drafts_schema_version_check",
+          "definition": "CHECK ((schema_version = 1))"
+        },
+        {
+          "name": "education_drafts_title_check",
+          "definition": "CHECK (((char_length(btrim(title)) >= 1) AND (char_length(btrim(title)) <= 80)))"
+        },
+        {
+          "name": "education_drafts_user_id_fkey",
+          "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+        }
+      ]
+    },
+    "actual_policy_read": {
+      "policies": 3,
+      "owner": "auth.uid() = user_id",
+      "update_using": true,
+      "update_with_check": true
+    },
+    "actual_business_rows_read": false,
+    "actual_insert_update_tested": false
+  },
+  "public_build": {
+    "command": "node scripts/deployment/build-static.mjs",
+    "allowed_files": 24,
+    "allowlist_modified": false,
+    "local_real_http_404": [
+      "scripts/notion-poc/cli.mjs",
+      "docs/research/NB-V2-008A_REPORT.md",
+      ".env"
+    ],
+    "production_verified": false
+  },
+  "privacy": {
+    "csv_first_record_only": true,
+    "header_limit_bytes": 65536,
+    "response_rows_or_files_saved": false,
+    "unanalysed_csv_cloud_save_blocked": true,
+    "pasted_response_rows_removed_after_success": true,
+    "original_headers_preserved": true,
+    "long_suggested_property_names_bounded_to": 100
+  },
+  "remote": {
+    "supabase": "read-only schema constraints and RLS metadata; no DDL/DML/Auth changes",
+    "notion_calls": 0,
+    "vercel_deployments": 0,
+    "ai_calls": 0
+  },
+  "unverified": [
+    "Actual Supabase save/open/update through the new UI",
+    "Actual account signup/email confirmation and two-account RLS retest in this task",
+    "Production",
+    "Real phone, Safari and assistive technology",
+    "Notion generation/cross-workspace copy/new generic generation engine (out of scope)"
+  ],
+  "reports": [
+    "NB-V2-008A_REPORT.md",
+    "NB-V2-008A_CHATGPT_HANDOFF.md"
+  ]
+}

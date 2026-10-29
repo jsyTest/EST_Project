@@ -23,6 +23,13 @@ export function describeColumns(fields) {
  const keys=fields.map(nameKey);
  return fields.map((original,index)=>({index,original,normalized:normalizeName(original),issues:[...(!keys[index]?['빈 컬럼명']:[]),...(keys[index]&&keys.filter(k=>k===keys[index]).length>1?['정규화 후 중복 컬럼명']:[])]}));
 }
+// Text and files share the bounded, first-record-only reader. Never retain response rows.
+export function readCsvTextHeader(text) {
+ return readCsvHeader(new Blob([text]));
+}
+export function csvHeaderText(columns) {
+ return columns.map(c=>`"${c.original.replace(/"/g,'""')}"`).join(',');
+}
 export async function readCsvHeader(file,{encoding='utf-8'}={}) {
  if(!['utf-8','euc-kr'].includes(encoding))throw new Error('UTF-8 또는 EUC-KR/CP949를 선택하세요.');
  const decoder=new TextDecoder(encoding,{fatal:true});let text='';
