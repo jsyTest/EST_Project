@@ -1,0 +1,106 @@
+{
+  "task": "NB-V2-007",
+  "dateKst": "2026-10-30",
+  "status": "research completed; no product implementation",
+  "git": {
+    "branch": "main",
+    "head": "06a7c526e8cf93dcfed5c33072c1d23349a134df",
+    "subject": "추가 구현 7",
+    "commitTime": "2026-10-29T17:36:40+09:00",
+    "startStatus": "clean, main...origin/main; no fetch performed",
+    "endChanges": "only three new docs/research/NB-V2-007 documents",
+    "commitOrPush": false
+  },
+  "productionReadOnly": {
+    "domain": "https://pplus-rouge.vercel.app",
+    "deploymentId": "dpl_CRxCKAc6GQGLV8LKjLHmJToNbhSs",
+    "deploymentUrl": "https://pplus-9py8nppde-pplus1.vercel.app",
+    "state": "READY",
+    "target": "production",
+    "source": "git",
+    "branch": "main",
+    "commit": "06a7c526e8cf93dcfed5c33072c1d23349a134df",
+    "feature006AlreadyDeployed": true,
+    "deployedDuringThisTask": false
+  },
+  "supabaseReadOnly": {
+    "projectRef": "pxkjxcryceqtjomgxyfe",
+    "publicTables": [{"table_name": "education_drafts", "rls_enabled": true, "force_rls": true, "policy_count": 3}],
+    "schemaQuery": "pg_class/pg_namespace/pg_policies catalog SELECT, no business row contents",
+    "authUrlConfigurationRechecked": false,
+    "settingsOrSchemaChanged": false,
+    "browserDraftListRead": "own list successfully fetched; no draft opened or saved during NB007"
+  },
+  "testsThisTask": {
+    "command": "node --test scripts/notion-poc/tests/*.test.mjs",
+    "pass": 129,
+    "fail": 0,
+    "skipped": 0,
+    "v1CombinationsIncluded": 256,
+    "newProductTestsAdded": false,
+    "priorSql13AndLiveDataApi16Rerun": false
+  },
+  "pureFunctionDiagnosticsThisTask": [
+    {"mode":"form", "fixture":"docs/mapping/EXAMPLE_FORM.txt", "questions":5, "columns":0, "propertiesIncludingDefaults":8, "review":0, "validationErrors":0},
+    {"mode":"csv", "fixture":"docs/mapping/EXAMPLE_HEADERS.csv", "questions":0, "columns":5, "propertiesIncludingDefaults":8, "review":5, "validationErrors":8},
+    {"mode":"both", "questions":5, "columns":5, "propertiesIncludingDefaults":8, "review":0, "validationErrors":0},
+    {"mode":"unnumbered-form", "input":"성명\n단답형\n이메일\n단답형", "questions":0, "columns":0, "propertiesIncludingDefaults":3, "review":0, "validationErrors":0, "finding":"zero input properties do not block schema validation"},
+    {"mode":"explicit-long-text", "input":"1. 신청 동기\n장문형", "questions":1, "propertiesIncludingDefaults":4, "review":1, "validationErrors":2, "recommendedType":"select", "finding":"alias recommendation overrides explicit long-text wording; validation blocks incomplete options"}
+  ],
+  "browserThisTask": {
+    "method": "native Chrome accessibility and screenshot observation; browser access host unavailable",
+    "pageZoom": "reset to 100 percent before judging layout; preview display scale varies",
+    "login": {"widthsCssPx":[390,768,1280], "heightCssPx":844, "observed":"basic empty login card and controls; no credential entry, submit or logout"},
+    "input": {"viewportsCssPx":[[390,375],[768,750],[1280,750]], "observed":"header, save toolbar, introduction; mobile body and generation button; desktop two-column start; not exhaustive"},
+    "result": {"viewportsCssPx":[[390,375],[768,750],[1280,750]], "observed":"mobile save panel plus result AX, tablet/desktop result heading/actions; not all tables or formula states"},
+    "mapping": {"viewportsCssPx":[[390,750],[768,750],[1280,750]], "observed":"default Select/Status controls; 1280 sticky introduction overlaps editing rows"},
+    "confirmedUiBug": {
+      "id":"UI-01",
+      "severity":"P1",
+      "page":"mapping.html",
+      "widthCssPx":1280,
+      "repro":"scroll into property/color review and Status editing rows",
+      "observation":"intro heading, description and note remain superimposed over property controls on repeated screenshots",
+      "sourceCause":"mapping.html:25 uses .intro; css/style.css:138 makes it sticky with top:50px; <=960px rule resets it, but mapping has no desktop override",
+      "fixed":false
+    },
+    "horizontalOverflowConclusion":"no confirmed whole-page overflow in inspected default states; long content and numeric scrollWidth measurements not verified",
+    "draftList":"actual own-list fetch and Open accessibility element verified; full pixel layout, long titles and pagination not verified",
+    "syntheticInput":"NB007 UI Survey in new tab only; Mock result and input preservation observed; no cloud Save clicked",
+    "longCsvUi":"header-only synthetic file prepared in /tmp; OS picker interaction incomplete and cancelled; no successful file selection/analysis or visual verification claimed",
+    "persistentScreenshotsSaved":false,
+    "cleanup":"created incognito window and research tab closed, original user tab preserved; signed-in session retained"
+  },
+  "notion": {
+    "projectApiVersion":"2026-03-11",
+    "writesThisTask":false,
+    "companyWorkspaceAccessed":false,
+    "crossWorkspaceOrAccountDuplicationTested":false,
+    "genericMappingLiveGenerationTested":false,
+    "statusLiveGenerationTestedThisTask":false,
+    "oauthImplemented":false,
+    "historicalEvidenceOnly":"NB002A fixed six databases and KPI; NB006 SQL13/live Data API16 and restoration as documented in their reports"
+  },
+  "officialSources": [
+    {"url":"https://www.notion.com/help/transfer-content-to-another-account", "scope":"same/different account duplication procedures, wrapper constraint and preservation warning"},
+    {"url":"https://www.notion.com/help/duplicate-public-pages", "scope":"public page duplication, subpages and inaccessible blocks"},
+    {"url":"https://www.notion.com/en-gb/help/relations-and-rollups", "scope":"single related DB duplication and CSV relation export/import limits"},
+    {"url":"https://www.notion.com/help/import-data-into-notion", "scope":"new CSV import limits, existing property mapping and append behavior"},
+    {"url":"https://developers.notion.com/reference/property-object", "scope":"option colors, Status creation/groups and property schemas"},
+    {"url":"https://developers.notion.com/reference/update-data-source-properties", "scope":"property IDs, destructive option omission, Status options and group management limits"},
+    {"url":"https://developers.notion.com/guides/get-started/authorization", "scope":"internal versus public authorization, selected pages and access/refresh token lifecycle"},
+    {"url":"https://www.notion.com/en-gb/help/enterprise-connection-settings", "scope":"workspace approval restrictions"}
+  ],
+  "unverified": [
+    "company workspace and different-account duplication and reference independence",
+    "new arbitrary form/CSV plan live Notion creation",
+    "new Status API writes with project pinned version",
+    "web generation backend, jobs, OAuth and administrator features",
+    "all screen states, long CSV/list layouts, physical mobile and Safari"
+  ],
+  "deliverables": [
+    "docs/research/NB-V2-007_REPORT.md",
+    "docs/research/NB-V2-007_CHATGPT_HANDOFF.md",
+    "docs/research/NB-V2-007_EVIDENCE.json"
+  ]
+}
