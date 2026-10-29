@@ -1,6 +1,8 @@
 import {COLORS,TYPES,GROUPS,DATABASE_KEYS,baseProperties,option,validateModel,compileSchema,summarizeModel} from './mapping/model.mjs';
 import {parseForm,mergeSources,formInputError} from './mapping/parse.mjs';
 import {readCsvHeader,readCsvTextHeader,csvHeaderText} from './mapping/csv.mjs';
+import {createGenerationPlan} from './planner/plan.mjs';
+import {MODULES,TEMPLATE_NAMES} from './planner/catalog.mjs';
 async function initializeMappingPage() {
 if (document.documentElement.dataset.authRequired === 'true' && (!(await window.estAuth?.ready) || document.documentElement.dataset.authState !== 'authenticated')) return;
 const drafts=window.estDraftsReady?await window.estDraftsReady:null;
@@ -10,7 +12,7 @@ const dbNames={applicants:'신청자 DB',courses:'과정 DB',applications:'과�
 const typeNames={title:'제목',rich_text:'텍스트',phone_number:'전화번호',email:'이메일',number:'숫자',date:'날짜',checkbox:'체크박스',select:'단일 선택',multi_select:'복수 선택',status:'진행 상태 (Status)'};
 const colorNames={default:'기본',gray:'회색',brown:'갈색',orange:'주황',yellow:'노랑',green:'초록',blue:'파랑',purple:'보라',pink:'분홍',red:'빨강'};
 const swatches={default:'#ddd',gray:'#999',brown:'#a77954',orange:'#da8c43',yellow:'#d5b23b',green:'#509a6e',blue:'#4b8ec8',purple:'#946ac7',pink:'#cb77aa',red:'#cd6767'};
-let model={version:1,properties:baseProperties()},columns=[],sequence=0,compiled=null,active=true,analysisError='',sourceDirty=false,sourceRevision=0,csvDirty=false;
+let model={version:1,properties:baseProperties()},columns=[],sequence=0,compiled=null,active=true,analysisError='',sourceDirty=false,sourceRevision=0,csvDirty=false,generationPlan=null;
 const csvMode=()=>$('csv-mode')?.value==='text'?'text':'file';
 if(drafts){
  const restored=drafts.snapshot().configuration.mapping;
@@ -41,9 +43,34 @@ function renderCsvMode(){ $('csv-file-fields').hidden=csvMode()==='text';$('csv-
 function captureMapping(){return {formText:$('form-text').value,encoding:$('encoding').value,columns,model};}
 function nextManualId(){let id;do{id=`manual-${sequence++}`;}while(model.properties.some(p=>p.localId===id||p.options.some(o=>o.localId===`option-${id}`)));return id;}
 function syncDraft(){if(drafts&&active)try{drafts.update('mapping',captureMapping());}catch(error){drafts.showError(error);}}
-window.addEventListener('est-auth-cleared',()=>{active=false;model={version:1,properties:[]};columns=[];compiled=null;},{once:true});
+window.addEventListener('est-auth-cleared',()=>{active=false;model={version:1,properties:[]};columns=[];compiled=null;generationPlan=null;},{once:true});
 function el(tag,text,cls){const n=document.createElement(tag);if(text!=null)n.textContent=text;if(cls)n.className=cls;return n;}
-function invalidate(){compiled=null;$('download-schema').disabled=true;$('schema-preview').textContent='편집 내용이 바뀌었습니다. 다시 검사해 주세요.';$('validation').replaceChildren();syncDraft();renderSummary();}
+function invalidate(){compiled=null;generationPlan=null;$('download-schema').disabled=true;$('download-plan').disabled=true;$('plan-summary').textContent='구성을 확인하려면 DB 구성 미리보기를 눌러 주세요.';$('plan-json').textContent='미리보기 전';$('db-preview').replaceChildren();$('plan-details').replaceChildren();$('schema-preview').textContent='편집 내용이 바뀌었습니다. 다시 검사해 주세요.';$('validation').replaceChildren();syncDraft();renderSummary();}
+function planSettings(){return {templateType:$('template-type').value||'basic',enabledModules:Object.keys(MODULES).filter(id=>$(`module-${id}`).checked),repeatPrograms:$('repeat-programs').checked,personHistory:$('person-history').checked,programStatistics:$('program-statistics').checked,multipleApplications:$('multiple-applications').checked};}
+function renderGenerationPlan(){
+ const current=drafts?.snapshot().configuration??{version:1,requirements:{}};
+ generationPlan=createGenerationPlan({...current,requirements:{...current.requirements,educationType:$('education-type').value||'education'},mapping:captureMapping()},planSettings());
+ const root=$('plan-summary');root.replaceChildren();
+ const s=generationPlan.summary;root.append(el('p',`${TEMPLATE_NAMES[generationPlan.templateType]??'잘못된 구성'} · DB ${s.databases}개 · 속성 ${s.properties}개 · 관계 ${s.relations}개 · Rollup ${s.rollups}개 · Formula ${s.formulas}개`));
+ root.append(el('p',`자동 계획 항목 ${s.automaticItems}개 · 실제 API 검증 필요 ${s.apiVerificationItems}개 · 확인 사항 ${s.confirmationItems}개 · 차단 오류 ${s.blockingErrors}개`));
+ if(generationPlan.enabledModules.length)root.append(el('p',`의존성을 포함한 모듈: ${generationPlan.enabledModules.map(id=>MODULES[id]?.name??id).join(', ')}`));
+ if(generationPlan.recommendations.templateType==='standard')root.append(el('p','반복 운영·사람별 이력·통계 설정에 따라 일반형을 권장합니다. 기본형 선택을 자동 변경하지 않습니다.'));
+ for(const message of generationPlan.blockingErrors)root.append(el('p',`생성 차단: ${message.message}`,'validation-error'));
+ for(const message of generationPlan.confirmationItems)root.append(el('p',`확인 사항: ${message.message}`,'review-reasons'));
+ for(const message of generationPlan.warnings)root.append(el('p',message.message,'field-help'));
+ root.append(el('p','실제 생성·행 연결·중복 제거·계산값 검증은 실행하지 않았습니다. Status 그룹의 이름·순서·색상 변경은 Notion UI 작업입니다.','field-help'));
+ const cards=$('db-preview');cards.replaceChildren();
+ for(const d of generationPlan.databases){const card=el('article',null,'db-preview-card');card.append(el('h3',d.name));const list=el('ul');for(const p of generationPlan.properties.filter(p=>p.dataSourceId===d.dataSourceId))list.append(el('li',`${p.name} · ${typeNames[p.type]??p.type}`));card.append(list);cards.append(card);}
+ const details=$('plan-details');details.replaceChildren();
+ for(const relation of generationPlan.relations){const from=generationPlan.databases.find(d=>d.dataSourceId===relation.sourceDataSourceId),to=generationPlan.databases.find(d=>d.dataSourceId===relation.targetDataSourceId);details.append(el('p',`${from?.name} ↔ ${to?.name} · 양방향 관계 계획`));}
+ for(const f of generationPlan.formulas)details.append(el('p',`Formula ${f.propertyId}: ${f.expression} · 값 미계산`));
+ for(const r of generationPlan.rollups)details.append(el('p',`Rollup ${r.propertyId}: ${r.function}(${r.targetPropertyId}) · 값 미계산`));
+ details.append(el('p',`예상 순서: ${generationPlan.executionPhases.map(p=>p.name).join(' → ')}`));
+ $('plan-json').textContent=JSON.stringify(generationPlan,null,2);$('download-plan').disabled=false;
+ return generationPlan.dryRunValid;
+}
+for(const id of ['template-type','repeat-programs','person-history','program-statistics','multiple-applications','education-type'])$(id).addEventListener('change',invalidate);
+for(const id of Object.keys(MODULES))$(`module-${id}`).addEventListener('change',()=>{if($(`module-${id}`).checked)$('template-type').value='extended';invalidate();});
 function mark(p){p.mappingStatus='review';invalidate();}
 function input(value,label,change){const n=el('input');n.type='text';n.value=value??'';n.setAttribute('aria-label',label);n.addEventListener('input',()=>change(n.value));return n;}
 function select(values,value,label,change){const n=el('select');n.setAttribute('aria-label',label);for(const [v,name] of values){const o=el('option',name);o.value=v;n.append(o);}n.value=value;n.addEventListener('change',()=>change(n.value));return n;}
@@ -52,10 +79,10 @@ function button(text,fn){const b=el('button',text,'small-button');b.type='button
 function renderSummary(){
  const summary=summarizeModel(model,columns),root=$('analysis-summary');root.replaceChildren();
  const list=el('dl',null,'analysis-counts');
- for(const [label,value] of [['폼 질문',summary.questions],['CSV 컬럼',summary.columns],['최종 추천 속성',summary.recommended],['자동 처리·확인 완료',summary.automatic],['필수 확인 속성',summary.review],['제외',summary.excluded],['중복·충돌 표시',summary.duplicates]]){
+ for(const [label,value] of [['폼 질문',summary.questions],['CSV 컬럼',summary.columns],['기존 매핑 스키마 속성',summary.recommended],['자동 처리·확인 완료',summary.automatic],['필수 확인 속성',summary.review],['제외',summary.excluded],['중복·충돌 표시',summary.duplicates]]){
   const item=el('div');item.append(el('dt',label),el('dd',`${value}개`));list.append(item);
  }
- root.append(list,el('p',`최종 속성 수에는 기본 운영 속성 ${summary.base}개와 DB별 자동 제목 속성 ${summary.implicitTitles}개가 포함됩니다. 질문과 CSV가 연결되면 한 속성으로 합칩니다.`,'field-help'));
+ root.append(list,el('p',`매핑 스키마 수에는 기본 운영 속성 ${summary.base}개와 자동 제목 ${summary.implicitTitles}개가 포함됩니다. 실제 선택 구성의 DB·속성 수는 아래 생성 계획에서 확인하세요.`,'field-help'));
  const error=analysisError||(sourceDirty?'입력이 바뀌었습니다. 다시 분석해 주세요.':'');
  const ready=summary.validation.ok&&!error;
  $('preview-state').textContent=ready?'DB 구성 미리보기 가능':error||'입력 분석 또는 필수 확인이 필요합니다.';
@@ -119,8 +146,20 @@ $('analyze').addEventListener('click',async()=>{
  catch(e){if(active){analysisError=e.message;invalidate();$('feedback').textContent=`분석 실패: ${e.message} 기존 매핑 결과는 보존했습니다. 입력을 수정한 뒤 다시 분석해 주세요.`;}}finally{b.disabled=false;}
 });
 $('add-field').addEventListener('click',()=>{model.properties.push({localId:nextManualId(),origin:'manual',questionName:'',csvColumn:null,name:'새 속성',type:'rich_text',targetDb:'applicants',options:[],included:true,mappingStatus:'review',reviewReasons:['이름과 유형을 확인하세요.']});invalidate();render();});
-$('preview').addEventListener('click',()=>{const result=validateModel(model);let sourceError=analysisError||(sourceDirty?'입력이 바뀌었습니다. 다시 분석해 주세요.':'');try{sourceError=formInputError(parseForm($('form-text').value))||sourceError;}catch(e){sourceError=e.message;}if(sourceError){result.ok=false;result.errors.unshift(sourceError);}$('validation').replaceChildren();for(const error of result.errors)$('validation').append(el('p',error,'validation-error'));if(!result.ok){compiled=null;$('download-schema').disabled=true;$('schema-preview').textContent='확인이 필요한 항목과 오류를 수정해 주세요.';$('advanced-settings').open=true;return;}compiled=compileSchema(model);$('validation').append(el('p','검사 통과. 실제 Notion DB를 생성하지 않는 스키마 미리보기입니다.'));for(const warning of result.warnings)$('validation').append(el('p',warning));const cards=$('db-preview');cards.replaceChildren();for(const [db,definition] of Object.entries(compiled.databases)){const card=el('article',null,'db-preview-card');card.append(el('h3',dbNames[db]));const list=el('ul');for(const [name,config] of Object.entries(definition.properties))list.append(el('li',`${name} · ${typeNames[Object.keys(config)[0]]}`));card.append(list);cards.append(card);}$('schema-preview').textContent=JSON.stringify(compiled,null,2);$('download-schema').disabled=false;});
+$('preview').addEventListener('click',()=>{
+ const result=validateModel(model);let sourceError=analysisError||(sourceDirty?'입력이 바뀌었습니다. 다시 분석해 주세요.':'');
+ try{sourceError=formInputError(parseForm($('form-text').value))||sourceError;}catch(e){sourceError=e.message;}
+ if(sourceError){result.ok=false;result.errors.unshift(sourceError);}
+ $('validation').replaceChildren();for(const error of result.errors)$('validation').append(el('p',error,'validation-error'));
+ const planValid=!sourceError&&renderGenerationPlan();
+ if(!result.ok||!planValid){compiled=null;$('download-schema').disabled=true;$('schema-preview').textContent='확인이 필요한 항목과 오류를 수정해 주세요.';if(!result.ok)$('advanced-settings').open=true;if(!sourceError&&!planValid)$('validation').append(el('p','생성 계획의 차단 오류를 해결해 주세요.','validation-error'));return;}
+ compiled=compileSchema(model);$('validation').append(el('p','검사 통과. 실제 Notion DB를 생성하지 않는 스키마 미리보기입니다.'));
+ for(const warning of result.warnings)$('validation').append(el('p',warning));
+ $('schema-preview').textContent=JSON.stringify(compiled,null,2);$('download-schema').disabled=false;
+});
+
 function download(value,name){const url=URL.createObjectURL(new Blob([JSON.stringify(value,null,2)],{type:'application/json'}));const a=el('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+$('download-plan').addEventListener('click',()=>{if(generationPlan)download(generationPlan,'notion-generation-plan-dry-run.json');});
 $('download-model').addEventListener('click',()=>download(model,'mapping-model.json'));
 $('download-schema').addEventListener('click',()=>{if(compiled)download(compiled,'notion-schema-dry-run.json');});
 renderCsvMode();render();

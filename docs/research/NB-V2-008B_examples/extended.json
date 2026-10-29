@@ -1,0 +1,2184 @@
+{
+  "planVersion": 1,
+  "planId": "plan-1066ce1800d317f8",
+  "mode": "dry-run",
+  "notionApiVersion": "2026-03-11",
+  "networkRequests": 0,
+  "notionWrites": 0,
+  "liveApiVerified": false,
+  "futureExecutorReady": false,
+  "educationType": "education",
+  "templateType": "extended",
+  "enabledModules": [
+    "attendance",
+    "participation",
+    "teams"
+  ],
+  "requestedModules": [
+    "attendance",
+    "teams"
+  ],
+  "databases": [
+    {
+      "id": "db:people",
+      "key": "people",
+      "name": "사람",
+      "dataSourceId": "ds:people",
+      "support": "automatic"
+    },
+    {
+      "id": "db:programs",
+      "key": "programs",
+      "name": "프로그램·과정",
+      "dataSourceId": "ds:programs",
+      "support": "automatic"
+    },
+    {
+      "id": "db:applications",
+      "key": "applications",
+      "name": "신청·참가 기록",
+      "dataSourceId": "ds:applications",
+      "support": "automatic"
+    },
+    {
+      "id": "db:enrollments",
+      "key": "enrollments",
+      "name": "참여·수강",
+      "dataSourceId": "ds:enrollments",
+      "support": "automatic"
+    },
+    {
+      "id": "db:attendance",
+      "key": "attendance",
+      "name": "출석기록",
+      "dataSourceId": "ds:attendance",
+      "support": "automatic"
+    },
+    {
+      "id": "db:teams",
+      "key": "teams",
+      "name": "팀",
+      "dataSourceId": "ds:teams",
+      "support": "automatic"
+    }
+  ],
+  "dataSources": [
+    {
+      "id": "ds:people",
+      "databaseId": "db:people",
+      "support": "automatic"
+    },
+    {
+      "id": "ds:programs",
+      "databaseId": "db:programs",
+      "support": "automatic"
+    },
+    {
+      "id": "ds:applications",
+      "databaseId": "db:applications",
+      "support": "automatic"
+    },
+    {
+      "id": "ds:enrollments",
+      "databaseId": "db:enrollments",
+      "support": "automatic"
+    },
+    {
+      "id": "ds:attendance",
+      "databaseId": "db:attendance",
+      "support": "automatic"
+    },
+    {
+      "id": "ds:teams",
+      "databaseId": "db:teams",
+      "support": "automatic"
+    }
+  ],
+  "properties": [
+    {
+      "id": "ds:applications:field:base-selection",
+      "dataSourceId": "ds:applications",
+      "name": "선정 상태",
+      "type": "select",
+      "sourceRefs": [
+        {
+          "localId": "base-selection",
+          "origin": "base",
+          "questionNumber": "",
+          "questionName": "",
+          "csvColumn": null,
+          "originalTargetDb": "applications"
+        }
+      ],
+      "origin": "mapped",
+      "support": "automatic"
+    },
+    {
+      "id": "ds:programs:field:base-progress",
+      "dataSourceId": "ds:programs",
+      "name": "교육 진행 상태",
+      "type": "status",
+      "sourceRefs": [
+        {
+          "localId": "base-progress",
+          "origin": "base",
+          "questionNumber": "",
+          "questionName": "",
+          "csvColumn": null,
+          "originalTargetDb": "courses"
+        }
+      ],
+      "origin": "mapped",
+      "support": "api_verification_required"
+    },
+    {
+      "id": "ds:people:field:form-0",
+      "dataSourceId": "ds:people",
+      "name": "성명",
+      "type": "title",
+      "sourceRefs": [
+        {
+          "localId": "form-0",
+          "origin": "form",
+          "questionNumber": "1",
+          "questionName": "성명",
+          "csvColumn": {
+            "index": 0,
+            "original": "성명"
+          },
+          "originalTargetDb": "applicants"
+        }
+      ],
+      "origin": "mapped",
+      "support": "automatic"
+    },
+    {
+      "id": "ds:people:field:form-1",
+      "dataSourceId": "ds:people",
+      "name": "이메일",
+      "type": "email",
+      "sourceRefs": [
+        {
+          "localId": "form-1",
+          "origin": "form",
+          "questionNumber": "2",
+          "questionName": "이메일",
+          "csvColumn": {
+            "index": 1,
+            "original": "이메일"
+          },
+          "originalTargetDb": "applicants"
+        }
+      ],
+      "origin": "mapped",
+      "support": "automatic"
+    },
+    {
+      "id": "ds:applications:field:form-2",
+      "dataSourceId": "ds:applications",
+      "name": "신청 동기",
+      "type": "rich_text",
+      "sourceRefs": [
+        {
+          "localId": "form-2",
+          "origin": "form",
+          "questionNumber": "3",
+          "questionName": "신청 동기",
+          "csvColumn": {
+            "index": 2,
+            "original": "신청 동기"
+          },
+          "originalTargetDb": "applications"
+        }
+      ],
+      "origin": "mapped",
+      "support": "automatic"
+    },
+    {
+      "id": "ds:programs:operation-type",
+      "dataSourceId": "ds:programs",
+      "name": "운영 유형",
+      "type": "select",
+      "sourceRefs": [],
+      "origin": "rule",
+      "support": "automatic"
+    },
+    {
+      "id": "ds:enrollments:module:participation:state",
+      "dataSourceId": "ds:enrollments",
+      "name": "참여 상태",
+      "type": "select",
+      "sourceRefs": [],
+      "origin": "rule",
+      "support": "automatic"
+    },
+    {
+      "id": "ds:attendance:module:attendance:date",
+      "dataSourceId": "ds:attendance",
+      "name": "출석 일자",
+      "type": "date",
+      "sourceRefs": [],
+      "origin": "rule",
+      "support": "automatic"
+    },
+    {
+      "id": "ds:attendance:module:attendance:state",
+      "dataSourceId": "ds:attendance",
+      "name": "출석 상태",
+      "type": "select",
+      "sourceRefs": [],
+      "origin": "rule",
+      "support": "automatic"
+    },
+    {
+      "id": "ds:teams:module:teams:state",
+      "dataSourceId": "ds:teams",
+      "name": "팀 상태",
+      "type": "select",
+      "sourceRefs": [],
+      "origin": "rule",
+      "support": "automatic"
+    },
+    {
+      "id": "ds:programs:title",
+      "dataSourceId": "ds:programs",
+      "name": "프로그램명",
+      "type": "title",
+      "sourceRefs": [],
+      "origin": "rule",
+      "support": "automatic"
+    },
+    {
+      "id": "ds:applications:title",
+      "dataSourceId": "ds:applications",
+      "name": "이름",
+      "type": "title",
+      "sourceRefs": [],
+      "origin": "rule",
+      "support": "automatic"
+    },
+    {
+      "id": "ds:enrollments:title",
+      "dataSourceId": "ds:enrollments",
+      "name": "이름",
+      "type": "title",
+      "sourceRefs": [],
+      "origin": "rule",
+      "support": "automatic"
+    },
+    {
+      "id": "ds:attendance:title",
+      "dataSourceId": "ds:attendance",
+      "name": "이름",
+      "type": "title",
+      "sourceRefs": [],
+      "origin": "rule",
+      "support": "automatic"
+    },
+    {
+      "id": "ds:teams:title",
+      "dataSourceId": "ds:teams",
+      "name": "이름",
+      "type": "title",
+      "sourceRefs": [],
+      "origin": "rule",
+      "support": "automatic"
+    },
+    {
+      "id": "ds:applications:relation:applications:people:사람",
+      "dataSourceId": "ds:applications",
+      "name": "사람",
+      "type": "relation",
+      "sourceRefs": [],
+      "origin": "rule",
+      "support": "api_verification_required"
+    },
+    {
+      "id": "ds:people:relation:applications:people:사람:reverse",
+      "dataSourceId": "ds:people",
+      "name": "신청기록",
+      "type": "relation",
+      "sourceRefs": [],
+      "origin": "rule",
+      "support": "api_verification_required"
+    },
+    {
+      "id": "ds:applications:relation:applications:programs:프로그램",
+      "dataSourceId": "ds:applications",
+      "name": "프로그램",
+      "type": "relation",
+      "sourceRefs": [],
+      "origin": "rule",
+      "support": "api_verification_required"
+    },
+    {
+      "id": "ds:programs:relation:applications:programs:프로그램:reverse",
+      "dataSourceId": "ds:programs",
+      "name": "신청기록",
+      "type": "relation",
+      "sourceRefs": [],
+      "origin": "rule",
+      "support": "api_verification_required"
+    },
+    {
+      "id": "ds:enrollments:relation:enrollments:people:사람",
+      "dataSourceId": "ds:enrollments",
+      "name": "사람",
+      "type": "relation",
+      "sourceRefs": [],
+      "origin": "rule",
+      "support": "api_verification_required"
+    },
+    {
+      "id": "ds:people:relation:enrollments:people:사람:reverse",
+      "dataSourceId": "ds:people",
+      "name": "참여기록",
+      "type": "relation",
+      "sourceRefs": [],
+      "origin": "rule",
+      "support": "api_verification_required"
+    },
+    {
+      "id": "ds:enrollments:relation:enrollments:programs:프로그램",
+      "dataSourceId": "ds:enrollments",
+      "name": "프로그램",
+      "type": "relation",
+      "sourceRefs": [],
+      "origin": "rule",
+      "support": "api_verification_required"
+    },
+    {
+      "id": "ds:programs:relation:enrollments:programs:프로그램:reverse",
+      "dataSourceId": "ds:programs",
+      "name": "참여기록",
+      "type": "relation",
+      "sourceRefs": [],
+      "origin": "rule",
+      "support": "api_verification_required"
+    },
+    {
+      "id": "ds:enrollments:relation:enrollments:applications:신청기록",
+      "dataSourceId": "ds:enrollments",
+      "name": "신청기록",
+      "type": "relation",
+      "sourceRefs": [],
+      "origin": "rule",
+      "support": "api_verification_required"
+    },
+    {
+      "id": "ds:applications:relation:enrollments:applications:신청기록:reverse",
+      "dataSourceId": "ds:applications",
+      "name": "참여기록",
+      "type": "relation",
+      "sourceRefs": [],
+      "origin": "rule",
+      "support": "api_verification_required"
+    },
+    {
+      "id": "ds:attendance:relation:attendance:enrollments:참여기록",
+      "dataSourceId": "ds:attendance",
+      "name": "참여기록",
+      "type": "relation",
+      "sourceRefs": [],
+      "origin": "rule",
+      "support": "api_verification_required"
+    },
+    {
+      "id": "ds:enrollments:relation:attendance:enrollments:참여기록:reverse",
+      "dataSourceId": "ds:enrollments",
+      "name": "출석기록",
+      "type": "relation",
+      "sourceRefs": [],
+      "origin": "rule",
+      "support": "api_verification_required"
+    },
+    {
+      "id": "ds:attendance:relation:attendance:programs:프로그램",
+      "dataSourceId": "ds:attendance",
+      "name": "프로그램",
+      "type": "relation",
+      "sourceRefs": [],
+      "origin": "rule",
+      "support": "api_verification_required"
+    },
+    {
+      "id": "ds:programs:relation:attendance:programs:프로그램:reverse",
+      "dataSourceId": "ds:programs",
+      "name": "출석기록",
+      "type": "relation",
+      "sourceRefs": [],
+      "origin": "rule",
+      "support": "api_verification_required"
+    },
+    {
+      "id": "ds:enrollments:relation:enrollments:teams:팀",
+      "dataSourceId": "ds:enrollments",
+      "name": "팀",
+      "type": "relation",
+      "sourceRefs": [],
+      "origin": "rule",
+      "support": "api_verification_required"
+    },
+    {
+      "id": "ds:teams:relation:enrollments:teams:팀:reverse",
+      "dataSourceId": "ds:teams",
+      "name": "참여기록",
+      "type": "relation",
+      "sourceRefs": [],
+      "origin": "rule",
+      "support": "api_verification_required"
+    },
+    {
+      "id": "ds:programs:rollup:applications",
+      "dataSourceId": "ds:programs",
+      "name": "신청 건수",
+      "type": "rollup",
+      "sourceRefs": [],
+      "origin": "rule",
+      "support": "api_verification_required"
+    },
+    {
+      "id": "ds:people:formula:applications",
+      "dataSourceId": "ds:people",
+      "name": "신청 건수",
+      "type": "formula",
+      "sourceRefs": [],
+      "origin": "rule",
+      "support": "api_verification_required"
+    },
+    {
+      "id": "ds:enrollments:rollup:attendance-count",
+      "dataSourceId": "ds:enrollments",
+      "name": "출석기록 수",
+      "type": "rollup",
+      "sourceRefs": [],
+      "origin": "rule",
+      "support": "api_verification_required"
+    },
+    {
+      "id": "ds:attendance:formula:recognized",
+      "dataSourceId": "ds:attendance",
+      "name": "출석 인정 값",
+      "type": "formula",
+      "sourceRefs": [],
+      "origin": "rule",
+      "support": "api_verification_required"
+    },
+    {
+      "id": "ds:teams:formula:member-count",
+      "dataSourceId": "ds:teams",
+      "name": "팀 참여기록 수",
+      "type": "formula",
+      "sourceRefs": [],
+      "origin": "rule",
+      "support": "api_verification_required"
+    }
+  ],
+  "relations": [
+    {
+      "id": "rel:applications:people:사람",
+      "sourceDataSourceId": "ds:applications",
+      "targetDataSourceId": "ds:people",
+      "propertyId": "ds:applications:relation:applications:people:사람",
+      "reversePropertyId": "ds:people:relation:applications:people:사람:reverse",
+      "type": "dual_property",
+      "remoteDataSourceId": null,
+      "support": "api_verification_required"
+    },
+    {
+      "id": "rel:applications:programs:프로그램",
+      "sourceDataSourceId": "ds:applications",
+      "targetDataSourceId": "ds:programs",
+      "propertyId": "ds:applications:relation:applications:programs:프로그램",
+      "reversePropertyId": "ds:programs:relation:applications:programs:프로그램:reverse",
+      "type": "dual_property",
+      "remoteDataSourceId": null,
+      "support": "api_verification_required"
+    },
+    {
+      "id": "rel:enrollments:people:사람",
+      "sourceDataSourceId": "ds:enrollments",
+      "targetDataSourceId": "ds:people",
+      "propertyId": "ds:enrollments:relation:enrollments:people:사람",
+      "reversePropertyId": "ds:people:relation:enrollments:people:사람:reverse",
+      "type": "dual_property",
+      "remoteDataSourceId": null,
+      "support": "api_verification_required"
+    },
+    {
+      "id": "rel:enrollments:programs:프로그램",
+      "sourceDataSourceId": "ds:enrollments",
+      "targetDataSourceId": "ds:programs",
+      "propertyId": "ds:enrollments:relation:enrollments:programs:프로그램",
+      "reversePropertyId": "ds:programs:relation:enrollments:programs:프로그램:reverse",
+      "type": "dual_property",
+      "remoteDataSourceId": null,
+      "support": "api_verification_required"
+    },
+    {
+      "id": "rel:enrollments:applications:신청기록",
+      "sourceDataSourceId": "ds:enrollments",
+      "targetDataSourceId": "ds:applications",
+      "propertyId": "ds:enrollments:relation:enrollments:applications:신청기록",
+      "reversePropertyId": "ds:applications:relation:enrollments:applications:신청기록:reverse",
+      "type": "dual_property",
+      "remoteDataSourceId": null,
+      "support": "api_verification_required"
+    },
+    {
+      "id": "rel:attendance:enrollments:참여기록",
+      "sourceDataSourceId": "ds:attendance",
+      "targetDataSourceId": "ds:enrollments",
+      "propertyId": "ds:attendance:relation:attendance:enrollments:참여기록",
+      "reversePropertyId": "ds:enrollments:relation:attendance:enrollments:참여기록:reverse",
+      "type": "dual_property",
+      "remoteDataSourceId": null,
+      "support": "api_verification_required"
+    },
+    {
+      "id": "rel:attendance:programs:프로그램",
+      "sourceDataSourceId": "ds:attendance",
+      "targetDataSourceId": "ds:programs",
+      "propertyId": "ds:attendance:relation:attendance:programs:프로그램",
+      "reversePropertyId": "ds:programs:relation:attendance:programs:프로그램:reverse",
+      "type": "dual_property",
+      "remoteDataSourceId": null,
+      "support": "api_verification_required"
+    },
+    {
+      "id": "rel:enrollments:teams:팀",
+      "sourceDataSourceId": "ds:enrollments",
+      "targetDataSourceId": "ds:teams",
+      "propertyId": "ds:enrollments:relation:enrollments:teams:팀",
+      "reversePropertyId": "ds:teams:relation:enrollments:teams:팀:reverse",
+      "type": "dual_property",
+      "remoteDataSourceId": null,
+      "support": "api_verification_required"
+    }
+  ],
+  "rollups": [
+    {
+      "propertyId": "ds:programs:rollup:applications",
+      "relationPropertyId": "ds:programs:relation:applications:programs:프로그램:reverse",
+      "targetPropertyId": "ds:applications:title",
+      "function": "count_all",
+      "support": "api_verification_required",
+      "value": null
+    },
+    {
+      "propertyId": "ds:enrollments:rollup:attendance-count",
+      "relationPropertyId": "ds:enrollments:relation:attendance:enrollments:참여기록:reverse",
+      "targetPropertyId": "ds:attendance:title",
+      "function": "count_all",
+      "support": "api_verification_required",
+      "value": null
+    }
+  ],
+  "formulas": [
+    {
+      "propertyId": "ds:people:formula:applications",
+      "ast": {
+        "op": "relation_count",
+        "propertyId": "ds:people:relation:applications:people:사람:reverse"
+      },
+      "expression": "prop(\"신청기록\").length()",
+      "support": "api_verification_required",
+      "value": null
+    },
+    {
+      "propertyId": "ds:attendance:formula:recognized",
+      "ast": {
+        "op": "equals_option",
+        "propertyId": "ds:attendance:module:attendance:state",
+        "value": "출석"
+      },
+      "expression": "if(prop(\"출석 상태\") == \"출석\", 1, 0)",
+      "support": "api_verification_required",
+      "value": null
+    },
+    {
+      "propertyId": "ds:teams:formula:member-count",
+      "ast": {
+        "op": "relation_count",
+        "propertyId": "ds:teams:relation:enrollments:teams:팀:reverse"
+      },
+      "expression": "prop(\"참여기록\").length()",
+      "support": "api_verification_required",
+      "value": null
+    }
+  ],
+  "selectOptions": [
+    {
+      "propertyId": "ds:applications:field:base-selection",
+      "options": [
+        {
+          "name": "접수",
+          "color": "blue"
+        },
+        {
+          "name": "선정",
+          "color": "green"
+        },
+        {
+          "name": "대기",
+          "color": "yellow"
+        },
+        {
+          "name": "미선정",
+          "color": "gray"
+        },
+        {
+          "name": "취소",
+          "color": "red"
+        }
+      ],
+      "support": "automatic"
+    },
+    {
+      "propertyId": "ds:programs:operation-type",
+      "options": [
+        {
+          "name": "일반 교육",
+          "color": "blue"
+        }
+      ],
+      "support": "automatic"
+    },
+    {
+      "propertyId": "ds:enrollments:module:participation:state",
+      "options": [
+        {
+          "name": "예정",
+          "color": "gray"
+        },
+        {
+          "name": "참여 중",
+          "color": "blue"
+        },
+        {
+          "name": "완료",
+          "color": "green"
+        },
+        {
+          "name": "취소",
+          "color": "red"
+        }
+      ],
+      "support": "automatic"
+    },
+    {
+      "propertyId": "ds:attendance:module:attendance:state",
+      "options": [
+        {
+          "name": "출석",
+          "color": "green"
+        },
+        {
+          "name": "결석",
+          "color": "red"
+        }
+      ],
+      "support": "automatic"
+    },
+    {
+      "propertyId": "ds:teams:module:teams:state",
+      "options": [
+        {
+          "name": "구성 중",
+          "color": "yellow"
+        },
+        {
+          "name": "활동 중",
+          "color": "blue"
+        },
+        {
+          "name": "종료",
+          "color": "gray"
+        }
+      ],
+      "support": "automatic"
+    }
+  ],
+  "statusOptions": [
+    {
+      "propertyId": "ds:programs:field:base-progress",
+      "options": [
+        {
+          "name": "예정",
+          "color": "gray",
+          "group": "To-do"
+        },
+        {
+          "name": "진행 중",
+          "color": "blue",
+          "group": "In progress"
+        },
+        {
+          "name": "완료",
+          "color": "green",
+          "group": "Complete"
+        },
+        {
+          "name": "취소",
+          "color": "red",
+          "group": "Complete"
+        }
+      ],
+      "support": "api_verification_required",
+      "groupDefinitions": "notion_ui_managed"
+    }
+  ],
+  "warnings": [
+    {
+      "code": "OPTIONAL_BASE_OMITTED",
+      "message": "수료 상태: 선택한 구성에 필요하지 않은 기본 속성은 추가하지 않았습니다.",
+      "ref": "base-completion"
+    },
+    {
+      "code": "NO_ROW_VALUES",
+      "message": "사람 수·신청 건수·Rollup/Formula 값은 실제 응답 없이 계산 완료로 표시하지 않습니다."
+    }
+  ],
+  "blockingErrors": [],
+  "confirmationItems": [
+    {
+      "code": "IDENTITY_POLICY_PENDING",
+      "message": "사람 식별·중복 제거 기준과 응답 행별 관계 연결은 아직 정하지 않았습니다. 헤더만으로 고유 사람을 확정하지 않습니다."
+    },
+    {
+      "code": "TEAM_IDENTITY_PENDING",
+      "message": "팀 참여기록 수는 고유 인원수가 아닙니다. 동일인의 중복 참여·팀 배치 기준을 확인해야 합니다."
+    }
+  ],
+  "executionPhases": [
+    {
+      "id": "parent",
+      "name": "상위 페이지",
+      "logicalIds": [
+        "page:root"
+      ],
+      "remoteParentId": null,
+      "dependsOn": []
+    },
+    {
+      "id": "databases",
+      "name": "DB 및 초기 Data Source",
+      "logicalIds": [
+        "db:people",
+        "db:programs",
+        "db:applications",
+        "db:enrollments",
+        "db:attendance",
+        "db:teams"
+      ],
+      "dependsOn": [
+        "parent"
+      ]
+    },
+    {
+      "id": "properties",
+      "name": "기본 속성",
+      "logicalIds": [
+        "ds:applications:field:base-selection",
+        "ds:programs:field:base-progress",
+        "ds:people:field:form-0",
+        "ds:people:field:form-1",
+        "ds:applications:field:form-2",
+        "ds:programs:operation-type",
+        "ds:enrollments:module:participation:state",
+        "ds:attendance:module:attendance:date",
+        "ds:attendance:module:attendance:state",
+        "ds:teams:module:teams:state",
+        "ds:programs:title",
+        "ds:applications:title",
+        "ds:enrollments:title",
+        "ds:attendance:title",
+        "ds:teams:title"
+      ],
+      "dependsOn": [
+        "databases"
+      ]
+    },
+    {
+      "id": "relations",
+      "name": "양방향 관계형",
+      "logicalIds": [
+        "rel:applications:people:사람",
+        "rel:applications:programs:프로그램",
+        "rel:enrollments:people:사람",
+        "rel:enrollments:programs:프로그램",
+        "rel:enrollments:applications:신청기록",
+        "rel:attendance:enrollments:참여기록",
+        "rel:attendance:programs:프로그램",
+        "rel:enrollments:teams:팀"
+      ],
+      "dependsOn": [
+        "properties"
+      ]
+    },
+    {
+      "id": "rollups",
+      "name": "Rollup",
+      "logicalIds": [
+        "ds:programs:rollup:applications",
+        "ds:enrollments:rollup:attendance-count"
+      ],
+      "dependsOn": [
+        "relations"
+      ]
+    },
+    {
+      "id": "formulas",
+      "name": "Formula",
+      "logicalIds": [
+        "ds:people:formula:applications",
+        "ds:attendance:formula:recognized",
+        "ds:teams:formula:member-count"
+      ],
+      "dependsOn": [
+        "rollups"
+      ]
+    },
+    {
+      "id": "options",
+      "name": "상태·선택 옵션·색상 재조회 검증",
+      "logicalIds": [
+        "ds:applications:field:base-selection",
+        "ds:programs:operation-type",
+        "ds:enrollments:module:participation:state",
+        "ds:attendance:module:attendance:state",
+        "ds:teams:module:teams:state",
+        "ds:programs:field:base-progress"
+      ],
+      "note": "옵션은 기본 속성 단계에서 생성하고 이 단계에서 반환값을 검사합니다.",
+      "dependsOn": [
+        "formulas"
+      ]
+    },
+    {
+      "id": "verify",
+      "name": "구조·참조·계산 검증",
+      "logicalIds": [
+        "ds:people",
+        "ds:programs",
+        "ds:applications",
+        "ds:enrollments",
+        "ds:attendance",
+        "ds:teams"
+      ],
+      "calculatedValues": "requires future rows; not evaluated",
+      "dependsOn": [
+        "options"
+      ]
+    }
+  ],
+  "capabilities": {
+    "automatic": [
+      "parent_page",
+      "database_and_initial_data_source",
+      "title",
+      "rich_text",
+      "email",
+      "phone_number",
+      "number",
+      "date",
+      "checkbox",
+      "select",
+      "multi_select"
+    ],
+    "api_verification_required": [
+      "relation",
+      "rollup",
+      "formula",
+      "status"
+    ],
+    "manual_ui": [
+      "status_group_definition_rename_reorder_color"
+    ],
+    "unsupported": [
+      "arbitrary_formula_expression",
+      "unknown_module",
+      "response_row_import",
+      "identity_deduplication",
+      "dashboard",
+      "remote_execution"
+    ]
+  },
+  "dataResolution": {
+    "rowsIncluded": false,
+    "identityDeduplication": "not_performed",
+    "relationRowLinking": "not_performed",
+    "calculatedValues": null
+  },
+  "recommendations": {
+    "templateType": "basic",
+    "reasons": [],
+    "forcedByHeaders": false
+  },
+  "normalizedInput": {
+    "configurationVersion": 1,
+    "educationType": "education",
+    "properties": [
+      {
+        "localId": "base-selection",
+        "origin": "base",
+        "name": "선정 상태",
+        "type": "select",
+        "targetDb": "applications",
+        "included": true,
+        "mappingStatus": "automatic",
+        "reviewReasons": [],
+        "options": [
+          {
+            "name": "접수",
+            "color": "blue"
+          },
+          {
+            "name": "선정",
+            "color": "green"
+          },
+          {
+            "name": "대기",
+            "color": "yellow"
+          },
+          {
+            "name": "미선정",
+            "color": "gray"
+          },
+          {
+            "name": "취소",
+            "color": "red"
+          }
+        ],
+        "source": {
+          "localId": "base-selection",
+          "origin": "base",
+          "questionNumber": "",
+          "questionName": "",
+          "csvColumn": null,
+          "originalTargetDb": "applications"
+        }
+      },
+      {
+        "localId": "base-completion",
+        "origin": "base",
+        "name": "수료 상태",
+        "type": "select",
+        "targetDb": "enrollments",
+        "included": true,
+        "mappingStatus": "automatic",
+        "reviewReasons": [],
+        "options": [
+          {
+            "name": "수료",
+            "color": "green"
+          },
+          {
+            "name": "미수료",
+            "color": "red"
+          },
+          {
+            "name": "수료 대기",
+            "color": "yellow"
+          }
+        ],
+        "source": {
+          "localId": "base-completion",
+          "origin": "base",
+          "questionNumber": "",
+          "questionName": "",
+          "csvColumn": null,
+          "originalTargetDb": "enrollments"
+        }
+      },
+      {
+        "localId": "base-progress",
+        "origin": "base",
+        "name": "교육 진행 상태",
+        "type": "status",
+        "targetDb": "courses",
+        "included": true,
+        "mappingStatus": "automatic",
+        "reviewReasons": [],
+        "options": [
+          {
+            "name": "예정",
+            "color": "gray",
+            "group": "To-do"
+          },
+          {
+            "name": "진행 중",
+            "color": "blue",
+            "group": "In progress"
+          },
+          {
+            "name": "완료",
+            "color": "green",
+            "group": "Complete"
+          },
+          {
+            "name": "취소",
+            "color": "red",
+            "group": "Complete"
+          }
+        ],
+        "source": {
+          "localId": "base-progress",
+          "origin": "base",
+          "questionNumber": "",
+          "questionName": "",
+          "csvColumn": null,
+          "originalTargetDb": "courses"
+        }
+      },
+      {
+        "localId": "form-0",
+        "origin": "form",
+        "name": "성명",
+        "type": "title",
+        "targetDb": "applicants",
+        "included": true,
+        "mappingStatus": "automatic",
+        "reviewReasons": [],
+        "options": [],
+        "source": {
+          "localId": "form-0",
+          "origin": "form",
+          "questionNumber": "1",
+          "questionName": "성명",
+          "csvColumn": {
+            "index": 0,
+            "original": "성명"
+          },
+          "originalTargetDb": "applicants"
+        }
+      },
+      {
+        "localId": "form-1",
+        "origin": "form",
+        "name": "이메일",
+        "type": "email",
+        "targetDb": "applicants",
+        "included": true,
+        "mappingStatus": "automatic",
+        "reviewReasons": [],
+        "options": [],
+        "source": {
+          "localId": "form-1",
+          "origin": "form",
+          "questionNumber": "2",
+          "questionName": "이메일",
+          "csvColumn": {
+            "index": 1,
+            "original": "이메일"
+          },
+          "originalTargetDb": "applicants"
+        }
+      },
+      {
+        "localId": "form-2",
+        "origin": "form",
+        "name": "신청 동기",
+        "type": "rich_text",
+        "targetDb": "applications",
+        "included": true,
+        "mappingStatus": "automatic",
+        "reviewReasons": [],
+        "options": [],
+        "source": {
+          "localId": "form-2",
+          "origin": "form",
+          "questionNumber": "3",
+          "questionName": "신청 동기",
+          "csvColumn": {
+            "index": 2,
+            "original": "신청 동기"
+          },
+          "originalTargetDb": "applications"
+        }
+      }
+    ],
+    "sourceCounts": {
+      "questions": 3,
+      "columns": 3
+    }
+  },
+  "unresolvedBindings": {
+    "parentPage": "page:root",
+    "databaseIds": [
+      "db:people",
+      "db:programs",
+      "db:applications",
+      "db:enrollments",
+      "db:attendance",
+      "db:teams"
+    ],
+    "dataSourceIds": [
+      "ds:people",
+      "ds:programs",
+      "ds:applications",
+      "ds:enrollments",
+      "ds:attendance",
+      "ds:teams"
+    ],
+    "propertyIds": [
+      "ds:applications:field:base-selection",
+      "ds:programs:field:base-progress",
+      "ds:people:field:form-0",
+      "ds:people:field:form-1",
+      "ds:applications:field:form-2",
+      "ds:programs:operation-type",
+      "ds:enrollments:module:participation:state",
+      "ds:attendance:module:attendance:date",
+      "ds:attendance:module:attendance:state",
+      "ds:teams:module:teams:state",
+      "ds:programs:title",
+      "ds:applications:title",
+      "ds:enrollments:title",
+      "ds:attendance:title",
+      "ds:teams:title",
+      "ds:applications:relation:applications:people:사람",
+      "ds:people:relation:applications:people:사람:reverse",
+      "ds:applications:relation:applications:programs:프로그램",
+      "ds:programs:relation:applications:programs:프로그램:reverse",
+      "ds:enrollments:relation:enrollments:people:사람",
+      "ds:people:relation:enrollments:people:사람:reverse",
+      "ds:enrollments:relation:enrollments:programs:프로그램",
+      "ds:programs:relation:enrollments:programs:프로그램:reverse",
+      "ds:enrollments:relation:enrollments:applications:신청기록",
+      "ds:applications:relation:enrollments:applications:신청기록:reverse",
+      "ds:attendance:relation:attendance:enrollments:참여기록",
+      "ds:enrollments:relation:attendance:enrollments:참여기록:reverse",
+      "ds:attendance:relation:attendance:programs:프로그램",
+      "ds:programs:relation:attendance:programs:프로그램:reverse",
+      "ds:enrollments:relation:enrollments:teams:팀",
+      "ds:teams:relation:enrollments:teams:팀:reverse",
+      "ds:programs:rollup:applications",
+      "ds:people:formula:applications",
+      "ds:enrollments:rollup:attendance-count",
+      "ds:attendance:formula:recognized",
+      "ds:teams:formula:member-count"
+    ],
+    "resolved": false
+  },
+  "delta": {
+    "scope": "logical-plan-only",
+    "createDatabases": [
+      "db:people",
+      "db:programs",
+      "db:applications",
+      "db:enrollments",
+      "db:attendance",
+      "db:teams"
+    ],
+    "reuseDatabases": [],
+    "addProperties": [
+      "ds:applications:field:base-selection",
+      "ds:programs:field:base-progress",
+      "ds:people:field:form-0",
+      "ds:people:field:form-1",
+      "ds:applications:field:form-2",
+      "ds:programs:operation-type",
+      "ds:enrollments:module:participation:state",
+      "ds:attendance:module:attendance:date",
+      "ds:attendance:module:attendance:state",
+      "ds:teams:module:teams:state",
+      "ds:programs:title",
+      "ds:applications:title",
+      "ds:enrollments:title",
+      "ds:attendance:title",
+      "ds:teams:title",
+      "ds:applications:relation:applications:people:사람",
+      "ds:people:relation:applications:people:사람:reverse",
+      "ds:applications:relation:applications:programs:프로그램",
+      "ds:programs:relation:applications:programs:프로그램:reverse",
+      "ds:enrollments:relation:enrollments:people:사람",
+      "ds:people:relation:enrollments:people:사람:reverse",
+      "ds:enrollments:relation:enrollments:programs:프로그램",
+      "ds:programs:relation:enrollments:programs:프로그램:reverse",
+      "ds:enrollments:relation:enrollments:applications:신청기록",
+      "ds:applications:relation:enrollments:applications:신청기록:reverse",
+      "ds:attendance:relation:attendance:enrollments:참여기록",
+      "ds:enrollments:relation:attendance:enrollments:참여기록:reverse",
+      "ds:attendance:relation:attendance:programs:프로그램",
+      "ds:programs:relation:attendance:programs:프로그램:reverse",
+      "ds:enrollments:relation:enrollments:teams:팀",
+      "ds:teams:relation:enrollments:teams:팀:reverse",
+      "ds:programs:rollup:applications",
+      "ds:people:formula:applications",
+      "ds:enrollments:rollup:attendance-count",
+      "ds:attendance:formula:recognized",
+      "ds:teams:formula:member-count"
+    ],
+    "changedProperties": [],
+    "removedLogicalIds": [],
+    "automaticDeletion": false
+  },
+  "summary": {
+    "databases": 6,
+    "properties": 36,
+    "relations": 8,
+    "rollups": 2,
+    "formulas": 3,
+    "automaticItems": 21,
+    "apiVerificationItems": 22,
+    "manualUiCapabilities": [
+      "Status 그룹 정의 변경"
+    ],
+    "confirmationItems": 2,
+    "blockingErrors": 0
+  },
+  "dryRunValid": true,
+  "executionState": "not_executed",
+  "requestTemplates": [
+    {
+      "phase": "parent",
+      "method": "POST",
+      "endpoint": "/v1/pages",
+      "body": {
+        "parent": {
+          "type": "page_id",
+          "page_id": {
+            "logicalRef": "external:parent_page_id",
+            "resolution": "after_creation"
+          }
+        },
+        "properties": {
+          "title": {
+            "type": "title",
+            "title": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "교육 운영"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "bind": "page:root",
+      "executable": false
+    },
+    {
+      "phase": "databases",
+      "method": "POST",
+      "endpoint": "/v1/databases",
+      "body": {
+        "parent": {
+          "type": "page_id",
+          "page_id": {
+            "logicalRef": "page:root",
+            "resolution": "after_creation"
+          }
+        },
+        "title": [
+          {
+            "type": "text",
+            "text": {
+              "content": "사람"
+            }
+          }
+        ],
+        "initial_data_source": {
+          "properties": {
+            "성명": {
+              "title": {}
+            }
+          }
+        }
+      },
+      "bind": {
+        "database": "db:people",
+        "initialDataSource": "ds:people"
+      },
+      "executable": false
+    },
+    {
+      "phase": "databases",
+      "method": "POST",
+      "endpoint": "/v1/databases",
+      "body": {
+        "parent": {
+          "type": "page_id",
+          "page_id": {
+            "logicalRef": "page:root",
+            "resolution": "after_creation"
+          }
+        },
+        "title": [
+          {
+            "type": "text",
+            "text": {
+              "content": "프로그램·과정"
+            }
+          }
+        ],
+        "initial_data_source": {
+          "properties": {
+            "프로그램명": {
+              "title": {}
+            }
+          }
+        }
+      },
+      "bind": {
+        "database": "db:programs",
+        "initialDataSource": "ds:programs"
+      },
+      "executable": false
+    },
+    {
+      "phase": "databases",
+      "method": "POST",
+      "endpoint": "/v1/databases",
+      "body": {
+        "parent": {
+          "type": "page_id",
+          "page_id": {
+            "logicalRef": "page:root",
+            "resolution": "after_creation"
+          }
+        },
+        "title": [
+          {
+            "type": "text",
+            "text": {
+              "content": "신청·참가 기록"
+            }
+          }
+        ],
+        "initial_data_source": {
+          "properties": {
+            "이름": {
+              "title": {}
+            }
+          }
+        }
+      },
+      "bind": {
+        "database": "db:applications",
+        "initialDataSource": "ds:applications"
+      },
+      "executable": false
+    },
+    {
+      "phase": "databases",
+      "method": "POST",
+      "endpoint": "/v1/databases",
+      "body": {
+        "parent": {
+          "type": "page_id",
+          "page_id": {
+            "logicalRef": "page:root",
+            "resolution": "after_creation"
+          }
+        },
+        "title": [
+          {
+            "type": "text",
+            "text": {
+              "content": "참여·수강"
+            }
+          }
+        ],
+        "initial_data_source": {
+          "properties": {
+            "이름": {
+              "title": {}
+            }
+          }
+        }
+      },
+      "bind": {
+        "database": "db:enrollments",
+        "initialDataSource": "ds:enrollments"
+      },
+      "executable": false
+    },
+    {
+      "phase": "databases",
+      "method": "POST",
+      "endpoint": "/v1/databases",
+      "body": {
+        "parent": {
+          "type": "page_id",
+          "page_id": {
+            "logicalRef": "page:root",
+            "resolution": "after_creation"
+          }
+        },
+        "title": [
+          {
+            "type": "text",
+            "text": {
+              "content": "출석기록"
+            }
+          }
+        ],
+        "initial_data_source": {
+          "properties": {
+            "이름": {
+              "title": {}
+            }
+          }
+        }
+      },
+      "bind": {
+        "database": "db:attendance",
+        "initialDataSource": "ds:attendance"
+      },
+      "executable": false
+    },
+    {
+      "phase": "databases",
+      "method": "POST",
+      "endpoint": "/v1/databases",
+      "body": {
+        "parent": {
+          "type": "page_id",
+          "page_id": {
+            "logicalRef": "page:root",
+            "resolution": "after_creation"
+          }
+        },
+        "title": [
+          {
+            "type": "text",
+            "text": {
+              "content": "팀"
+            }
+          }
+        ],
+        "initial_data_source": {
+          "properties": {
+            "이름": {
+              "title": {}
+            }
+          }
+        }
+      },
+      "bind": {
+        "database": "db:teams",
+        "initialDataSource": "ds:teams"
+      },
+      "executable": false
+    },
+    {
+      "phase": "properties",
+      "method": "PATCH",
+      "endpoint": "/v1/data_sources/{data_source_id}",
+      "data_source_id": {
+        "logicalRef": "ds:applications",
+        "resolution": "after_creation"
+      },
+      "body": {
+        "properties": {
+          "선정 상태": {
+            "select": {
+              "options": [
+                {
+                  "name": "접수",
+                  "color": "blue"
+                },
+                {
+                  "name": "선정",
+                  "color": "green"
+                },
+                {
+                  "name": "대기",
+                  "color": "yellow"
+                },
+                {
+                  "name": "미선정",
+                  "color": "gray"
+                },
+                {
+                  "name": "취소",
+                  "color": "red"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "executable": false
+    },
+    {
+      "phase": "properties",
+      "method": "PATCH",
+      "endpoint": "/v1/data_sources/{data_source_id}",
+      "data_source_id": {
+        "logicalRef": "ds:programs",
+        "resolution": "after_creation"
+      },
+      "body": {
+        "properties": {
+          "교육 진행 상태": {
+            "status": {
+              "options": [
+                {
+                  "name": "예정",
+                  "color": "gray",
+                  "group": "To-do"
+                },
+                {
+                  "name": "진행 중",
+                  "color": "blue",
+                  "group": "In progress"
+                },
+                {
+                  "name": "완료",
+                  "color": "green",
+                  "group": "Complete"
+                },
+                {
+                  "name": "취소",
+                  "color": "red",
+                  "group": "Complete"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "executable": false
+    },
+    {
+      "phase": "properties",
+      "method": "PATCH",
+      "endpoint": "/v1/data_sources/{data_source_id}",
+      "data_source_id": {
+        "logicalRef": "ds:people",
+        "resolution": "after_creation"
+      },
+      "body": {
+        "properties": {
+          "이메일": {
+            "email": {}
+          }
+        }
+      },
+      "executable": false
+    },
+    {
+      "phase": "properties",
+      "method": "PATCH",
+      "endpoint": "/v1/data_sources/{data_source_id}",
+      "data_source_id": {
+        "logicalRef": "ds:applications",
+        "resolution": "after_creation"
+      },
+      "body": {
+        "properties": {
+          "신청 동기": {
+            "rich_text": {}
+          }
+        }
+      },
+      "executable": false
+    },
+    {
+      "phase": "properties",
+      "method": "PATCH",
+      "endpoint": "/v1/data_sources/{data_source_id}",
+      "data_source_id": {
+        "logicalRef": "ds:programs",
+        "resolution": "after_creation"
+      },
+      "body": {
+        "properties": {
+          "운영 유형": {
+            "select": {
+              "options": [
+                {
+                  "name": "일반 교육",
+                  "color": "blue"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "executable": false
+    },
+    {
+      "phase": "properties",
+      "method": "PATCH",
+      "endpoint": "/v1/data_sources/{data_source_id}",
+      "data_source_id": {
+        "logicalRef": "ds:enrollments",
+        "resolution": "after_creation"
+      },
+      "body": {
+        "properties": {
+          "참여 상태": {
+            "select": {
+              "options": [
+                {
+                  "name": "예정",
+                  "color": "gray"
+                },
+                {
+                  "name": "참여 중",
+                  "color": "blue"
+                },
+                {
+                  "name": "완료",
+                  "color": "green"
+                },
+                {
+                  "name": "취소",
+                  "color": "red"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "executable": false
+    },
+    {
+      "phase": "properties",
+      "method": "PATCH",
+      "endpoint": "/v1/data_sources/{data_source_id}",
+      "data_source_id": {
+        "logicalRef": "ds:attendance",
+        "resolution": "after_creation"
+      },
+      "body": {
+        "properties": {
+          "출석 일자": {
+            "date": {}
+          }
+        }
+      },
+      "executable": false
+    },
+    {
+      "phase": "properties",
+      "method": "PATCH",
+      "endpoint": "/v1/data_sources/{data_source_id}",
+      "data_source_id": {
+        "logicalRef": "ds:attendance",
+        "resolution": "after_creation"
+      },
+      "body": {
+        "properties": {
+          "출석 상태": {
+            "select": {
+              "options": [
+                {
+                  "name": "출석",
+                  "color": "green"
+                },
+                {
+                  "name": "결석",
+                  "color": "red"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "executable": false
+    },
+    {
+      "phase": "properties",
+      "method": "PATCH",
+      "endpoint": "/v1/data_sources/{data_source_id}",
+      "data_source_id": {
+        "logicalRef": "ds:teams",
+        "resolution": "after_creation"
+      },
+      "body": {
+        "properties": {
+          "팀 상태": {
+            "select": {
+              "options": [
+                {
+                  "name": "구성 중",
+                  "color": "yellow"
+                },
+                {
+                  "name": "활동 중",
+                  "color": "blue"
+                },
+                {
+                  "name": "종료",
+                  "color": "gray"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "executable": false
+    },
+    {
+      "phase": "relations",
+      "method": "PATCH",
+      "endpoint": "/v1/data_sources/{data_source_id}",
+      "data_source_id": {
+        "logicalRef": "ds:applications",
+        "resolution": "after_creation"
+      },
+      "body": {
+        "properties": {
+          "사람": {
+            "relation": {
+              "data_source_id": {
+                "logicalRef": "ds:people",
+                "resolution": "after_creation"
+              },
+              "type": "dual_property",
+              "dual_property": {}
+            }
+          }
+        }
+      },
+      "executable": false,
+      "bindReverseProperty": "ds:people:relation:applications:people:사람:reverse",
+      "afterCreation": {
+        "retrieveBothDataSources": true,
+        "renameGeneratedReverseTo": "신청기록",
+        "verifyPair": true
+      }
+    },
+    {
+      "phase": "relations",
+      "method": "PATCH",
+      "endpoint": "/v1/data_sources/{data_source_id}",
+      "data_source_id": {
+        "logicalRef": "ds:applications",
+        "resolution": "after_creation"
+      },
+      "body": {
+        "properties": {
+          "프로그램": {
+            "relation": {
+              "data_source_id": {
+                "logicalRef": "ds:programs",
+                "resolution": "after_creation"
+              },
+              "type": "dual_property",
+              "dual_property": {}
+            }
+          }
+        }
+      },
+      "executable": false,
+      "bindReverseProperty": "ds:programs:relation:applications:programs:프로그램:reverse",
+      "afterCreation": {
+        "retrieveBothDataSources": true,
+        "renameGeneratedReverseTo": "신청기록",
+        "verifyPair": true
+      }
+    },
+    {
+      "phase": "relations",
+      "method": "PATCH",
+      "endpoint": "/v1/data_sources/{data_source_id}",
+      "data_source_id": {
+        "logicalRef": "ds:enrollments",
+        "resolution": "after_creation"
+      },
+      "body": {
+        "properties": {
+          "사람": {
+            "relation": {
+              "data_source_id": {
+                "logicalRef": "ds:people",
+                "resolution": "after_creation"
+              },
+              "type": "dual_property",
+              "dual_property": {}
+            }
+          }
+        }
+      },
+      "executable": false,
+      "bindReverseProperty": "ds:people:relation:enrollments:people:사람:reverse",
+      "afterCreation": {
+        "retrieveBothDataSources": true,
+        "renameGeneratedReverseTo": "참여기록",
+        "verifyPair": true
+      }
+    },
+    {
+      "phase": "relations",
+      "method": "PATCH",
+      "endpoint": "/v1/data_sources/{data_source_id}",
+      "data_source_id": {
+        "logicalRef": "ds:enrollments",
+        "resolution": "after_creation"
+      },
+      "body": {
+        "properties": {
+          "프로그램": {
+            "relation": {
+              "data_source_id": {
+                "logicalRef": "ds:programs",
+                "resolution": "after_creation"
+              },
+              "type": "dual_property",
+              "dual_property": {}
+            }
+          }
+        }
+      },
+      "executable": false,
+      "bindReverseProperty": "ds:programs:relation:enrollments:programs:프로그램:reverse",
+      "afterCreation": {
+        "retrieveBothDataSources": true,
+        "renameGeneratedReverseTo": "참여기록",
+        "verifyPair": true
+      }
+    },
+    {
+      "phase": "relations",
+      "method": "PATCH",
+      "endpoint": "/v1/data_sources/{data_source_id}",
+      "data_source_id": {
+        "logicalRef": "ds:enrollments",
+        "resolution": "after_creation"
+      },
+      "body": {
+        "properties": {
+          "신청기록": {
+            "relation": {
+              "data_source_id": {
+                "logicalRef": "ds:applications",
+                "resolution": "after_creation"
+              },
+              "type": "dual_property",
+              "dual_property": {}
+            }
+          }
+        }
+      },
+      "executable": false,
+      "bindReverseProperty": "ds:applications:relation:enrollments:applications:신청기록:reverse",
+      "afterCreation": {
+        "retrieveBothDataSources": true,
+        "renameGeneratedReverseTo": "참여기록",
+        "verifyPair": true
+      }
+    },
+    {
+      "phase": "relations",
+      "method": "PATCH",
+      "endpoint": "/v1/data_sources/{data_source_id}",
+      "data_source_id": {
+        "logicalRef": "ds:attendance",
+        "resolution": "after_creation"
+      },
+      "body": {
+        "properties": {
+          "참여기록": {
+            "relation": {
+              "data_source_id": {
+                "logicalRef": "ds:enrollments",
+                "resolution": "after_creation"
+              },
+              "type": "dual_property",
+              "dual_property": {}
+            }
+          }
+        }
+      },
+      "executable": false,
+      "bindReverseProperty": "ds:enrollments:relation:attendance:enrollments:참여기록:reverse",
+      "afterCreation": {
+        "retrieveBothDataSources": true,
+        "renameGeneratedReverseTo": "출석기록",
+        "verifyPair": true
+      }
+    },
+    {
+      "phase": "relations",
+      "method": "PATCH",
+      "endpoint": "/v1/data_sources/{data_source_id}",
+      "data_source_id": {
+        "logicalRef": "ds:attendance",
+        "resolution": "after_creation"
+      },
+      "body": {
+        "properties": {
+          "프로그램": {
+            "relation": {
+              "data_source_id": {
+                "logicalRef": "ds:programs",
+                "resolution": "after_creation"
+              },
+              "type": "dual_property",
+              "dual_property": {}
+            }
+          }
+        }
+      },
+      "executable": false,
+      "bindReverseProperty": "ds:programs:relation:attendance:programs:프로그램:reverse",
+      "afterCreation": {
+        "retrieveBothDataSources": true,
+        "renameGeneratedReverseTo": "출석기록",
+        "verifyPair": true
+      }
+    },
+    {
+      "phase": "relations",
+      "method": "PATCH",
+      "endpoint": "/v1/data_sources/{data_source_id}",
+      "data_source_id": {
+        "logicalRef": "ds:enrollments",
+        "resolution": "after_creation"
+      },
+      "body": {
+        "properties": {
+          "팀": {
+            "relation": {
+              "data_source_id": {
+                "logicalRef": "ds:teams",
+                "resolution": "after_creation"
+              },
+              "type": "dual_property",
+              "dual_property": {}
+            }
+          }
+        }
+      },
+      "executable": false,
+      "bindReverseProperty": "ds:teams:relation:enrollments:teams:팀:reverse",
+      "afterCreation": {
+        "retrieveBothDataSources": true,
+        "renameGeneratedReverseTo": "참여기록",
+        "verifyPair": true
+      }
+    },
+    {
+      "phase": "rollups",
+      "method": "PATCH",
+      "endpoint": "/v1/data_sources/{data_source_id}",
+      "data_source_id": {
+        "logicalRef": "ds:programs",
+        "resolution": "after_creation"
+      },
+      "body": {
+        "properties": {
+          "신청 건수": {
+            "rollup": {
+              "relation_property_id": {
+                "logicalRef": "ds:programs:relation:applications:programs:프로그램:reverse",
+                "resolution": "after_creation"
+              },
+              "rollup_property_id": {
+                "logicalRef": "ds:applications:title",
+                "resolution": "after_creation"
+              },
+              "function": "count_all"
+            }
+          }
+        }
+      },
+      "executable": false
+    },
+    {
+      "phase": "rollups",
+      "method": "PATCH",
+      "endpoint": "/v1/data_sources/{data_source_id}",
+      "data_source_id": {
+        "logicalRef": "ds:enrollments",
+        "resolution": "after_creation"
+      },
+      "body": {
+        "properties": {
+          "출석기록 수": {
+            "rollup": {
+              "relation_property_id": {
+                "logicalRef": "ds:enrollments:relation:attendance:enrollments:참여기록:reverse",
+                "resolution": "after_creation"
+              },
+              "rollup_property_id": {
+                "logicalRef": "ds:attendance:title",
+                "resolution": "after_creation"
+              },
+              "function": "count_all"
+            }
+          }
+        }
+      },
+      "executable": false
+    },
+    {
+      "phase": "formulas",
+      "method": "PATCH",
+      "endpoint": "/v1/data_sources/{data_source_id}",
+      "data_source_id": {
+        "logicalRef": "ds:people",
+        "resolution": "after_creation"
+      },
+      "body": {
+        "properties": {
+          "신청 건수": {
+            "formula": {
+              "expression": "prop(\"신청기록\").length()"
+            }
+          }
+        }
+      },
+      "executable": false
+    },
+    {
+      "phase": "formulas",
+      "method": "PATCH",
+      "endpoint": "/v1/data_sources/{data_source_id}",
+      "data_source_id": {
+        "logicalRef": "ds:attendance",
+        "resolution": "after_creation"
+      },
+      "body": {
+        "properties": {
+          "출석 인정 값": {
+            "formula": {
+              "expression": "if(prop(\"출석 상태\") == \"출석\", 1, 0)"
+            }
+          }
+        }
+      },
+      "executable": false
+    },
+    {
+      "phase": "formulas",
+      "method": "PATCH",
+      "endpoint": "/v1/data_sources/{data_source_id}",
+      "data_source_id": {
+        "logicalRef": "ds:teams",
+        "resolution": "after_creation"
+      },
+      "body": {
+        "properties": {
+          "팀 참여기록 수": {
+            "formula": {
+              "expression": "prop(\"참여기록\").length()"
+            }
+          }
+        }
+      },
+      "executable": false
+    },
+    {
+      "phase": "verify",
+      "method": "GET",
+      "endpoint": "/v1/data_sources/{data_source_id}",
+      "data_source_id": {
+        "logicalRef": "ds:people",
+        "resolution": "after_creation"
+      },
+      "verify": [
+        "names",
+        "types",
+        "remote_ids",
+        "relation_pairs",
+        "options_colors_groups",
+        "calculation_definitions"
+      ],
+      "rowValues": "not_evaluated_without_rows",
+      "executable": false
+    },
+    {
+      "phase": "verify",
+      "method": "GET",
+      "endpoint": "/v1/data_sources/{data_source_id}",
+      "data_source_id": {
+        "logicalRef": "ds:programs",
+        "resolution": "after_creation"
+      },
+      "verify": [
+        "names",
+        "types",
+        "remote_ids",
+        "relation_pairs",
+        "options_colors_groups",
+        "calculation_definitions"
+      ],
+      "rowValues": "not_evaluated_without_rows",
+      "executable": false
+    },
+    {
+      "phase": "verify",
+      "method": "GET",
+      "endpoint": "/v1/data_sources/{data_source_id}",
+      "data_source_id": {
+        "logicalRef": "ds:applications",
+        "resolution": "after_creation"
+      },
+      "verify": [
+        "names",
+        "types",
+        "remote_ids",
+        "relation_pairs",
+        "options_colors_groups",
+        "calculation_definitions"
+      ],
+      "rowValues": "not_evaluated_without_rows",
+      "executable": false
+    },
+    {
+      "phase": "verify",
+      "method": "GET",
+      "endpoint": "/v1/data_sources/{data_source_id}",
+      "data_source_id": {
+        "logicalRef": "ds:enrollments",
+        "resolution": "after_creation"
+      },
+      "verify": [
+        "names",
+        "types",
+        "remote_ids",
+        "relation_pairs",
+        "options_colors_groups",
+        "calculation_definitions"
+      ],
+      "rowValues": "not_evaluated_without_rows",
+      "executable": false
+    },
+    {
+      "phase": "verify",
+      "method": "GET",
+      "endpoint": "/v1/data_sources/{data_source_id}",
+      "data_source_id": {
+        "logicalRef": "ds:attendance",
+        "resolution": "after_creation"
+      },
+      "verify": [
+        "names",
+        "types",
+        "remote_ids",
+        "relation_pairs",
+        "options_colors_groups",
+        "calculation_definitions"
+      ],
+      "rowValues": "not_evaluated_without_rows",
+      "executable": false
+    },
+    {
+      "phase": "verify",
+      "method": "GET",
+      "endpoint": "/v1/data_sources/{data_source_id}",
+      "data_source_id": {
+        "logicalRef": "ds:teams",
+        "resolution": "after_creation"
+      },
+      "verify": [
+        "names",
+        "types",
+        "remote_ids",
+        "relation_pairs",
+        "options_colors_groups",
+        "calculation_definitions"
+      ],
+      "rowValues": "not_evaluated_without_rows",
+      "executable": false
+    }
+  ]
+}

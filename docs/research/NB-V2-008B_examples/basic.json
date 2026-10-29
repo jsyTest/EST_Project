@@ -1,0 +1,676 @@
+{
+  "planVersion": 1,
+  "planId": "plan-d670b8bb1e14326f",
+  "mode": "dry-run",
+  "notionApiVersion": "2026-03-11",
+  "networkRequests": 0,
+  "notionWrites": 0,
+  "liveApiVerified": false,
+  "futureExecutorReady": false,
+  "educationType": "education",
+  "templateType": "basic",
+  "enabledModules": [],
+  "requestedModules": [],
+  "databases": [
+    {
+      "id": "db:applications",
+      "key": "applications",
+      "name": "신청·참가 기록",
+      "dataSourceId": "ds:applications",
+      "support": "automatic"
+    }
+  ],
+  "dataSources": [
+    {
+      "id": "ds:applications",
+      "databaseId": "db:applications",
+      "support": "automatic"
+    }
+  ],
+  "properties": [
+    {
+      "id": "ds:applications:field:base-selection",
+      "dataSourceId": "ds:applications",
+      "name": "선정 상태",
+      "type": "select",
+      "sourceRefs": [
+        {
+          "localId": "base-selection",
+          "origin": "base",
+          "questionNumber": "",
+          "questionName": "",
+          "csvColumn": null,
+          "originalTargetDb": "applications"
+        }
+      ],
+      "origin": "mapped",
+      "support": "automatic"
+    },
+    {
+      "id": "ds:applications:field:form-0",
+      "dataSourceId": "ds:applications",
+      "name": "성명",
+      "type": "title",
+      "sourceRefs": [
+        {
+          "localId": "form-0",
+          "origin": "form",
+          "questionNumber": "1",
+          "questionName": "성명",
+          "csvColumn": {
+            "index": 0,
+            "original": "성명"
+          },
+          "originalTargetDb": "applicants"
+        }
+      ],
+      "origin": "mapped",
+      "support": "automatic"
+    },
+    {
+      "id": "ds:applications:field:form-1",
+      "dataSourceId": "ds:applications",
+      "name": "이메일",
+      "type": "email",
+      "sourceRefs": [
+        {
+          "localId": "form-1",
+          "origin": "form",
+          "questionNumber": "2",
+          "questionName": "이메일",
+          "csvColumn": {
+            "index": 1,
+            "original": "이메일"
+          },
+          "originalTargetDb": "applicants"
+        }
+      ],
+      "origin": "mapped",
+      "support": "automatic"
+    },
+    {
+      "id": "ds:applications:field:form-2",
+      "dataSourceId": "ds:applications",
+      "name": "신청 동기",
+      "type": "rich_text",
+      "sourceRefs": [
+        {
+          "localId": "form-2",
+          "origin": "form",
+          "questionNumber": "3",
+          "questionName": "신청 동기",
+          "csvColumn": {
+            "index": 2,
+            "original": "신청 동기"
+          },
+          "originalTargetDb": "applications"
+        }
+      ],
+      "origin": "mapped",
+      "support": "automatic"
+    }
+  ],
+  "relations": [],
+  "rollups": [],
+  "formulas": [],
+  "selectOptions": [
+    {
+      "propertyId": "ds:applications:field:base-selection",
+      "options": [
+        {
+          "name": "접수",
+          "color": "blue"
+        },
+        {
+          "name": "선정",
+          "color": "green"
+        },
+        {
+          "name": "대기",
+          "color": "yellow"
+        },
+        {
+          "name": "미선정",
+          "color": "gray"
+        },
+        {
+          "name": "취소",
+          "color": "red"
+        }
+      ],
+      "support": "automatic"
+    }
+  ],
+  "statusOptions": [],
+  "warnings": [
+    {
+      "code": "OPTIONAL_BASE_OMITTED",
+      "message": "수료 상태: 선택한 구성에 필요하지 않은 기본 속성은 추가하지 않았습니다.",
+      "ref": "base-completion"
+    },
+    {
+      "code": "OPTIONAL_BASE_OMITTED",
+      "message": "교육 진행 상태: 선택한 구성에 필요하지 않은 기본 속성은 추가하지 않았습니다.",
+      "ref": "base-progress"
+    }
+  ],
+  "blockingErrors": [],
+  "confirmationItems": [],
+  "executionPhases": [
+    {
+      "id": "parent",
+      "name": "상위 페이지",
+      "logicalIds": [
+        "page:root"
+      ],
+      "remoteParentId": null,
+      "dependsOn": []
+    },
+    {
+      "id": "databases",
+      "name": "DB 및 초기 Data Source",
+      "logicalIds": [
+        "db:applications"
+      ],
+      "dependsOn": [
+        "parent"
+      ]
+    },
+    {
+      "id": "properties",
+      "name": "기본 속성",
+      "logicalIds": [
+        "ds:applications:field:base-selection",
+        "ds:applications:field:form-0",
+        "ds:applications:field:form-1",
+        "ds:applications:field:form-2"
+      ],
+      "dependsOn": [
+        "databases"
+      ]
+    },
+    {
+      "id": "relations",
+      "name": "양방향 관계형",
+      "logicalIds": [],
+      "dependsOn": [
+        "properties"
+      ]
+    },
+    {
+      "id": "rollups",
+      "name": "Rollup",
+      "logicalIds": [],
+      "dependsOn": [
+        "relations"
+      ]
+    },
+    {
+      "id": "formulas",
+      "name": "Formula",
+      "logicalIds": [],
+      "dependsOn": [
+        "rollups"
+      ]
+    },
+    {
+      "id": "options",
+      "name": "상태·선택 옵션·색상 재조회 검증",
+      "logicalIds": [
+        "ds:applications:field:base-selection"
+      ],
+      "note": "옵션은 기본 속성 단계에서 생성하고 이 단계에서 반환값을 검사합니다.",
+      "dependsOn": [
+        "formulas"
+      ]
+    },
+    {
+      "id": "verify",
+      "name": "구조·참조·계산 검증",
+      "logicalIds": [
+        "ds:applications"
+      ],
+      "calculatedValues": "requires future rows; not evaluated",
+      "dependsOn": [
+        "options"
+      ]
+    }
+  ],
+  "capabilities": {
+    "automatic": [
+      "parent_page",
+      "database_and_initial_data_source",
+      "title",
+      "rich_text",
+      "email",
+      "phone_number",
+      "number",
+      "date",
+      "checkbox",
+      "select",
+      "multi_select"
+    ],
+    "api_verification_required": [
+      "relation",
+      "rollup",
+      "formula",
+      "status"
+    ],
+    "manual_ui": [
+      "status_group_definition_rename_reorder_color"
+    ],
+    "unsupported": [
+      "arbitrary_formula_expression",
+      "unknown_module",
+      "response_row_import",
+      "identity_deduplication",
+      "dashboard",
+      "remote_execution"
+    ]
+  },
+  "dataResolution": {
+    "rowsIncluded": false,
+    "identityDeduplication": "not_performed",
+    "relationRowLinking": "not_performed",
+    "calculatedValues": null
+  },
+  "recommendations": {
+    "templateType": "basic",
+    "reasons": [],
+    "forcedByHeaders": false
+  },
+  "normalizedInput": {
+    "configurationVersion": 1,
+    "educationType": "education",
+    "properties": [
+      {
+        "localId": "base-selection",
+        "origin": "base",
+        "name": "선정 상태",
+        "type": "select",
+        "targetDb": "applications",
+        "included": true,
+        "mappingStatus": "automatic",
+        "reviewReasons": [],
+        "options": [
+          {
+            "name": "접수",
+            "color": "blue"
+          },
+          {
+            "name": "선정",
+            "color": "green"
+          },
+          {
+            "name": "대기",
+            "color": "yellow"
+          },
+          {
+            "name": "미선정",
+            "color": "gray"
+          },
+          {
+            "name": "취소",
+            "color": "red"
+          }
+        ],
+        "source": {
+          "localId": "base-selection",
+          "origin": "base",
+          "questionNumber": "",
+          "questionName": "",
+          "csvColumn": null,
+          "originalTargetDb": "applications"
+        }
+      },
+      {
+        "localId": "base-completion",
+        "origin": "base",
+        "name": "수료 상태",
+        "type": "select",
+        "targetDb": "enrollments",
+        "included": true,
+        "mappingStatus": "automatic",
+        "reviewReasons": [],
+        "options": [
+          {
+            "name": "수료",
+            "color": "green"
+          },
+          {
+            "name": "미수료",
+            "color": "red"
+          },
+          {
+            "name": "수료 대기",
+            "color": "yellow"
+          }
+        ],
+        "source": {
+          "localId": "base-completion",
+          "origin": "base",
+          "questionNumber": "",
+          "questionName": "",
+          "csvColumn": null,
+          "originalTargetDb": "enrollments"
+        }
+      },
+      {
+        "localId": "base-progress",
+        "origin": "base",
+        "name": "교육 진행 상태",
+        "type": "status",
+        "targetDb": "courses",
+        "included": true,
+        "mappingStatus": "automatic",
+        "reviewReasons": [],
+        "options": [
+          {
+            "name": "예정",
+            "color": "gray",
+            "group": "To-do"
+          },
+          {
+            "name": "진행 중",
+            "color": "blue",
+            "group": "In progress"
+          },
+          {
+            "name": "완료",
+            "color": "green",
+            "group": "Complete"
+          },
+          {
+            "name": "취소",
+            "color": "red",
+            "group": "Complete"
+          }
+        ],
+        "source": {
+          "localId": "base-progress",
+          "origin": "base",
+          "questionNumber": "",
+          "questionName": "",
+          "csvColumn": null,
+          "originalTargetDb": "courses"
+        }
+      },
+      {
+        "localId": "form-0",
+        "origin": "form",
+        "name": "성명",
+        "type": "title",
+        "targetDb": "applicants",
+        "included": true,
+        "mappingStatus": "automatic",
+        "reviewReasons": [],
+        "options": [],
+        "source": {
+          "localId": "form-0",
+          "origin": "form",
+          "questionNumber": "1",
+          "questionName": "성명",
+          "csvColumn": {
+            "index": 0,
+            "original": "성명"
+          },
+          "originalTargetDb": "applicants"
+        }
+      },
+      {
+        "localId": "form-1",
+        "origin": "form",
+        "name": "이메일",
+        "type": "email",
+        "targetDb": "applicants",
+        "included": true,
+        "mappingStatus": "automatic",
+        "reviewReasons": [],
+        "options": [],
+        "source": {
+          "localId": "form-1",
+          "origin": "form",
+          "questionNumber": "2",
+          "questionName": "이메일",
+          "csvColumn": {
+            "index": 1,
+            "original": "이메일"
+          },
+          "originalTargetDb": "applicants"
+        }
+      },
+      {
+        "localId": "form-2",
+        "origin": "form",
+        "name": "신청 동기",
+        "type": "rich_text",
+        "targetDb": "applications",
+        "included": true,
+        "mappingStatus": "automatic",
+        "reviewReasons": [],
+        "options": [],
+        "source": {
+          "localId": "form-2",
+          "origin": "form",
+          "questionNumber": "3",
+          "questionName": "신청 동기",
+          "csvColumn": {
+            "index": 2,
+            "original": "신청 동기"
+          },
+          "originalTargetDb": "applications"
+        }
+      }
+    ],
+    "sourceCounts": {
+      "questions": 3,
+      "columns": 3
+    }
+  },
+  "unresolvedBindings": {
+    "parentPage": "page:root",
+    "databaseIds": [
+      "db:applications"
+    ],
+    "dataSourceIds": [
+      "ds:applications"
+    ],
+    "propertyIds": [
+      "ds:applications:field:base-selection",
+      "ds:applications:field:form-0",
+      "ds:applications:field:form-1",
+      "ds:applications:field:form-2"
+    ],
+    "resolved": false
+  },
+  "delta": {
+    "scope": "logical-plan-only",
+    "createDatabases": [
+      "db:applications"
+    ],
+    "reuseDatabases": [],
+    "addProperties": [
+      "ds:applications:field:base-selection",
+      "ds:applications:field:form-0",
+      "ds:applications:field:form-1",
+      "ds:applications:field:form-2"
+    ],
+    "changedProperties": [],
+    "removedLogicalIds": [],
+    "automaticDeletion": false
+  },
+  "summary": {
+    "databases": 1,
+    "properties": 4,
+    "relations": 0,
+    "rollups": 0,
+    "formulas": 0,
+    "automaticItems": 6,
+    "apiVerificationItems": 0,
+    "manualUiCapabilities": [
+      "Status 그룹 정의 변경"
+    ],
+    "confirmationItems": 0,
+    "blockingErrors": 0
+  },
+  "dryRunValid": true,
+  "executionState": "not_executed",
+  "requestTemplates": [
+    {
+      "phase": "parent",
+      "method": "POST",
+      "endpoint": "/v1/pages",
+      "body": {
+        "parent": {
+          "type": "page_id",
+          "page_id": {
+            "logicalRef": "external:parent_page_id",
+            "resolution": "after_creation"
+          }
+        },
+        "properties": {
+          "title": {
+            "type": "title",
+            "title": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "교육 운영"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "bind": "page:root",
+      "executable": false
+    },
+    {
+      "phase": "databases",
+      "method": "POST",
+      "endpoint": "/v1/databases",
+      "body": {
+        "parent": {
+          "type": "page_id",
+          "page_id": {
+            "logicalRef": "page:root",
+            "resolution": "after_creation"
+          }
+        },
+        "title": [
+          {
+            "type": "text",
+            "text": {
+              "content": "신청·참가 기록"
+            }
+          }
+        ],
+        "initial_data_source": {
+          "properties": {
+            "성명": {
+              "title": {}
+            }
+          }
+        }
+      },
+      "bind": {
+        "database": "db:applications",
+        "initialDataSource": "ds:applications"
+      },
+      "executable": false
+    },
+    {
+      "phase": "properties",
+      "method": "PATCH",
+      "endpoint": "/v1/data_sources/{data_source_id}",
+      "data_source_id": {
+        "logicalRef": "ds:applications",
+        "resolution": "after_creation"
+      },
+      "body": {
+        "properties": {
+          "선정 상태": {
+            "select": {
+              "options": [
+                {
+                  "name": "접수",
+                  "color": "blue"
+                },
+                {
+                  "name": "선정",
+                  "color": "green"
+                },
+                {
+                  "name": "대기",
+                  "color": "yellow"
+                },
+                {
+                  "name": "미선정",
+                  "color": "gray"
+                },
+                {
+                  "name": "취소",
+                  "color": "red"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "executable": false
+    },
+    {
+      "phase": "properties",
+      "method": "PATCH",
+      "endpoint": "/v1/data_sources/{data_source_id}",
+      "data_source_id": {
+        "logicalRef": "ds:applications",
+        "resolution": "after_creation"
+      },
+      "body": {
+        "properties": {
+          "이메일": {
+            "email": {}
+          }
+        }
+      },
+      "executable": false
+    },
+    {
+      "phase": "properties",
+      "method": "PATCH",
+      "endpoint": "/v1/data_sources/{data_source_id}",
+      "data_source_id": {
+        "logicalRef": "ds:applications",
+        "resolution": "after_creation"
+      },
+      "body": {
+        "properties": {
+          "신청 동기": {
+            "rich_text": {}
+          }
+        }
+      },
+      "executable": false
+    },
+    {
+      "phase": "verify",
+      "method": "GET",
+      "endpoint": "/v1/data_sources/{data_source_id}",
+      "data_source_id": {
+        "logicalRef": "ds:applications",
+        "resolution": "after_creation"
+      },
+      "verify": [
+        "names",
+        "types",
+        "remote_ids",
+        "relation_pairs",
+        "options_colors_groups",
+        "calculation_definitions"
+      ],
+      "rowValues": "not_evaluated_without_rows",
+      "executable": false
+    }
+  ]
+}

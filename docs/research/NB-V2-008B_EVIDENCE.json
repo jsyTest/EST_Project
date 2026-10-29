@@ -1,0 +1,158 @@
+{
+  "task": "NB-V2-008B",
+  "date_kst": "2026-10-30",
+  "status": "local_dry_run_implemented_not_deployed",
+  "git": {
+    "branch": "main",
+    "start_commit": "23085b0c2d293c8b0e8ade41b53b09210a8ddbed",
+    "end_commit": "23085b0c2d293c8b0e8ade41b53b09210a8ddbed",
+    "start_worktree": "clean",
+    "commit_push": false
+  },
+  "node": {
+    "passed": 200,
+    "failed": 0,
+    "skipped": 0,
+    "existing": 172,
+    "new": 28,
+    "v1_combinations": 256,
+    "module_selection_combinations": 128,
+    "command": "node --test --test-reporter=spec scripts/notion-poc/tests/*.test.mjs"
+  },
+  "browser": {
+    "actual_engine": "headless Google Chrome with isolated temporary profile",
+    "backend": "mock Auth and education_drafts",
+    "functional_checks": 25,
+    "viewport_checks": 5,
+    "widths": [
+      390,
+      768,
+      960,
+      1280,
+      1440
+    ],
+    "runtime_exceptions": 0,
+    "passed": true,
+    "actual_json_download_verified": true,
+    "source": "NB-V2-008B_browser/result.json"
+  },
+  "planner": {
+    "planVersion": 1,
+    "configuration_version_unchanged": 1,
+    "notion_version": "2026-03-11",
+    "existing_cli_version_changed": false,
+    "api_support_evidence": "official documentation only; no live API execution",
+    "module_ids": [
+      "participation",
+      "attendance",
+      "teams",
+      "projects",
+      "judging",
+      "completion",
+      "survey"
+    ],
+    "transient_ui_settings": [
+      "templateType",
+      "enabledModules",
+      "recommendation flags"
+    ],
+    "does_not_store_plan_in_supabase": true,
+    "examples": {
+      "basic": {
+        "planId": "plan-d670b8bb1e14326f",
+        "summary": {
+          "databases": 1,
+          "properties": 4,
+          "relations": 0,
+          "rollups": 0,
+          "formulas": 0,
+          "automaticItems": 6,
+          "apiVerificationItems": 0,
+          "manualUiCapabilities": [
+            "Status 그룹 정의 변경"
+          ],
+          "confirmationItems": 0,
+          "blockingErrors": 0
+        },
+        "liveApiVerified": false,
+        "executionState": "not_executed"
+      },
+      "standard": {
+        "planId": "plan-6e01d3acfc59098d",
+        "summary": {
+          "databases": 3,
+          "properties": 14,
+          "relations": 2,
+          "rollups": 1,
+          "formulas": 1,
+          "automaticItems": 11,
+          "apiVerificationItems": 7,
+          "manualUiCapabilities": [
+            "Status 그룹 정의 변경"
+          ],
+          "confirmationItems": 1,
+          "blockingErrors": 0
+        },
+        "liveApiVerified": false,
+        "executionState": "not_executed"
+      },
+      "extended": {
+        "planId": "plan-1066ce1800d317f8",
+        "summary": {
+          "databases": 6,
+          "properties": 36,
+          "relations": 8,
+          "rollups": 2,
+          "formulas": 3,
+          "automaticItems": 21,
+          "apiVerificationItems": 22,
+          "manualUiCapabilities": [
+            "Status 그룹 정의 변경"
+          ],
+          "confirmationItems": 2,
+          "blockingErrors": 0
+        },
+        "liveApiVerified": false,
+        "executionState": "not_executed"
+      }
+    }
+  },
+  "public_build": {
+    "files": 26,
+    "new_public_modules": [
+      "js/planner/catalog.mjs",
+      "js/planner/plan.mjs"
+    ],
+    "local_http_404": [
+      "scripts/notion-poc/cli.mjs",
+      "docs/research/NB-V2-008B_REPORT.md",
+      ".env"
+    ],
+    "production_verified": false
+  },
+  "remote": {
+    "notion_api_reads": 0,
+    "notion_writes": 0,
+    "supabase_reads": 0,
+    "supabase_changes": 0,
+    "vercel_deployments": 0,
+    "ai_requests": 0
+  },
+  "unverified": [
+    "Actual Notion creation, reverse-property rename, remote ID mapping, API schema results",
+    "Actual reuse/option merge on remote objects",
+    "Identity deduplication, row relation binding, live Rollup/Formula values",
+    "New UI with real Supabase Auth/data, real mobile/Safari, Production"
+  ],
+  "artifacts": [
+    "NB-V2-008B_REPORT.md",
+    "NB-V2-008B_CHATGPT_HANDOFF.md",
+    "NB-V2-008B_API_NOTES.md",
+    "NB-V2-008B_MODEL.md"
+  ],
+  "source_hashes": {
+    "js/planner/catalog.mjs": "2861de9899699d88be4b9db37e79bf195d6ea038e35c17a4b9d73bbbca410fe6",
+    "js/planner/plan.mjs": "fa2d468173c5f1c8e3aa803622efeda2be9f5a583c90d851d0769ed2b6cbf77b",
+    "scripts/generation-plan-dry-run.mjs": "e35be903af74a83072d6cde029874a41f786baea95154ba44fbf46c7c4623a18"
+  }
+}

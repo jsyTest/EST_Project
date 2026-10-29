@@ -1,0 +1,7 @@
+{
+  "templateType": "extended",
+  "enabledModules": [
+    "teams",
+    "attendance"
+  ]
+}
