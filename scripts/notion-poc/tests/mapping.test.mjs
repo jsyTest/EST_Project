@@ -14,7 +14,8 @@ import {makeFixture} from '../fixture.mjs';
 import {runPoc} from '../engine.mjs';
 import {RunStore} from '../state.mjs';
 import {FakeNotion,PARENT_ID} from './fake-notion.mjs';
-const model=()=>({version:1,properties:baseProperties()});
+// Color/schema tests use a real input field; operational defaults alone are not an input.
+const model=()=>({version:1,properties:[...baseProperties(),{localId:'manual-note',origin:'manual',name:'메모',type:'rich_text',targetDb:'applications',included:true,mappingStatus:'confirmed',options:[]}]});
 const csv=value=>readCsvHeader(new Blob([value]));
 
 test('selection/completion/progress templates assign recommended allowed colors',()=>{

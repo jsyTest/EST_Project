@@ -7,7 +7,7 @@
       name="description"
       content="교육 운영 요구사항을 바탕으로 노션 대시보드 설계 샘플을 확인하는 정적 프로토타입"
     >
-    <title>AI 노션 빌더 | 요구사항 입력</title>
+    <title>노션 설계 도우미 | 요구사항 입력</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/auth.css">
     <link rel="stylesheet" href="css/drafts.css">
@@ -23,7 +23,7 @@
     <noscript><p>서비스를 이용하려면 JavaScript를 활성화하고 로그인해 주세요.</p></noscript>
   </section>
     <header data-auth-content class="site-header">
-      <a class="brand" href="index.html" aria-label="AI 노션 빌더 요구사항 입력으로 이동">
+      <a class="brand" href="index.html" aria-label="노션 설계 도우미 요구사항 입력으로 이동">
         <span class="brand-logo-crop" aria-hidden="true">
           <img class="brand-logo" src="assets/logo_1.png" alt="">
         </span>
@@ -43,8 +43,8 @@
         <div class="scope-note">
           <strong>첫 번째 버전 안내</strong>
           <p>
-            실제 AI나 노션 계정에 연결하지 않습니다. 선택한 관리 항목에 맞춰 미리 준비된
-            Mock 설계 결과를 보여주는 정적 프로토타입입니다.
+            AI API를 사용하지 않습니다. 선택한 관리 항목에 맞춰 규칙 기반 샘플 설계안을
+            미리 보여주며, 실제 Notion DB를 생성하지 않습니다.
           </p>
         </div>
       </section>
@@ -157,7 +157,7 @@
 
           <p id="requirement-save-error" class="field-error" role="alert"></p>
           <button class="button button-primary button-large" type="submit">
-            AI 설계 생성
+            설계안 미리보기
             <span aria-hidden="true">→</span>
           </button>
         </form>
@@ -165,7 +165,7 @@
     </main>
 
     <footer data-auth-content class="site-footer">
-      <p>AI 노션 빌더 · 교육 설계는 브라우저에서 처리하며, 로그인은 Supabase Auth를 사용합니다.</p>
+      <p>노션 설계 도우미 · 교육 설계는 브라우저에서 처리하며, 로그인은 Supabase Auth를 사용합니다.</p>
     </footer>
 
     <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

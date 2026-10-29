@@ -285,7 +285,7 @@
   }
 
   function renderResult(design) {
-    document.title = `${design.requirements.educationName} 설계 결과 | AI 노션 빌더`;
+    document.title = `${design.requirements.educationName} 설계 결과 | 노션 설계 도우미`;
     document.getElementById("result-education-name").textContent = design.requirements.educationName;
     document.getElementById("result-summary").textContent =
       `${design.databases.length}개 데이터베이스와 ${design.formulas.length}개 예시 수식으로 구성된 교육별 독립 대시보드 설계 샘플입니다.`;

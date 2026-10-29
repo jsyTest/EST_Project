@@ -136,9 +136,12 @@ a {
 }
 
 .intro {
+  padding-top: 12px;
+}
+
+.input-page .intro {
   position: sticky;
   top: 50px;
-  padding-top: 12px;
 }
 
 .eyebrow,
@@ -978,7 +981,7 @@ fieldset .field-help {
     padding-top: 54px;
   }
 
-  .intro {
+  .input-page .intro {
     position: static;
   }
 

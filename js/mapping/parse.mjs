@@ -15,6 +15,14 @@ export function recommend(name) {
  const rule=RULES.find(r=>r[1].some(a=>nameKey(a)===nameKey(name)));
  return rule?{name:rule[0],type:rule[2],targetDb:rule[3],rule:rule[0]}:{name:normalizeName(name),type:'rich_text',targetDb:'applicants',rule:null};
 }
+// An empty form is optional for CSV-only input; a supplied but unrecognized form is not.
+export function formInputError(form) {
+ return form.rawText?.trim()&&!form.properties?.length
+  ? '폼에서 질문을 찾지 못했습니다. 질문을 “1. 질문명” 형식으로 확인해 주세요. CSV만 사용하려면 폼 입력을 비워 주세요.'
+  : '';
+}
+const TEXT_TYPE=/^(?:입력\s*유형\s*[:：]\s*)?(단답형|장문형|서술형|주관식)$/;
+const TYPE_LINE=/^(?:입력\s*유형\s*[:：]\s*)?(?:단답형|장문형|서술형|주관식|객관식(?:\s*\(.*\))?|복수\s*선택형?|다중\s*선택형?|단일\s*선택형?|체크박스|드롭다운)$/;
 export function parseForm(text) {
  if(text.length>100000)throw new Error('질문 텍스트는 100,000자 이내로 입력하세요.');
  const lines=text.replace(/\r\n?/g,'\n').split('\n'); const questions=[]; const unparsed=[]; let current;
@@ -29,31 +37,41 @@ export function parseForm(text) {
  }
  const properties=questions.map((q,index)=> {
   const rec=recommend(q.label); const all=q.raw.join('\n');
-  const multiple=/복수\s*선택|여러\s*개|다중\s*선택|체크박스/.test(all);
+  const textTypes=q.body.map(line=>line.match(TEXT_TYPE)?.[1]).filter(Boolean);
+  const inlineText=q.label.match(/(?:\/|\|)\s*(단답형|장문형|서술형|주관식)\s*$/)?.[1];
+  if(inlineText)textTypes.push(inlineText);
+  const explicitText=textTypes.length>0;
+  const longText=textTypes.some(type=>type!=='단답형');
+  const multiple=/복수\s*선택|여러\s*개|다중\s*선택|체크박스|객관식\s*\(복수\)/.test(all);
   const single=/단일\s*선택|하나만|한\s*개만|객관식\s*\(단일\)/.test(all);
-  const choice=multiple||single||/객관식|선택형|드롭다운/.test(all)||['select','multi_select'].includes(rec.type);
+  const choice=!explicitText&&(multiple||single||/객관식|선택형|드롭다운/.test(all)||['select','multi_select'].includes(rec.type));
   const options=[]; const unknown=[];
   for(const line of q.body) {
-   if(/^(?:\[?필수\]?|선택|단답형|장문형|주관식|객관식(?:\s*\(.*\))?|복수\s*선택|단일\s*선택|체크박스|드롭다운|답변을 입력해?\s*주세요[.!]?)$/.test(line))continue;
+   if(TYPE_LINE.test(line)||/^(?:\[?필수\]?|선택|답변을 입력해?\s*주세요[.!]?)$/.test(line))continue;
    const bullet=line.match(/^(?:[-•●○□☐✓✔]|\d+\))\s*(.+)$/);
-   if(bullet) options.push(bullet[1].trim());
+   if(bullet&&choice) options.push(bullet[1].trim());
    else if(choice&&!/[.!?。]$/.test(line)&&line.length<80&&!/안내|동의|문의|기간|필수|선택/.test(line))options.push(line);
    else unknown.push(line);
   }
   const reasons=[];
   if(!rec.rule)reasons.push('등록되지 않은 질문명');
+  if((explicitText&&(multiple||single))||(multiple&&single))reasons.push('입력 유형 표시가 서로 다름: 확인 필요');
   if(choice&&!multiple&&!single)reasons.push('단일/복수 선택 여부 확인');
   if(choice&&!options.length)reasons.push('선택지 확인 필요');
   if(unknown.length)reasons.push('해석하지 못한 본문 확인');
   if(new Set(options.map(nameKey)).size!==options.length)reasons.push('중복 선택지');
-  const type=choice?(multiple?'multi_select':'select'):rec.type;
-  return {localId:`form-${index}`,origin:'form',questionNumber:q.number,questionName:q.label,rawText:all,csvColumn:null,name:rec.name,type,targetDb:rec.targetDb,required:/\*|\[필수\]|\(필수\)/.test(q.label)||q.body.some(line=>/^(?:필수|\[필수\])$/.test(line))?true:null,cardinality:multiple?'multiple':single?'single':choice?'unknown':null,options:options.map((n,i)=>option(n,i)),included:true,mappingStatus:reasons.length?'review':'automatic',reviewReasons:reasons};
+  // Preserve useful title/email/phone aliases for short answers, never a choice alias.
+  const type=explicitText?(longText||!['title','email','phone_number'].includes(rec.type)?'rich_text':rec.type):choice?(multiple?'multi_select':'select'):rec.type;
+  return {localId:`form-${index}`,origin:'form',questionNumber:q.number,questionName:q.label,rawText:all,csvColumn:null,name:rec.name,type,targetDb:rec.targetDb,required:/\*|\[필수\]|\(필수\)/.test(q.label)||q.body.some(line=>/^(?:필수|\[필수\])$/.test(line))?true:null,cardinality:choice?(multiple?'multiple':single?'single':'unknown'):null,options:options.map((n,i)=>option(n,i)),included:true,mappingStatus:reasons.length?'review':'automatic',reviewReasons:reasons};
  });
  const numbers=questions.map(q=>q.number);
  if(new Set(numbers).size!==numbers.length)properties.forEach(p=>{p.mappingStatus='review';p.reviewReasons.push('질문 번호 중복 확인');});
- return {properties,rawText:text,unparsed,warnings:[...(unparsed.length?['질문 앞 안내문은 속성으로 만들지 않았습니다. 원문을 확인하세요.']:[]),...(!questions.length?['번호가 있는 질문을 찾지 못했습니다. 원문을 유지하고 속성을 직접 추가하세요.']:[])]};
+ return {properties,rawText:text,unparsed,warnings:[...(unparsed.length?['질문 앞 안내문은 속성으로 만들지 않았습니다. 원문을 확인하세요.']:[]),...(text.trim()&&!questions.length?['번호가 있는 질문을 찾지 못했습니다. 질문 번호와 원문을 확인하세요.']:[])]};
 }
 export function mergeSources(form,columns) {
+ const error=formInputError(form);
+ if(error)throw new Error(error);
+ if(!form.properties?.length&&!columns.length)throw new Error('분석할 질문이나 CSV 컬럼이 없습니다. 폼 질문 또는 CSV 파일을 입력해 주세요. 기본 운영 속성은 질문 수에 포함하지 않습니다.');
  const properties=structuredClone(form.properties??[]);const used=new Set();
  const columnKeys=columns.map(c=>nameKey(c.original));
  for(const p of properties) {

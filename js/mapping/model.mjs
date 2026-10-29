@@ -17,6 +17,7 @@ export function baseProperties() {
 export function validateModel(model) {
  const errors=[]; const warning=[]; const ids=new Set(); const names=new Set(); const titles=new Set(); const columns=new Set();
  if (model?.version!==1 || !Array.isArray(model.properties)) return {ok:false,errors:['지원하지 않는 속성 모델입니다.'],warnings:[]};
+ if(!model.properties.some(p=>p?.included&&p.origin!=='base'))errors.push('분석한 질문·CSV 속성 또는 직접 추가한 속성이 없습니다. 기본 운영 속성만으로는 미리보기를 만들 수 없습니다.');
  for(const p of model.properties) {
   if(!p || typeof p.localId!=='string' || ids.has(p.localId)) {errors.push('속성 식별자가 없거나 중복됩니다.');continue;} ids.add(p.localId);
   if(!p.included)continue;

@@ -1,0 +1,33 @@
+{
+  "task": "NB-V2-007A",
+  "dateKst": "2026-10-30",
+  "status": "four local fixes completed; not deployed",
+  "gitStart": {"branch":"main","head":"a322899b2519b9ea8afdd4a018ae6b961b27861a","clean":true},
+  "gitEnd": {"branch":"main","head":"a322899b2519b9ea8afdd4a018ae6b961b27861a","committedOrPushed":false,"changes":"8 product files, 1 existing test fixture, 1 new test file, 3 new task documents"},
+  "tests": {"command":"node --test --test-reporter=spec scripts/notion-poc/tests/*.test.mjs","existing":129,"added":14,"pass":143,"fail":0,"skipped":0,"v1CombinationsIncluded":256,"historicalSql13AndRealApi16Rerun":false},
+  "build": {"command":"node scripts/deployment/build-static.mjs","publicFileCount":24,"allowlistChanged":false,"localHttpHeadPublic200":24,"localHttpHead404":["scripts/notion-poc/cli.mjs","database/education-drafts.sql","docs/research/NB-V2-007_REPORT.md",".env","js/not-present.mjs"]},
+  "browser": {
+    "method":"native Chrome AX and screenshot observation; browser host unavailable",
+    "baseUrl":"http://127.0.0.1:8766",
+    "mappingWidthsCssPx":[390,768,960,1280,1440],
+    "overlap":"no repeated intro overlay in inspected property/Status regions",
+    "viewportHeights":"auto-fit varied; approximate observed CSS heights 387,516,552,774,860",
+    "overflow":"no new whole-page overflow visually observed in inspected default areas; no numeric scrollWidth audit",
+    "zeroQuestions":"unnumbered synthetic form reports analysis failure; preview reports defaults-only rejection",
+    "explicitTypes":"three synthetic questions show Text/Select/Multi-select",
+    "color":"pink edit confirmed in preview JSON and on page refresh",
+    "mixedFailure":"valid synthetic CSV plus unnumbered form reports form failure",
+    "csvOnly":"empty form, one header, three defaults; row confirmation enables preview",
+    "v1":"input -> preview result -> edit retains existing synthetic education title; updated action copy observed",
+    "auth":"existing authenticated local session, account/logout/save toolbar visible; no new login submit or logout",
+    "remoteSaveOrOpen":"not rerun; Node mock regression tests cover save/open/restoration",
+    "cloudWrites":false,
+    "cleanup":"verification tab closed; preexisting user tabs retained",
+    "persistentScreenshotsSaved":false
+  },
+  "storage": {"schemaVersion":1,"jsonSchemaChanged":false,"databaseSqlChanged":false,"draftModulesChanged":false},
+  "preservedUnchanged": ["js/auth-bootstrap.js","js/auth-core.js","js/auth.js","js/supabase-client.js","js/drafts","database/education-drafts.sql","js/mapping/csv.mjs","scripts/notion-poc product CLI/schema/formulas","scripts/deployment/build-static.mjs","vercel.json","assets/logo_1.png"],
+  "remoteChanges": {"supabase":false,"notion":false,"companyAccess":false,"vercelPreview":false,"vercelProduction":false,"productionReinspected":false},
+  "limitations":["physical mobile and Safari not tested","not every long-content or error layout tested","no remote login/mail/save/RLS or real Notion creation rerun","legacy PNG retains existing AI brand lettering","all unnumbered form formats are not supported"],
+  "deliverables":["docs/research/NB-V2-007A_REPORT.md","docs/research/NB-V2-007A_CHATGPT_HANDOFF.md","docs/research/NB-V2-007A_EVIDENCE.json"]
+}
