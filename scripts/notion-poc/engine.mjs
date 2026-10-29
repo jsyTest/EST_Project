@@ -5,12 +5,21 @@ import { makeFixture, validateFixture, expectedKpis } from './fixture.mjs';
 import { verifyEventually } from './verify.mjs';
 import { NotionError } from './client.mjs';
 import { validateSchemaRepairState, verifyRepairSkeleton } from './schema-repair.mjs';
+import { verifyOptionSchema } from '../../js/mapping/model.mjs';
 
 const richText = value => [{ type: 'text', text: { content: value } }];
 const title = value => ({ title: richText(value) });
 const text = value => ({ rich_text: richText(value) });
 const relation = ids => ({ relation: ids.map(id => ({ id })) });
 const fingerprint = (viewProfile = 'full') => createHash('sha256').update(JSON.stringify({ DATABASES, RELATIONS, CALCULATIONS, fixture: makeFixture(), API_VERSION, viewProfile })).digest('hex');
+// Completed NB-V2-002A runs predate explicit colors. Reuse their result without modifying them.
+const colorlessFingerprint = viewProfile => {
+  const databases = structuredClone(DATABASES);
+  for (const db of Object.values(databases)) for (const property of Object.values(db.properties)) {
+    for (const option of property.select?.options ?? []) delete option.color;
+  }
+  return createHash('sha256').update(JSON.stringify({ DATABASES: databases, RELATIONS, CALCULATIONS, fixture: makeFixture(), API_VERSION, viewProfile })).digest('hex');
+};
 
 export function dryRun(config, { viewProfile = 'full' } = {}) {
   validateViewProfile(viewProfile);
@@ -58,7 +67,8 @@ export async function runPoc({ config, runId, confirmParent, client, store, onPr
         state.schemaRepair = { startedAt: new Date().toISOString(), originalFingerprint: previous.fingerprint, originalFailure: structuredClone(previous.steps.at(-1)) };
         state.status = 'running';
       } else {
-        if (previous.runId !== runId || !sameId(previous.parentId, config.parentId) || previous.fingerprint !== fingerprint(viewProfile)) throw new Error('기존 실행의 대상 또는 코드가 다릅니다. 상태를 보존하고 별도 검토하세요.');
+        const legacyComplete = ['complete', 'partial'].includes(previous.status) && previous.fingerprint === colorlessFingerprint(viewProfile);
+        if (previous.runId !== runId || !sameId(previous.parentId, config.parentId) || (previous.fingerprint !== fingerprint(viewProfile) && !legacyComplete)) throw new Error('기존 실행의 대상 또는 코드가 다릅니다. 상태를 보존하고 별도 검토하세요.');
         if (['complete', 'partial'].includes(previous.status)) return { ...previous, reusedExistingRun: true };
         throw new Error('이 run-id에 미완료 실행이 있습니다. 중복 생성 방지를 위해 중단합니다. inspect/verify로 확인하세요.');
       }
@@ -121,6 +131,7 @@ export async function runPoc({ config, runId, confirmParent, client, store, onPr
           if (!property?.id || property.type !== Object.keys(definition)[0]) throw new Error(`초기 스키마 불일치: ${key}.${name}`);
           if (definition.select && JSON.stringify(property.select?.options?.map(o => o.name).sort()) !== JSON.stringify(definition.select.options.map(o => o.name).sort())) throw new Error(`초기 선택 옵션 불일치: ${key}.${name}`);
         }
+        verifyOptionSchema(schema.properties, initial.properties);
       });
     }
     for (const r of RELATIONS) {
@@ -156,6 +167,7 @@ export async function runPoc({ config, runId, confirmParent, client, store, onPr
           }
           if (definition.rollup && actual.rollup?.function !== definition.rollup.function) throw new Error(`롤업 집계 함수 재조회 불일치: ${key}.${name}`);
         }
+        verifyOptionSchema(expectedSchemas[key], schemas[key].properties);
       }
       state.schemaVerified = true;
       if (schemaRepair) {

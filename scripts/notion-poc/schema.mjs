@@ -1,7 +1,8 @@
 import { normalizeId } from './config.mjs';
+import { RECOMMENDED } from '../../js/mapping/model.mjs';
 
 const text = () => ({ rich_text: {} });
-const select = names => ({ select: { options: names.map(name => ({ name })) } });
+const select = names => ({ select: { options: names.map(name => ({ name, color: RECOMMENDED[name] ?? 'default' })) } });
 const formula = expression => ({ formula: { expression } });
 const rollup = (relation, property) => ({ rollup: { relation_property_name: relation, rollup_property_name: property, function: 'sum' } });
 
