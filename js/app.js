@@ -524,6 +524,15 @@
     return lines.join("\n");
   }
 
-  if (page === "input") initializeInputPage();
-  if (page === "result") initializeResultPage();
+  function initializePage() {
+    if (page === "input") initializeInputPage();
+    if (page === "result") initializeResultPage();
+    window.addEventListener?.("est-auth-cleared", function () { currentDesign = null; }, { once: true });
+  }
+
+  if (document.documentElement?.dataset.authRequired === "true") {
+    window.estAuth?.ready.then(function (authenticated) {
+      if (authenticated && document.documentElement.dataset.authState === "authenticated") initializePage();
+    });
+  } else initializePage();
 })();

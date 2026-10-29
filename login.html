@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ko" data-auth-page="true" data-auth-state="checking">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>로그인 | AI 노션 빌더</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/auth.css">
+  <script src="js/auth-bootstrap.js"></script>
+</head>
+<body>
+  <main class="auth-page">
+    <section class="auth-card" aria-labelledby="auth-title">
+      <div class="auth-brand">
+        <span class="brand-logo-crop" aria-hidden="true"><img class="brand-logo" src="assets/logo_1.png" alt=""></span>
+        <strong>AI 노션 빌더</strong>
+      </div>
+      <h1 id="auth-title">로그인</h1>
+      <p id="auth-description">이메일로 로그인하고 교육 운영 설계를 이어가세요.</p>
+      <p id="auth-message" class="auth-message" role="status" aria-live="polite" tabindex="-1">인증 연결을 확인하고 있습니다.</p>
+      <form id="auth-form" novalidate aria-busy="true">
+        <div class="field-group">
+          <label for="auth-email">이메일</label>
+          <input id="auth-email" name="email" type="email" autocomplete="username" maxlength="254" required disabled aria-describedby="auth-email-error">
+          <p id="auth-email-error" class="field-error"></p>
+        </div>
+        <div class="field-group">
+          <label for="auth-password">비밀번호</label>
+          <div class="password-field">
+            <input id="auth-password" name="password" type="password" autocomplete="current-password" required disabled aria-describedby="password-help auth-password-error">
+            <button class="password-toggle" type="button" data-password-toggle="auth-password" aria-label="비밀번호 표시" aria-pressed="false" disabled>표시</button>
+          </div>
+          <p id="password-help" class="field-help">비밀번호는 안전하게 인증 서버로 전송됩니다.</p>
+          <p id="auth-password-error" class="field-error"></p>
+        </div>
+        <div id="confirmation-field" class="field-group" hidden>
+          <label for="auth-confirmation">비밀번호 확인</label>
+          <div class="password-field">
+            <input id="auth-confirmation" name="confirmation" type="password" autocomplete="new-password" disabled aria-describedby="auth-confirmation-error">
+            <button class="password-toggle" type="button" data-password-toggle="auth-confirmation" aria-label="비밀번호 확인 표시" aria-pressed="false" disabled>표시</button>
+          </div>
+          <p id="auth-confirmation-error" class="field-error"></p>
+        </div>
+        <button id="auth-submit" class="button button-primary" type="submit" disabled>로그인</button>
+      </form>
+      <button id="auth-switch" class="button button-quiet auth-switch" type="button" disabled>처음이신가요? 회원가입</button>
+      <button id="auth-retry" class="button button-quiet" type="button" hidden>인증 연결 다시 확인</button>
+      <noscript><p>로그인하려면 JavaScript를 활성화해 주세요.</p></noscript>
+    </section>
+  </main>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="js/supabase-client.js"></script>
+  <script defer src="js/auth-core.js"></script>
+  <script defer src="js/auth.js"></script>
+</body>
+</html>

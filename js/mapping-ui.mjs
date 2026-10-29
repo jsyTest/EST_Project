@@ -1,12 +1,15 @@
 import {COLORS,TYPES,GROUPS,DATABASE_KEYS,baseProperties,option,validateModel,compileSchema} from './mapping/model.mjs';
 import {parseForm,mergeSources} from './mapping/parse.mjs';
 import {readCsvHeader} from './mapping/csv.mjs';
+async function initializeMappingPage() {
+if (document.documentElement.dataset.authRequired === 'true' && (!(await window.estAuth?.ready) || document.documentElement.dataset.authState !== 'authenticated')) return;
 const $=id=>document.getElementById(id);
 const dbNames={applicants:'신청자 DB',courses:'과정 DB',applications:'과정별 신청기록 DB',enrollments:'수강 DB',attendance:'출석기록 DB'};
 const typeNames={title:'제목',rich_text:'텍스트',phone_number:'전화번호',email:'이메일',number:'숫자',date:'날짜',checkbox:'체크박스',select:'단일 선택',multi_select:'복수 선택',status:'진행 상태 (Status)'};
 const colorNames={default:'기본',gray:'회색',brown:'갈색',orange:'주황',yellow:'노랑',green:'초록',blue:'파랑',purple:'보라',pink:'분홍',red:'빨강'};
 const swatches={default:'#ddd',gray:'#999',brown:'#a77954',orange:'#da8c43',yellow:'#d5b23b',green:'#509a6e',blue:'#4b8ec8',purple:'#946ac7',pink:'#cb77aa',red:'#cd6767'};
 let model={version:1,properties:baseProperties()},columns=[],sequence=0,compiled=null;
+window.addEventListener('est-auth-cleared',()=>{model={version:1,properties:[]};columns=[];compiled=null;},{once:true});
 function el(tag,text,cls){const n=document.createElement(tag);if(text!=null)n.textContent=text;if(cls)n.className=cls;return n;}
 function invalidate(){compiled=null;$('download-schema').disabled=true;$('schema-preview').textContent='편집 내용이 바뀌었습니다. 다시 검사해 주세요.';$('validation').replaceChildren();}
 function mark(p){p.mappingStatus='review';invalidate();}
@@ -55,3 +58,5 @@ function download(value,name){const url=URL.createObjectURL(new Blob([JSON.strin
 $('download-model').addEventListener('click',()=>download(model,'mapping-model.json'));
 $('download-schema').addEventListener('click',()=>{if(compiled)download(compiled,'notion-schema-dry-run.json');});
 render();
+}
+initializeMappingPage();
