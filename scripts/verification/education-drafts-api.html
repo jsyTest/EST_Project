@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>NB-V2-006 실계정 RLS 검증</title>
+<style>body{max-width:800px;margin:40px auto;padding:20px;font:16px/1.7 system-ui;background:#f8f7fc;color:#211a36}button{padding:12px 20px;background:#6654b3;color:white;border:0;border-radius:10px;cursor:pointer}li{overflow-wrap:anywhere}.error{color:#a42632}</style></head><body>
+<h1>NB-V2-006 실계정 RLS 검증</h1>
+<p>현재 로그인한 계정으로 지정된 가상 설계 두 개만 검사합니다. 비밀번호·토큰·설정 본문은 표시하거나 기록하지 않습니다. 삭제 요청은 하지 않습니다.</p>
+<button id="run">가상 설계 접근 검증 실행</button> <button id="logout">로그아웃 후 로그인 화면</button>
+<p id="status" role="status"></p><ul id="results"></ul><p id="own"></p>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/js/supabase-client.js"></script>
+<script type="module">
+import {emptyConfiguration,forSave} from '/js/drafts/model.mjs';
+const $=id=>document.getElementById(id),params=new URLSearchParams(location.search),uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+let own=params.get('own'),other=params.get('other'),busy=false;
+const label=params.get('label')==='A'?'A':'B';
+function pass(message){const li=document.createElement('li');li.textContent='PASS '+message;$('results').append(li);}
+function check(condition,label){if(!condition)throw {code:label};}
+$('logout').addEventListener('click',async()=>{if(busy)return;await window.supabaseClient.auth.signOut({scope:'local'});location.href='login.html';});
+$('run').addEventListener('click',async()=>{
+ if(busy)return;busy=true;$('run').disabled=true;$('logout').disabled=true;$('results').replaceChildren();$('status').textContent='검증 중…';
+ try{
+  check(uuid.test(other||'')&&(!own||uuid.test(own)),'invalid_test_ids');
+  const client=window.supabaseClient,session=await client.auth.getSession();check(!session.error&&session.data?.session?.user?.id,'login_required');
+  // Deliberately omit user_id filters: these requests test the actual server-side RLS.
+  let r=await client.from('education_drafts').select('id').eq('id',other);check(!r.error&&r.data.length===0,'foreign_read_or_same_account');pass('다른 계정 설계 UUID 조회: 0개');
+  if(!own){const c=emptyConfiguration();c.requirements.educationName='NB-V2-006 RLS '+label;
+   r=await client.from('education_drafts').insert(forSave(c)).select('id').single();check(!r.error&&r.data?.id,'own_insert');own=r.data.id;
+   params.set('own',own);history.replaceState(null,'',location.pathname+'?'+params.toString());pass('현재 계정 가상 설계 생성');
+  }else pass('기존 현재 계정 가상 설계 사용');
+  $('own').textContent='검증용 내 설계 ID: '+own;
+  r=await client.from('education_drafts').select('id').eq('id',own);check(!r.error&&r.data.length===1,'own_read');pass('내 설계 조회: 1개');
+  r=await client.from('education_drafts').update({title:label==='A'?'NB-V2-006 E2E':'NB-V2-006 RLS B'}).eq('id',own).select('id');check(!r.error&&r.data.length===1,'own_update');pass('내 설계 수정 허용');
+  r=await client.from('education_drafts').update({title:'NB006_FOREIGN_TAMPER'}).eq('id',other).select('id');check((r.error?.code==='42501')||(!r.error&&r.data.length===0),'foreign_update');pass('다른 계정 설계 UUID 수정: 차단');
+  const otherUser=session.data.session.user.id==='00000000-0000-4000-8000-000000000000'?'11111111-1111-4111-8111-111111111111':'00000000-0000-4000-8000-000000000000';
+  const c=emptyConfiguration();c.requirements.educationName='NB006_OWNER_FORGERY';
+  r=await client.from('education_drafts').insert({...forSave(c),user_id:otherUser});check(r.error?.code==='42501','owner_insert');pass('임의 소유자 지정 INSERT: 42501 차단');
+  r=await client.from('education_drafts').update({user_id:otherUser}).eq('id',own);check(r.error?.code==='42501','owner_update');pass('내 행 소유자 변경 UPDATE: 42501 차단');
+  r=await client.from('education_drafts').update({schema_version:0}).eq('id',own);check(r.error?.code==='23514','invalid_version');pass('미지원 schema_version: 23514 차단');
+  $('status').textContent='8/8 PASS — 계정 '+label+' 실제 Data API 검증 완료';
+ }catch(error){$('status').textContent='검증 중단: '+(typeof error.code==='string'?error.code:'network_error');$('status').className='error';}
+ finally{busy=false;$('logout').disabled=false;}
+});
+</script></body></html>

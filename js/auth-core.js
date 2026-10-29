@@ -42,7 +42,10 @@
   function syncDraftOwner(storage, userId) {
     const previous = storage.getItem(OWNER_KEY);
     const changed = previous !== (userId || null);
-    if (!userId || changed) storage.removeItem(DRAFT_KEY);
+    if (!userId || changed) {
+      storage.removeItem(DRAFT_KEY);
+      storage.removeItem('estEducationWorkspaceV1');
+    }
     if (userId) storage.setItem(OWNER_KEY, userId);
     else storage.removeItem(OWNER_KEY);
     return { changed: changed, previous: previous };

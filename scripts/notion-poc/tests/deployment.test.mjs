@@ -11,7 +11,7 @@ async function files(root,prefix=''){const list=[];for(const entry of await read
 test('deployment: public output excludes private/source files and removes stale artifacts on rebuild',async t=>{
  const root=await fixture(t);
  for(const file of ['.env','docs/internal.md','scripts/notion-poc/cli.mjs','public-dist/docs/stale.md']){await mkdir(dirname(join(root,file)),{recursive:true});await writeFile(join(root,file),'synthetic private content');}
- const result=await buildStatic(root);assert.equal(result.count,18);assert.deepEqual(await files(join(root,'public-dist')),[...PUBLIC_FILES].sort());
+ const result=await buildStatic(root);assert.equal(result.count,24);assert.deepEqual(await files(join(root,'public-dist')),[...PUBLIC_FILES].sort());
  assert.equal(await readFile(join(root,'public-dist/js/auth.js'),'utf8'),await readFile(join(repository,'js/auth.js'),'utf8'));
  const config=JSON.parse(await readFile(join(repository,'vercel.json'),'utf8'));assert.equal(config.outputDirectory,result.outputDirectory);assert.equal(config.buildCommand,'node scripts/deployment/build-static.mjs');
 });

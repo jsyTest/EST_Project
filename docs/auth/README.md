@@ -1,8 +1,10 @@
 # NB-V2-005 Supabase Auth 사용·설정 안내
 
-기준일: 2026-10-29. 기존 Supabase v2 CDN·Project URL·Publishable Key·단일 `window.supabaseClient`를 재사용한다. 로그인 기능이 추가되었으며 기존 연결 단계의 세션 비활성화 설정은 이번에 변경했다. Notion 웹 생성·업무 테이블·권한 역할·배포는 추가하지 않는다.
+기준일: 2026-10-29. 기존 Supabase v2 CDN·Project URL·Publishable Key·단일 `window.supabaseClient`를 재사용한다. 로그인 기능이 추가되었으며 기존 연결 단계의 세션 비활성화 설정은 이번에 변경했다. NB-V2-005 단계에서는 Notion 웹 생성·업무 테이블·권한 역할·배포를 추가하지 않았다.
 
-NB-V2-005A 최신 상태: 운영 Site URL과 Production/로컬 callback 2개는 승인 후 적용·재조회 완료했다. 현재 운영은 main/4bff220이며 기본 사용자 동선도 확인했다. 최신 결과는 [NB-V2-005A 보고서](../deployment/NB-V2-005A_REPORT.md)를 기준으로 한다. 아래 localhost 기록은 이전 확인 시점의 이력이다.
+NB-V2-005A 당시 상태: 운영 Site URL과 Production/로컬 callback 2개는 승인 후 적용·재조회 완료했다. 당시 운영은 main/4bff220이며 기본 사용자 동선도 확인했다. 최신 결과는 [NB-V2-005A 보고서](../deployment/NB-V2-005A_REPORT.md)를 기준으로 한다. 아래 localhost 기록은 이전 확인 시점의 이력이다.
+
+NB-V2-006 최신 상태: 운영 기준은 main/82aba7c다. 사용자 승인 후 education_drafts·소유권 RLS·최소 컬럼 권한을 적용했으며, 저장/복원 UI는 로컬 구현·운영 미반영이다. 실제 계정 저장·복원과 양방향 Data API 격리 검증을 완료했다. 새 캐시 estEducationWorkspaceV1도 로그아웃/계정 변경 시 정리한다. 요청별 데이터 클라이언트는 별도 Auth 세션을 만들지 않는다. [저장 기능 보고서](../storage/NB-V2-006_REPORT.md)를 참고한다.
 
 ## 화면과 이동
 
@@ -28,7 +30,7 @@ NB-V2-005A 최신 상태: 운영 Site URL과 Production/로컬 callback 2개는 
 - `css/auth.css`: 기존 공통 CSS 변수/로고/버튼에 맞춘 인증 카드·반응형 상단 계정 UI·초기 가림.
 - 기존 `js/app.js`, `js/mapping-ui.mjs`: 인증 ready를 기다리는 최소 연결과 로그아웃 시 메모리 입력 정리만 추가했다.
 
-스크립트 순서: 헤드 bootstrap → v2 CDN(defer) → 기존 client(defer) → core(defer) → auth UI(defer) → 기존 app/deferred module. 기존 앱이 먼저 저장된 입력을 표시하는 것을 막는다.
+스크립트 순서: 헤드 Auth bootstrap 및 저장 기능 bootstrap → v2 CDN(defer) → 기존 client(defer) → core(defer) → auth UI(defer) → 저장 기능 초기화를 기다리는 기존 app/deferred module. 기존 앱이 먼저 저장된 입력을 표시하는 것을 막는다.
 
 ## 입력·오류·세션
 
@@ -38,7 +40,7 @@ NB-V2-005A 최신 상태: 운영 Site URL과 Production/로컬 callback 2개는 
 
 `getSession()`으로 SDK 세션을 읽고 `onAuthStateChange`로 로그인/로그아웃/토큰 갱신을 반영한다. 구독은 하나만 등록하고 떠날 때 해제한다. BFCache 복원은 화면을 숨긴 상태로 다시 검사한다. 로그인/로그아웃과 늦은 초기 조회 결과가 경쟁하면 더 최신 인증 이벤트를 우선한다.
 
-현재 기기 로그아웃 성공 후 입력 세션 키 `aiNotionBuilderRequirements`와 소유자 키 `estAuthDraftOwner`를 지우고, 폼/CSV 메모리·메인 DOM·계정 표시를 지운 뒤 로그인으로 이동한다. 다른 기기의 전체 로그아웃을 요청하지 않는다. 실패하면 성공으로 표시하지 않는다. 계정이 바뀌어도 기존 입력을 지우고 페이지를 다시 연다. 이전 로그인 기능이 없던 시점의 소유자 없는 임시 입력은 첫 인증 확인에서 지운다. 같은 사용자로 새로고침/화면 이동할 때는 소유자가 일치하는 입력을 유지한다.
+현재 기기 로그아웃 성공 후 입력 세션 키 `aiNotionBuilderRequirements`·교육 편집 캐시 `estEducationWorkspaceV1`와 소유자 키 `estAuthDraftOwner`를 지우고, 폼/CSV 메모리·메인 DOM·계정 표시를 지운 뒤 로그인으로 이동한다. 다른 기기의 전체 로그아웃을 요청하지 않는다. 실패하면 성공으로 표시하지 않는다. 계정이 바뀌어도 기존 입력을 지우고 페이지를 다시 연다. 이전 로그인 기능이 없던 시점의 소유자 없는 임시 입력은 첫 인증 확인에서 지운다. 같은 사용자로 새로고침/화면 이동할 때는 소유자가 일치하는 입력을 유지한다.
 
 ## 실제 설정 확인 결과
 

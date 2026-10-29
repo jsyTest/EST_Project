@@ -1,0 +1,336 @@
+{
+  "task": "NB-V2-006",
+  "status": "implementation, approved remote schema, actual CRUD/editor restoration and bidirectional real-account RLS verified; frontend not deployed",
+  "gitStart": {
+    "branch": "main",
+    "head": "2432420f36368331228283dcb93000b2f90f89a8",
+    "preexistingUntracked": [
+      "docs/deployment/NB-V2-005B_CHATGPT_HANDOFF.md",
+      "docs/deployment/NB-V2-005B_EVIDENCE.json",
+      "docs/deployment/NB-V2-005B_REPORT.md"
+    ]
+  },
+  "externalHeadChange": {
+    "head": "82aba7ce0683f7dc9dae6be21e43b0c55853c921",
+    "onlyChanges": "three NB-V2-005B documents; preserved"
+  },
+  "production": {
+    "domain": "https://pplus-rouge.vercel.app",
+    "deploymentId": "dpl_4V6RzMtwuBGftuQjhQLoSFiBnVoF",
+    "url": "https://pplus-hpv9dp827-pplus1.vercel.app",
+    "state": "READY",
+    "sourceCommit": "82aba7ce0683f7dc9dae6be21e43b0c55853c921",
+    "feature006Deployed": false
+  },
+  "remoteInspection": {
+    "projectId": "pxkjxcryceqtjomgxyfe",
+    "publicTables": [],
+    "sameNamedTriggerFunctionCount": 0,
+    "broadDefaultGrantsObserved": true,
+    "apiSchemaSetting": "No remote setting change; table recognized by API and anonymous SELECT denied after apply",
+    "schemaApplied": true,
+    "rowsWritten": true,
+    "beforeDataApiProbe": {
+      "httpStatus": 404,
+      "code": "PGRST205",
+      "method": "read-only anonymous Data API GET; no rows requested",
+      "projectRef": "pxkjxcryceqtjomgxyfe"
+    },
+    "afterDataApiProbe": {
+      "httpStatus": 401,
+      "code": "42501",
+      "method": "read-only anonymous Data API GET; no rows requested",
+      "projectRef": "pxkjxcryceqtjomgxyfe"
+    },
+    "publicTablesAfter": [
+      "education_drafts"
+    ],
+    "migration": {
+      "name": "nb_v2_006_education_drafts",
+      "version": "20261029080237"
+    },
+    "knownAgentCreatedSyntheticRows": 2
+  },
+  "tests": {
+    "command": "node --test scripts/notion-poc/tests/*.test.mjs",
+    "pass": 129,
+    "fail": 0,
+    "skipped": 0,
+    "originalTests": 103,
+    "newTests": 26,
+    "v1ModuleCombinations": 256
+  },
+  "localSql": {
+    "engine": "PGlite 0.5.13 / embedded Postgres",
+    "pass": 13,
+    "command": "node scripts/verification/education-drafts-rls.mjs /tmp/nb-v2-006-pg/node_modules/@electric-sql/pglite/dist/index.js",
+    "remoteAuthAccountsUsed": false,
+    "remoteSqlApplied": false
+  },
+  "actualCdnSdkSmoke": {
+    "version": "2.118.0",
+    "accessTokenFixedHeader": true,
+    "mockFetchOnly": true,
+    "remoteNetworkRequests": 0
+  },
+  "realBrowser": {
+    "localAuthenticatedFlow": "verified actual save/update/list/open/new/refresh/mapping/color/custom-property restoration and V1 result",
+    "realSupabaseAB": "verified A-to-B 8/8 and B-to-A 8/8 actual Data API tests without client owner filters",
+    "mobile": "400 x 689 emulation panel layout checked; physical device unverified",
+    "logout": "product UI/other local tab cleared; account switch to B and back to A verified",
+    "finalState": "Account A signed in; synthetic NB-V2-006 E2E opened for review"
+  },
+  "remoteMutations": {
+    "schema": true,
+    "rows": true,
+    "authConfiguration": false,
+    "commitsByAgent": false,
+    "pushByAgent": false,
+    "vercelDeployByAgent": false
+  },
+  "verifiedAtKst": "2026-10-29T17:33:21+09:00",
+  "gitEnd": {
+    "branch": "main",
+    "head": "82aba7ce0683f7dc9dae6be21e43b0c55853c921",
+    "workingTree": "NB-V2-006 changes uncommitted"
+  },
+  "localBuild": {
+    "fileCount": 24,
+    "referenceCount": 59,
+    "missingReferences": 0,
+    "http": [
+      {
+        "path": "index.html",
+        "status": 200,
+        "matchesBuild": true,
+        "sha256": "03a4e89f88a50ab8686e3f65e0025421165b80e26fc2a4c0fda2a5f7c6e1e28e"
+      },
+      {
+        "path": "login.html",
+        "status": 200,
+        "matchesBuild": true,
+        "sha256": "ca4dbb9265ea3ba7a176b99bc8f5a19845af0133bd02f01345001b88afb9de02"
+      },
+      {
+        "path": "result.html",
+        "status": 200,
+        "matchesBuild": true,
+        "sha256": "06c495966f4fb9d0229c5ac6a9d44e9cc42b077c4942dc728918354fd3df21f4"
+      },
+      {
+        "path": "mapping.html",
+        "status": 200,
+        "matchesBuild": true,
+        "sha256": "383a256dec74775e5f6ac5390ef903e5a1dc94c3c7f5100c507f399b36a1f7cd"
+      },
+      {
+        "path": "css/style.css",
+        "status": 200,
+        "matchesBuild": true,
+        "sha256": "82d7b5054e7d7360b67f068cc033f9d487e6a9aa2be3858a1e8577cac1b6ca3b"
+      },
+      {
+        "path": "css/auth.css",
+        "status": 200,
+        "matchesBuild": true,
+        "sha256": "175daa3c21e6785f0381bc5b0de9c7b522c6eb7fd0be8d189278140829096be1"
+      },
+      {
+        "path": "css/mapping.css",
+        "status": 200,
+        "matchesBuild": true,
+        "sha256": "e28ae091e8ff8e5dfe2bd353dca53c58ef5eff3353813c622405ad213a5dc4bb"
+      },
+      {
+        "path": "css/drafts.css",
+        "status": 200,
+        "matchesBuild": true,
+        "sha256": "2ee8f0fc16cac5c9264e73440bdfee990928230bcbc03629be4a264e4311faa8"
+      },
+      {
+        "path": "js/app.js",
+        "status": 200,
+        "matchesBuild": true,
+        "sha256": "b27d3f338c70869fdd0826526faf7415cd422ec8d45c5a36697bd8d97fd60986"
+      },
+      {
+        "path": "js/mock-data.js",
+        "status": 200,
+        "matchesBuild": true,
+        "sha256": "184375fa93d9983db1b627e34bd047c59897cc96e22ec6b2e8435529470ed7cd"
+      },
+      {
+        "path": "js/supabase-client.js",
+        "status": 200,
+        "matchesBuild": true,
+        "sha256": "3a26f4152f39b173cdd801fbd9dbfb1af02960d39e90fec2e081af1037e387e8"
+      },
+      {
+        "path": "js/auth-bootstrap.js",
+        "status": 200,
+        "matchesBuild": true,
+        "sha256": "f5be50cebf87ab9b61e2f35d5aec3b47b5df25c4e835b508f5718661ff045741"
+      },
+      {
+        "path": "js/auth-core.js",
+        "status": 200,
+        "matchesBuild": true,
+        "sha256": "a2fce47835927f0fbb39c46bbdaf33a6528a799b271f1028772ad94d0ea335d8"
+      },
+      {
+        "path": "js/auth.js",
+        "status": 200,
+        "matchesBuild": true,
+        "sha256": "d75810bf493d01b7c302ea5559e35ff80fab4f33edf92a4289defd69012fb2d2"
+      },
+      {
+        "path": "js/mapping-ui.mjs",
+        "status": 200,
+        "matchesBuild": true,
+        "sha256": "83095aeab947d35cc46078e21c34d4be6a169a491a9dce60c03a3a41b701e1e9"
+      },
+      {
+        "path": "js/mapping/model.mjs",
+        "status": 200,
+        "matchesBuild": true,
+        "sha256": "2134702e5694d9e63ce28a97cc863f673e179f6fbbdbaa46043a8b97fb568b9d"
+      },
+      {
+        "path": "js/mapping/parse.mjs",
+        "status": 200,
+        "matchesBuild": true,
+        "sha256": "d501c29731a64f39b9dcb1ac94aac7b2d6c0d6ecda27ff59d84517c70e480de2"
+      },
+      {
+        "path": "js/mapping/csv.mjs",
+        "status": 200,
+        "matchesBuild": true,
+        "sha256": "f2928144577a695cb52e71d63864fcf2c550539370008a460fb584af6e66b0dc"
+      },
+      {
+        "path": "js/drafts-bootstrap.js",
+        "status": 200,
+        "matchesBuild": true,
+        "sha256": "4b435ba2443bd36453d540db4c28e0b035ce211c7898b8eac835be548724fd49"
+      },
+      {
+        "path": "js/drafts/model.mjs",
+        "status": 200,
+        "matchesBuild": true,
+        "sha256": "ce176d7399b055b2ced52b053be8978827530e9801bd054d675796f8ca69f089"
+      },
+      {
+        "path": "js/drafts/repository.mjs",
+        "status": 200,
+        "matchesBuild": true,
+        "sha256": "0e701b9d373cb7ed8260aa8e3f4a82df7de0ee334b77aa9de8ad938905472c77"
+      },
+      {
+        "path": "js/drafts/workspace.mjs",
+        "status": 200,
+        "matchesBuild": true,
+        "sha256": "5fb5cdf2420ed647882a3c7f333981acd457f30dd5cc29b844456feda7c2c1ea"
+      },
+      {
+        "path": "js/drafts/ui.mjs",
+        "status": 200,
+        "matchesBuild": true,
+        "sha256": "fe7bfff9f9c4b641b6bad7b56163d8c9feeb3cc67ffba6acf2e949591390e0a1"
+      },
+      {
+        "path": "assets/logo_1.png",
+        "status": 200,
+        "matchesBuild": true,
+        "sha256": "4622dba3f82ac8fd5745aa0f5a46899b67fd781e4ae8fa0daa7f179fd2080605"
+      },
+      {
+        "path": "database/education-drafts.sql",
+        "status": 404
+      },
+      {
+        "path": "docs/storage/NB-V2-006_REPORT.md",
+        "status": 404
+      },
+      {
+        "path": "scripts/notion-poc/cli.mjs",
+        "status": 404
+      },
+      {
+        "path": "scripts/verification/education-drafts-rls.mjs",
+        "status": 404
+      },
+      {
+        "path": ".env",
+        "status": 404
+      },
+      {
+        "path": ".git/config",
+        "status": 404
+      }
+    ]
+  },
+  "sqlReview": {
+    "path": "database/education-drafts.sql",
+    "sha256": "118795793f7c76b6b0124c91a3bc9bd78fc4a2f322251a89e753fc69b88c97e9",
+    "approved": true,
+    "approvalAnswer": "승인 — 제안 SQL 적용 및 권한 검증"
+  },
+  "changedFiles": [
+    "css/drafts.css",
+    "database/education-drafts.sql",
+    "docs/SUPABASE_SETUP.md",
+    "docs/auth/README.md",
+    "docs/storage/NB-V2-006_CHATGPT_HANDOFF.md",
+    "docs/storage/NB-V2-006_DB_PLAN.md",
+    "docs/storage/NB-V2-006_EVIDENCE.json",
+    "docs/storage/NB-V2-006_REMOTE_VERIFICATION.json",
+    "docs/storage/NB-V2-006_REPORT.md",
+    "index.html",
+    "js/app.js",
+    "js/auth-core.js",
+    "js/drafts-bootstrap.js",
+    "js/drafts/model.mjs",
+    "js/drafts/repository.mjs",
+    "js/drafts/ui.mjs",
+    "js/drafts/workspace.mjs",
+    "js/mapping-ui.mjs",
+    "js/supabase-client.js",
+    "mapping.html",
+    "result.html",
+    "scripts/deployment/build-static.mjs",
+    "scripts/notion-poc/tests/deployment.test.mjs",
+    "scripts/notion-poc/tests/education-drafts-ui.test.mjs",
+    "scripts/notion-poc/tests/education-drafts.test.mjs",
+    "scripts/notion-poc/tests/helpers/browser.mjs",
+    "scripts/notion-poc/tests/helpers/drafts-fixture.mjs",
+    "scripts/notion-poc/tests/service-flow.test.mjs",
+    "scripts/verification/education-drafts-api.html",
+    "scripts/verification/education-drafts-rls.mjs",
+    "scripts/verification/serve-drafts-check.py"
+  ],
+  "publicOutputKnownSecretScan": {
+    "detected": false,
+    "scope": "known local Notion/secret values and sb_secret_ marker; not a universal secret detector"
+  },
+  "remoteVerificationFile": "docs/storage/NB-V2-006_REMOTE_VERIFICATION.json",
+  "realHttpRls": {
+    "pass": 16,
+    "fail": 0,
+    "twoDistinctOwnersConfirmed": true,
+    "details": "NB-V2-006_REMOTE_VERIFICATION.json"
+  },
+  "verificationRoutesClosed": [
+    {
+      "path": "/__nb006_rls_check.html",
+      "status": 404
+    },
+    {
+      "path": "/scripts/verification/education-drafts-api.html",
+      "status": 404
+    },
+    {
+      "path": "/scripts/verification/serve-drafts-check.py",
+      "status": 404
+    }
+  ]
+}

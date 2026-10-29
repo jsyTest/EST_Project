@@ -1,0 +1,330 @@
+{
+  "catalog": {
+    "table": {
+      "rls": true,
+      "force_rls": true
+    },
+    "policies": [
+      {
+        "name": "education_drafts_select_own",
+        "roles": [
+          "authenticated"
+        ],
+        "command": "SELECT",
+        "using": "((( SELECT auth.uid() AS uid) IS NOT NULL) AND (( SELECT auth.uid() AS uid) = user_id))",
+        "with_check": null
+      },
+      {
+        "name": "education_drafts_insert_own",
+        "roles": [
+          "authenticated"
+        ],
+        "command": "INSERT",
+        "using": null,
+        "with_check": "((( SELECT auth.uid() AS uid) IS NOT NULL) AND (( SELECT auth.uid() AS uid) = user_id))"
+      },
+      {
+        "name": "education_drafts_update_own",
+        "roles": [
+          "authenticated"
+        ],
+        "command": "UPDATE",
+        "using": "((( SELECT auth.uid() AS uid) IS NOT NULL) AND (( SELECT auth.uid() AS uid) = user_id))",
+        "with_check": "((( SELECT auth.uid() AS uid) IS NOT NULL) AND (( SELECT auth.uid() AS uid) = user_id))"
+      }
+    ],
+    "columns": [
+      {
+        "name": "id",
+        "type": "uuid",
+        "nullable": "NO",
+        "default": "gen_random_uuid()"
+      },
+      {
+        "name": "user_id",
+        "type": "uuid",
+        "nullable": "NO",
+        "default": "auth.uid()"
+      },
+      {
+        "name": "title",
+        "type": "text",
+        "nullable": "NO",
+        "default": null
+      },
+      {
+        "name": "configuration",
+        "type": "jsonb",
+        "nullable": "NO",
+        "default": null
+      },
+      {
+        "name": "schema_version",
+        "type": "integer",
+        "nullable": "NO",
+        "default": "1"
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "nullable": "NO",
+        "default": "now()"
+      },
+      {
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "nullable": "NO",
+        "default": "clock_timestamp()"
+      }
+    ],
+    "grants": [
+      {
+        "grantee": "authenticated",
+        "privilege": "INSERT",
+        "column": "configuration"
+      },
+      {
+        "grantee": "authenticated",
+        "privilege": "SELECT",
+        "column": "configuration"
+      },
+      {
+        "grantee": "authenticated",
+        "privilege": "UPDATE",
+        "column": "configuration"
+      },
+      {
+        "grantee": "authenticated",
+        "privilege": "SELECT",
+        "column": "created_at"
+      },
+      {
+        "grantee": "authenticated",
+        "privilege": "SELECT",
+        "column": "id"
+      },
+      {
+        "grantee": "authenticated",
+        "privilege": "INSERT",
+        "column": "schema_version"
+      },
+      {
+        "grantee": "authenticated",
+        "privilege": "SELECT",
+        "column": "schema_version"
+      },
+      {
+        "grantee": "authenticated",
+        "privilege": "UPDATE",
+        "column": "schema_version"
+      },
+      {
+        "grantee": "authenticated",
+        "privilege": "INSERT",
+        "column": "title"
+      },
+      {
+        "grantee": "authenticated",
+        "privilege": "SELECT",
+        "column": "title"
+      },
+      {
+        "grantee": "authenticated",
+        "privilege": "UPDATE",
+        "column": "title"
+      },
+      {
+        "grantee": "authenticated",
+        "privilege": "SELECT",
+        "column": "updated_at"
+      },
+      {
+        "grantee": "authenticated",
+        "privilege": "SELECT",
+        "column": "user_id"
+      }
+    ],
+    "permissions": {
+      "anon_select": false,
+      "anon_insert": false,
+      "authenticated_delete": false,
+      "authenticated_owner_insert": false,
+      "authenticated_owner_update": false,
+      "authenticated_function_execute": false
+    },
+    "index": "CREATE INDEX education_drafts_owner_updated_idx ON public.education_drafts USING btree (user_id, updated_at DESC, id DESC)",
+    "trigger": "CREATE TRIGGER education_drafts_update_timestamp BEFORE UPDATE ON public.education_drafts FOR EACH ROW EXECUTE FUNCTION education_drafts_touch_updated_at()",
+    "row_count": 0
+  },
+  "securityAdvisors": {
+    "lints": [
+      {
+        "name": "anon_security_definer_function_executable",
+        "title": "Public Can Execute SECURITY DEFINER Function",
+        "level": "WARN",
+        "facing": "EXTERNAL",
+        "categories": [
+          "SECURITY"
+        ],
+        "description": "Detects `SECURITY DEFINER` functions that are callable without signing in. Revoke `EXECUTE`, switch the function to `SECURITY INVOKER`, or move it out of your exposed API schema if it is not meant to be public.",
+        "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0028_anon_security_definer_function_executable",
+        "count": 1,
+        "findings": [
+          {
+            "detail": "Function `public.rls_auto_enable()` can be executed by the `anon` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/rls_auto_enable`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+            "metadata": {
+              "name": "rls_auto_enable",
+              "schema": "public",
+              "language": "plpgsql",
+              "arguments": "",
+              "security_definer": true
+            },
+            "observed_at": "2026-10-29T08:03:12.130Z"
+          }
+        ]
+      },
+      {
+        "name": "authenticated_security_definer_function_executable",
+        "title": "Signed-In Users Can Execute SECURITY DEFINER Function",
+        "level": "WARN",
+        "facing": "EXTERNAL",
+        "categories": [
+          "SECURITY"
+        ],
+        "description": "Detects `SECURITY DEFINER` functions that are callable by signed-in users. Revoke `EXECUTE`, switch the function to `SECURITY INVOKER`, or move it out of your exposed API schema if signed-in users should not call it.",
+        "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable",
+        "count": 1,
+        "findings": [
+          {
+            "detail": "Function `public.rls_auto_enable()` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/rls_auto_enable`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+            "metadata": {
+              "name": "rls_auto_enable",
+              "schema": "public",
+              "language": "plpgsql",
+              "arguments": "",
+              "security_definer": true
+            },
+            "observed_at": "2026-10-29T08:03:12.130Z"
+          }
+        ]
+      },
+      {
+        "name": "auth_leaked_password_protection",
+        "title": "Leaked Password Protection Disabled",
+        "level": "WARN",
+        "facing": "EXTERNAL",
+        "categories": [
+          "SECURITY"
+        ],
+        "description": "Leaked password protection is currently disabled.",
+        "remediation": "https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection",
+        "count": 1,
+        "findings": [
+          {
+            "detail": "Supabase Auth prevents the use of compromised passwords by checking against HaveIBeenPwned.org. Enable this feature to enhance security.",
+            "metadata": {
+              "type": "auth",
+              "entity": "Auth"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "migration": {
+    "name": "nb_v2_006_education_drafts",
+    "version": "20261029080237"
+  },
+  "approval": "승인 — 제안 SQL 적용 및 권한 검증",
+  "sourceSqlSha256": "118795793f7c76b6b0124c91a3bc9bd78fc4a2f322251a89e753fc69b88c97e9",
+  "transactionHandling": "same approved DDL; outer BEGIN/COMMIT delegated to migration tool",
+  "authenticatedCrud": {
+    "status": "verified with actual account A in native Chrome and Supabase Data API; bidirectional RLS verified with two actual accounts",
+    "syntheticRow": {
+      "id": "1c3310e3-ad69-4933-b73b-02edb712d1e1",
+      "title": "NB-V2-006 E2E",
+      "schema_version": 1,
+      "purpose": "Synthetic revised configuration",
+      "basic_modules": [
+        "students",
+        "attendance"
+      ],
+      "additional_modules": [
+        "completion"
+      ],
+      "header_count": 3,
+      "property_count": 9,
+      "custom_name": "Applicant Label",
+      "selection_color": "purple",
+      "manual_count": 1,
+      "response_marker_excluded": true,
+      "file_name_excluded": true,
+      "updated_at": "2026-10-29 08:16:47.078751+00"
+    },
+    "newRowsCreated": 2,
+    "operations": [
+      "insert",
+      "update purpose in same row",
+      "update form/CSV/option/custom-property configuration",
+      "list",
+      "open via list",
+      "open server row in new tab",
+      "refresh mapping",
+      "regenerate existing V1 Mock result",
+      "new education clears editor without deleting stored rows",
+      "product logout clears panel and other local tab",
+      "final save passed after complete-operation timeout hardening"
+    ],
+    "twoRealAccounts": "A-to-B 8/8 and B-to-A 8/8 actual HTTP tests passed",
+    "responseMarkerExcluded": true,
+    "fileNameExcluded": true,
+    "rawCsvFileNotRestored": true,
+    "mobileEmulation": "400 x 689 new panel/controls visually checked",
+    "physicalMobile": "not tested",
+    "initialObservation": "First insert confirmed in DB before success UI observed; after bringing Chrome forward and opening same row, subsequent save confirmations and loads passed. No duplicate insert retry.",
+    "logout": "verified: product result page moved to login; other open local product tab moved to login",
+    "finalBrowserState": "Account A signed in; NB-V2-006 E2E open for review; DevTools closed"
+  },
+  "apiAnonymous": {
+    "status": 401,
+    "code": "42501"
+  },
+  "catalogCapturedBeforeTestRows": true,
+  "rlsHttpB": {
+    "otherDraftId": "1c3310e3-ad69-4933-b73b-02edb712d1e1",
+    "ownDraftId": "5aab9678-63d8-4e6e-a11a-89b34c90154d",
+    "pass": 8,
+    "fail": 0,
+    "clientUserIdFilterUsed": false,
+    "tests": [
+      "foreign UUID SELECT 0 rows",
+      "own INSERT",
+      "own SELECT",
+      "own UPDATE",
+      "foreign UUID UPDATE blocked",
+      "forged owner INSERT 42501",
+      "owner UPDATE 42501",
+      "schema_version 0 UPDATE 23514"
+    ],
+    "source": "scripts/verification/education-drafts-api.html",
+    "servedOnlyOnLoopback": true,
+    "includedInProductionBuild": false
+  },
+  "rlsHttpA": {
+    "ownDraftId": "1c3310e3-ad69-4933-b73b-02edb712d1e1",
+    "otherDraftId": "5aab9678-63d8-4e6e-a11a-89b34c90154d",
+    "pass": 8,
+    "fail": 0,
+    "clientUserIdFilterUsed": false,
+    "sameTestCasesAs": "rlsHttpB (existing own row used instead of another insert)"
+  },
+  "actualOwnerAggregation": {
+    "testRows": 2,
+    "distinctTestOwners": 2,
+    "foreignTitlesUnchanged": true,
+    "versionsUnchanged": true,
+    "scope": "only the two agent-created synthetic rows; other user rows were not inspected or changed"
+  },
+  "verificationRouteClosedAfterTests": true,
+  "deleteHttpRequestsSent": false
+}

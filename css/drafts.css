@@ -1,0 +1,14 @@
+.draft-panel { width: min(calc(100% - 40px), 1180px); margin: 24px auto 0; padding: 20px 24px; border: 1px solid var(--line); border-radius: var(--radius-large); background: var(--surface); }
+.draft-panel h2 { margin: 0; font-size: 1.2rem; }
+.draft-current, .draft-help { color: var(--text-muted); font-size: .9rem; overflow-wrap: anywhere; }
+.draft-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.draft-actions .button { padding: 9px 14px; font-size: .9rem; }
+.draft-status { min-height: 1.5em; color: var(--accent); }
+.draft-error { color: var(--danger); }
+.draft-panel summary { cursor: pointer; color: var(--primary); }
+.draft-list { list-style: none; padding: 0; margin: 12px 0; }
+.draft-list li { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid var(--line); }
+.draft-list-title { flex: 1 1 180px; overflow-wrap: anywhere; }
+.draft-list small { color: var(--text-muted); }
+.draft-panel button:disabled { opacity: .6; cursor: wait; }
+@media (max-width: 600px) { .draft-panel { width: calc(100% - 24px); padding: 16px; } .draft-actions .button { flex: 1 1 140px; } }

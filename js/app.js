@@ -6,6 +6,7 @@
   const data = window.MOCK_DASHBOARD_DATA;
   let toastTimer;
   let currentDesign = null;
+  let drafts = null;
 
   function readSavedRequirements() {
     try {
@@ -49,7 +50,7 @@
     const educationName = document.getElementById("education-name");
     const nameError = document.getElementById("education-name-error");
     const saveError = document.getElementById("requirement-save-error");
-    const saved = readSavedRequirements();
+    const saved = drafts ? drafts.snapshot().configuration.requirements : readSavedRequirements();
 
     if (saved) {
       educationName.value = saved.educationName || "";
@@ -57,6 +58,25 @@
       form.elements.requirements.value = saved.requirements || "";
       restoreCheckboxes(form, "basicItems", saved.basicItems);
       restoreCheckboxes(form, "additionalItems", saved.additionalItems);
+    }
+
+    function captureRequirements() {
+      return {
+        educationName: educationName.value,
+        purpose: form.elements.purpose.value,
+        requirements: form.elements.requirements.value,
+        basicItems: selectedValues(form, "basicItems"),
+        additionalItems: selectedValues(form, "additionalItems")
+      };
+    }
+    if (drafts) {
+      drafts.register('requirements', captureRequirements);
+      const update = function () {
+        try { drafts.update('requirements', captureRequirements()); }
+        catch (error) { drafts.showError(error); }
+      };
+      form.addEventListener('input', update);
+      form.addEventListener('change', update);
     }
 
     educationName.addEventListener("input", function () {
@@ -88,6 +108,7 @@
         saveError.textContent = "입력 내용을 브라우저에 저장하지 못했습니다. 사이트 저장소를 허용하거나 여유 공간을 확인한 뒤 다시 시도해 주세요.";
         return;
       }
+      if (drafts) drafts.update('requirements', requirements);
       window.location.href = "result.html";
     });
   }
@@ -246,7 +267,7 @@
   }
 
   function initializeResultPage() {
-    const requirements = readSavedRequirements();
+    const requirements = drafts ? drafts.snapshot().configuration.requirements : readSavedRequirements();
     const emptyState = document.getElementById("empty-state");
     const resultContent = document.getElementById("result-content");
 
@@ -547,7 +568,9 @@
     return lines.join("\n");
   }
 
-  function initializePage() {
+  async function initializePage() {
+    if (window.estDraftsReady) drafts = await window.estDraftsReady;
+    if (document.documentElement?.dataset.authRequired === "true" && document.documentElement.dataset.authState !== "authenticated") return;
     if (page === "input") initializeInputPage();
     if (page === "result") initializeResultPage();
     window.addEventListener?.("est-auth-cleared", function () { currentDesign = null; }, { once: true });
