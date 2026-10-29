@@ -1,0 +1,5 @@
+.env
+.env.*
+!.env.example
+.notion-poc-state/
+node_modules/
