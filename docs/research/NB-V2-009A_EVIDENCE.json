@@ -1,0 +1,103 @@
+{
+  "task": "NB-V2-009A",
+  "date_kst": "2026-10-30",
+  "status": "approved_basic_database_created_and_api_verified",
+  "git": {
+    "branch": "main",
+    "start_commit": "b34f80b1215de7a19b5246ccb5b2c1f532336def",
+    "end_commit": "b34f80b1215de7a19b5246ccb5b2c1f532336def",
+    "start_worktree": "clean",
+    "commit_push": false
+  },
+  "node": {
+    "passed": 223,
+    "failed": 0,
+    "skipped": 0,
+    "existing": 200,
+    "new": 23,
+    "v1_mock_combinations": 256,
+    "command": "node --test --test-reporter=spec scripts/notion-poc/tests/*.test.mjs"
+  },
+  "approvals": {
+    "parent_page": "User explicitly requested the assistant create the dedicated private parent",
+    "database": "승인 — 위 빈 DB 1개 생성·재조회 실행",
+    "databaseApprovedAt": "2026-10-30T00:08:28.165Z",
+    "planHash": "5c97427997f9afc9af6f50196f6c6b411f6e07cbeeba3ba5f8cd7f093002f2ab",
+    "requestHash": "4a44b1da2a4921fcc9a33b6955624e1c1d907e50b7d6920f7b55a375a060552a"
+  },
+  "live": {
+    "runId": "nb-v2-009a-basic-001",
+    "planId": "plan-316dfc0fed39abe5",
+    "parentId": "4091f60f-fdfa-818b-b496-ceed30116dc6",
+    "workspaceId": "10e1f60f-fdfa-8128-b201-00037feeb155",
+    "botId": "4081f60f-fdfa-8154-b4cc-002726360706",
+    "databaseId": "a72bbd64-de62-4a95-a39b-e75ad5db01a1",
+    "dataSourceId": "d67da62e-98fc-4ec9-b16e-dff7ca76a8bc",
+    "propertyIds": {
+      "ds:applications:field:base-selection": "Ez%5C%7B",
+      "ds:applications:field:form-0": "title",
+      "ds:applications:field:form-1": "S%5CWw",
+      "ds:applications:field:form-2": "o~%3DI",
+      "ds:applications:field:form-3": "WDR%7B",
+      "ds:applications:field:form-4": "lGSe",
+      "ds:applications:field:form-5": "%40nLU"
+    },
+    "serverCreatedTime": "2026-10-30T00:08:33.996+00:00",
+    "readbackPassed": true,
+    "readbackChecks": 34,
+    "rows": 0,
+    "restDatabaseCreationPosts": 1,
+    "restDataSourceNamePatches": 0,
+    "mcpParentPageCreations": 1,
+    "mcpInternalHttpRequestCount": "not exposed by tool",
+    "replay": {
+      "readRequests": 6,
+      "writeRequests": 0,
+      "blockedWriteAttempts": 0
+    },
+    "source": "NB-V2-009A_LIVE_RESULT.json"
+  },
+  "security": {
+    "planAndRequestFrozen": true,
+    "privateStateGitIgnored": true,
+    "manifestFileMode": "0600",
+    "directoryMode": "0700",
+    "noRealNotionTokenInChangedOrPublicFiles": true,
+    "scannedFiles": 43,
+    "existingPocFilesModified": false,
+    "automaticWriteRetries": 0,
+    "browserCreationEndpointAdded": false
+  },
+  "publicBuild": {
+    "files": 26,
+    "executorIncluded": false,
+    "productionDeployed": false
+  },
+  "environment": {
+    "initialParent404ResolvedAfterUserAddedConnection": true,
+    "mcpFreeBlockLimitGraceNotice": true,
+    "restCreationSucceeded": true,
+    "planOrPaymentChanged": false
+  },
+  "unverified": [
+    "Actual Number/Date/Checkbox creation",
+    "Status/URL/Relation/Rollup/Formula execution",
+    "Actual DS naming PATCH and real fault recovery; mock only",
+    "Actual network loss, disk failure and HTTP error scenarios; mock only",
+    "Notion UI visual verification, generic web API/OAuth/company duplication"
+  ],
+  "remoteOther": {
+    "existing002AChanged": false,
+    "companyAccess": false,
+    "supabaseReads": 0,
+    "supabaseChanges": 0,
+    "vercelDeployments": 0,
+    "aiCalls": 0
+  },
+  "sourceHashes": {
+    "scripts/basic-notion/plan.mjs": "86f9808212b839fc192812b3c03b157a1cffbb970a19081474909c07ca319273",
+    "scripts/basic-notion/store.mjs": "7ebad1d67a5a4784324ba2e78c3b0e93c8308d06acc5c9978da2d45f735091c3",
+    "scripts/basic-notion/engine.mjs": "cdf36ed4c85dba2086a007770061cdfd0097c43ba8c097536e43f7110520f7b5",
+    "scripts/basic-notion/cli.mjs": "8e647c9df7baf0a80a3e2f890023458c7cb6159469d1e6a0956fad4c50221a99"
+  }
+}

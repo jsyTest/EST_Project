@@ -1,0 +1,195 @@
+{
+  "task": "NB-V2-009A",
+  "runId": "nb-v2-009a-basic-001",
+  "planId": "plan-316dfc0fed39abe5",
+  "planHash": "5c97427997f9afc9af6f50196f6c6b411f6e07cbeeba3ba5f8cd7f093002f2ab",
+  "requestHash": "4a44b1da2a4921fcc9a33b6955624e1c1d907e50b7d6920f7b55a375a060552a",
+  "status": "verified",
+  "target": {
+    "kind": "personal-test",
+    "workspaceId": "10e1f60f-fdfa-8128-b201-00037feeb155",
+    "workspaceName": "지승엽의 워크스페이스",
+    "parentId": "4091f60f-fdfa-818b-b496-ceed30116dc6",
+    "parentTitle": "NB-V2-009A 테스트",
+    "botId": "4081f60f-fdfa-8154-b4cc-002726360706"
+  },
+  "remote": {
+    "databaseId": "a72bbd64-de62-4a95-a39b-e75ad5db01a1",
+    "dataSourceId": "d67da62e-98fc-4ec9-b16e-dff7ca76a8bc"
+  },
+  "propertyIds": {
+    "ds:applications:field:base-selection": "Ez%5C%7B",
+    "ds:applications:field:form-0": "title",
+    "ds:applications:field:form-1": "S%5CWw",
+    "ds:applications:field:form-2": "o~%3DI",
+    "ds:applications:field:form-3": "WDR%7B",
+    "ds:applications:field:form-4": "lGSe",
+    "ds:applications:field:form-5": "%40nLU"
+  },
+  "writeAttempts": 1,
+  "startedAt": "2026-10-30T00:08:33.457Z",
+  "updatedAt": "2026-10-30T00:09:43.678Z",
+  "verification": {
+    "ok": true,
+    "checks": [
+      {
+        "name": "database name",
+        "ok": true
+      },
+      {
+        "name": "data source name",
+        "ok": true
+      },
+      {
+        "name": "property count",
+        "ok": true
+      },
+      {
+        "name": "one title",
+        "ok": true
+      },
+      {
+        "name": "ds:applications:field:base-selection: name/type",
+        "ok": true
+      },
+      {
+        "name": "ds:applications:field:base-selection: remote ID",
+        "ok": true
+      },
+      {
+        "name": "ds:applications:field:base-selection: option count",
+        "ok": true
+      },
+      {
+        "name": "ds:applications:field:base-selection: unique option IDs",
+        "ok": true
+      },
+      {
+        "name": "ds:applications:field:base-selection: option 접수",
+        "ok": true
+      },
+      {
+        "name": "ds:applications:field:base-selection: option 선정",
+        "ok": true
+      },
+      {
+        "name": "ds:applications:field:base-selection: option 대기",
+        "ok": true
+      },
+      {
+        "name": "ds:applications:field:base-selection: option 미선정",
+        "ok": true
+      },
+      {
+        "name": "ds:applications:field:base-selection: option 취소",
+        "ok": true
+      },
+      {
+        "name": "ds:applications:field:form-0: name/type",
+        "ok": true
+      },
+      {
+        "name": "ds:applications:field:form-0: remote ID",
+        "ok": true
+      },
+      {
+        "name": "ds:applications:field:form-1: name/type",
+        "ok": true
+      },
+      {
+        "name": "ds:applications:field:form-1: remote ID",
+        "ok": true
+      },
+      {
+        "name": "ds:applications:field:form-2: name/type",
+        "ok": true
+      },
+      {
+        "name": "ds:applications:field:form-2: remote ID",
+        "ok": true
+      },
+      {
+        "name": "ds:applications:field:form-3: name/type",
+        "ok": true
+      },
+      {
+        "name": "ds:applications:field:form-3: remote ID",
+        "ok": true
+      },
+      {
+        "name": "ds:applications:field:form-4: name/type",
+        "ok": true
+      },
+      {
+        "name": "ds:applications:field:form-4: remote ID",
+        "ok": true
+      },
+      {
+        "name": "ds:applications:field:form-4: option count",
+        "ok": true
+      },
+      {
+        "name": "ds:applications:field:form-4: unique option IDs",
+        "ok": true
+      },
+      {
+        "name": "ds:applications:field:form-4: option 가상 일반 참가",
+        "ok": true
+      },
+      {
+        "name": "ds:applications:field:form-4: option 가상 학생 참가",
+        "ok": true
+      },
+      {
+        "name": "ds:applications:field:form-5: name/type",
+        "ok": true
+      },
+      {
+        "name": "ds:applications:field:form-5: remote ID",
+        "ok": true
+      },
+      {
+        "name": "ds:applications:field:form-5: option count",
+        "ok": true
+      },
+      {
+        "name": "ds:applications:field:form-5: unique option IDs",
+        "ok": true
+      },
+      {
+        "name": "ds:applications:field:form-5: option 가상 과정 A",
+        "ok": true
+      },
+      {
+        "name": "ds:applications:field:form-5: option 가상 과정 B",
+        "ok": true
+      },
+      {
+        "name": "empty structure; no response rows",
+        "ok": true
+      }
+    ],
+    "propertyIds": {
+      "ds:applications:field:base-selection": "Ez%5C%7B",
+      "ds:applications:field:form-0": "title",
+      "ds:applications:field:form-1": "S%5CWw",
+      "ds:applications:field:form-2": "o~%3DI",
+      "ds:applications:field:form-3": "WDR%7B",
+      "ds:applications:field:form-4": "lGSe",
+      "ds:applications:field:form-5": "%40nLU"
+    },
+    "verifiedAt": "2026-10-30T00:09:43.674Z",
+    "databaseId": "a72bbd64-de62-4a95-a39b-e75ad5db01a1",
+    "dataSourceId": "d67da62e-98fc-4ec9-b16e-dff7ca76a8bc",
+    "databaseName": "[TEST] NB-V2-009A 기본형 신청",
+    "dataSourceName": "[TEST] NB-V2-009A 기본형 신청",
+    "url": "https://www.notion.so/a72bbd64de624a95a39be75ad5db01a1",
+    "rowsReadForEmptinessOnly": true
+  },
+  "reusedExistingRun": true,
+  "replayGuard": {
+    "readRequests": 6,
+    "writeRequests": 0,
+    "blockedWriteAttempts": 0
+  }
+}

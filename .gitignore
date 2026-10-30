@@ -2,5 +2,6 @@
 .env.*
 !.env.example
 .notion-poc-state/
+.notion-generation-state/
 node_modules/
 public-dist/

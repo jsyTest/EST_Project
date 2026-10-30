@@ -1,0 +1,334 @@
+{
+  "version": 1,
+  "requirements": {
+    "educationName": "NB-V2-009A 가상 기본형 입력",
+    "educationType": "education",
+    "purpose": "",
+    "requirements": "",
+    "basicItems": [
+      "students",
+      "attendance",
+      "schedule"
+    ],
+    "additionalItems": []
+  },
+  "mapping": {
+    "formText": "1. 성명\n단답형\n2. 이메일\n단답형\n3. 연락처\n단답형\n4. 신청 동기\n장문형\n5. 참여자 유형\n단일 선택\n- 가상 일반 참가\n- 가상 학생 참가\n6. 신청 과정 선택\n복수 선택\n- 가상 과정 A\n- 가상 과정 B",
+    "encoding": "utf-8",
+    "columns": [
+      {
+        "index": 0,
+        "original": "성명",
+        "normalized": "성명",
+        "issues": []
+      },
+      {
+        "index": 1,
+        "original": "이메일",
+        "normalized": "이메일",
+        "issues": []
+      },
+      {
+        "index": 2,
+        "original": "연락처",
+        "normalized": "연락처",
+        "issues": []
+      },
+      {
+        "index": 3,
+        "original": "신청 동기",
+        "normalized": "신청 동기",
+        "issues": []
+      },
+      {
+        "index": 4,
+        "original": "참여자 유형",
+        "normalized": "참여자 유형",
+        "issues": []
+      },
+      {
+        "index": 5,
+        "original": "신청 과정 선택",
+        "normalized": "신청 과정 선택",
+        "issues": []
+      }
+    ],
+    "model": {
+      "version": 1,
+      "source": {
+        "formRaw": "1. 성명\n단답형\n2. 이메일\n단답형\n3. 연락처\n단답형\n4. 신청 동기\n장문형\n5. 참여자 유형\n단일 선택\n- 가상 일반 참가\n- 가상 학생 참가\n6. 신청 과정 선택\n복수 선택\n- 가상 과정 A\n- 가상 과정 B",
+        "unparsed": [],
+        "warnings": []
+      },
+      "properties": [
+        {
+          "localId": "base-selection",
+          "name": "선정 상태",
+          "type": "select",
+          "targetDb": "applications",
+          "origin": "base",
+          "questionName": "",
+          "csvColumn": null,
+          "required": null,
+          "options": [
+            {
+              "localId": "option-0",
+              "name": "접수",
+              "color": "blue"
+            },
+            {
+              "localId": "option-1",
+              "name": "선정",
+              "color": "green"
+            },
+            {
+              "localId": "option-2",
+              "name": "대기",
+              "color": "yellow"
+            },
+            {
+              "localId": "option-3",
+              "name": "미선정",
+              "color": "gray"
+            },
+            {
+              "localId": "option-4",
+              "name": "취소",
+              "color": "red"
+            }
+          ],
+          "included": true,
+          "mappingStatus": "automatic",
+          "reviewReasons": []
+        },
+        {
+          "localId": "base-completion",
+          "name": "수료 상태",
+          "type": "select",
+          "targetDb": "enrollments",
+          "origin": "base",
+          "questionName": "",
+          "csvColumn": null,
+          "required": null,
+          "options": [
+            {
+              "localId": "option-0",
+              "name": "수료",
+              "color": "green"
+            },
+            {
+              "localId": "option-1",
+              "name": "미수료",
+              "color": "red"
+            },
+            {
+              "localId": "option-2",
+              "name": "수료 대기",
+              "color": "yellow"
+            }
+          ],
+          "included": true,
+          "mappingStatus": "automatic",
+          "reviewReasons": []
+        },
+        {
+          "localId": "base-progress",
+          "name": "교육 진행 상태",
+          "type": "status",
+          "targetDb": "courses",
+          "origin": "base",
+          "questionName": "",
+          "csvColumn": null,
+          "required": null,
+          "options": [
+            {
+              "localId": "option-0",
+              "name": "예정",
+              "color": "gray",
+              "group": "To-do"
+            },
+            {
+              "localId": "option-1",
+              "name": "진행 중",
+              "color": "blue",
+              "group": "In progress"
+            },
+            {
+              "localId": "option-2",
+              "name": "완료",
+              "color": "green",
+              "group": "Complete"
+            },
+            {
+              "localId": "option-3",
+              "name": "취소",
+              "color": "red",
+              "group": "Complete"
+            }
+          ],
+          "included": true,
+          "mappingStatus": "automatic",
+          "reviewReasons": []
+        },
+        {
+          "localId": "form-0",
+          "origin": "form",
+          "questionNumber": "1",
+          "questionName": "성명",
+          "rawText": "1. 성명\n단답형",
+          "csvColumn": {
+            "index": 0,
+            "original": "성명",
+            "normalized": "성명",
+            "issues": []
+          },
+          "name": "성명",
+          "type": "title",
+          "targetDb": "applicants",
+          "required": null,
+          "cardinality": null,
+          "options": [],
+          "included": true,
+          "mappingStatus": "automatic",
+          "reviewReasons": []
+        },
+        {
+          "localId": "form-1",
+          "origin": "form",
+          "questionNumber": "2",
+          "questionName": "이메일",
+          "rawText": "2. 이메일\n단답형",
+          "csvColumn": {
+            "index": 1,
+            "original": "이메일",
+            "normalized": "이메일",
+            "issues": []
+          },
+          "name": "이메일",
+          "type": "email",
+          "targetDb": "applicants",
+          "required": null,
+          "cardinality": null,
+          "options": [],
+          "included": true,
+          "mappingStatus": "automatic",
+          "reviewReasons": []
+        },
+        {
+          "localId": "form-2",
+          "origin": "form",
+          "questionNumber": "3",
+          "questionName": "연락처",
+          "rawText": "3. 연락처\n단답형",
+          "csvColumn": {
+            "index": 2,
+            "original": "연락처",
+            "normalized": "연락처",
+            "issues": []
+          },
+          "name": "연락처",
+          "type": "phone_number",
+          "targetDb": "applicants",
+          "required": null,
+          "cardinality": null,
+          "options": [],
+          "included": true,
+          "mappingStatus": "automatic",
+          "reviewReasons": []
+        },
+        {
+          "localId": "form-3",
+          "origin": "form",
+          "questionNumber": "4",
+          "questionName": "신청 동기",
+          "rawText": "4. 신청 동기\n장문형",
+          "csvColumn": {
+            "index": 3,
+            "original": "신청 동기",
+            "normalized": "신청 동기",
+            "issues": []
+          },
+          "name": "신청 동기",
+          "type": "rich_text",
+          "targetDb": "applications",
+          "required": null,
+          "cardinality": null,
+          "options": [],
+          "included": true,
+          "mappingStatus": "automatic",
+          "reviewReasons": []
+        },
+        {
+          "localId": "form-4",
+          "origin": "form",
+          "questionNumber": "5",
+          "questionName": "참여자 유형",
+          "rawText": "5. 참여자 유형\n단일 선택\n- 가상 일반 참가\n- 가상 학생 참가",
+          "csvColumn": {
+            "index": 4,
+            "original": "참여자 유형",
+            "normalized": "참여자 유형",
+            "issues": []
+          },
+          "name": "참여자 유형",
+          "type": "select",
+          "targetDb": "applicants",
+          "required": null,
+          "cardinality": "single",
+          "options": [
+            {
+              "localId": "option-0",
+              "name": "가상 일반 참가",
+              "color": "purple",
+              "colorSource": "user"
+            },
+            {
+              "localId": "option-1",
+              "name": "가상 학생 참가",
+              "color": "green",
+              "colorSource": "user"
+            }
+          ],
+          "included": true,
+          "mappingStatus": "automatic",
+          "reviewReasons": []
+        },
+        {
+          "localId": "form-5",
+          "origin": "form",
+          "questionNumber": "6",
+          "questionName": "신청 과정 선택",
+          "rawText": "6. 신청 과정 선택\n복수 선택\n- 가상 과정 A\n- 가상 과정 B",
+          "csvColumn": {
+            "index": 5,
+            "original": "신청 과정 선택",
+            "normalized": "신청 과정 선택",
+            "issues": []
+          },
+          "name": "신청 과정",
+          "type": "multi_select",
+          "targetDb": "applications",
+          "required": null,
+          "cardinality": "multiple",
+          "options": [
+            {
+              "localId": "option-0",
+              "name": "가상 과정 A",
+              "color": "blue",
+              "colorSource": "user"
+            },
+            {
+              "localId": "option-1",
+              "name": "가상 과정 B",
+              "color": "purple",
+              "colorSource": "user"
+            }
+          ],
+          "included": true,
+          "mappingStatus": "automatic",
+          "reviewReasons": []
+        }
+      ]
+    }
+  }
+}

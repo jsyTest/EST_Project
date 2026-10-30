@@ -1,0 +1,216 @@
+{
+  "task": "NB-V2-009A",
+  "mode": "dry-run",
+  "runId": "nb-v2-009a-basic-001",
+  "spec": {
+    "apiVersion": "2026-03-11",
+    "planId": "plan-316dfc0fed39abe5",
+    "planHash": "5c97427997f9afc9af6f50196f6c6b411f6e07cbeeba3ba5f8cd7f093002f2ab",
+    "databaseLogicalId": "db:applications",
+    "dataSourceLogicalId": "ds:applications",
+    "databaseName": "[TEST] NB-V2-009A 기본형 신청",
+    "dataSourceName": "[TEST] NB-V2-009A 기본형 신청",
+    "fields": [
+      {
+        "logicalId": "ds:applications:field:base-selection",
+        "name": "선정 상태",
+        "type": "select",
+        "options": [
+          {
+            "name": "접수",
+            "color": "blue"
+          },
+          {
+            "name": "선정",
+            "color": "green"
+          },
+          {
+            "name": "대기",
+            "color": "yellow"
+          },
+          {
+            "name": "미선정",
+            "color": "gray"
+          },
+          {
+            "name": "취소",
+            "color": "red"
+          }
+        ]
+      },
+      {
+        "logicalId": "ds:applications:field:form-0",
+        "name": "성명",
+        "type": "title"
+      },
+      {
+        "logicalId": "ds:applications:field:form-1",
+        "name": "이메일",
+        "type": "email"
+      },
+      {
+        "logicalId": "ds:applications:field:form-2",
+        "name": "연락처",
+        "type": "phone_number"
+      },
+      {
+        "logicalId": "ds:applications:field:form-3",
+        "name": "신청 동기",
+        "type": "rich_text"
+      },
+      {
+        "logicalId": "ds:applications:field:form-4",
+        "name": "참여자 유형",
+        "type": "select",
+        "options": [
+          {
+            "name": "가상 일반 참가",
+            "color": "purple"
+          },
+          {
+            "name": "가상 학생 참가",
+            "color": "green"
+          }
+        ]
+      },
+      {
+        "logicalId": "ds:applications:field:form-5",
+        "name": "신청 과정",
+        "type": "multi_select",
+        "options": [
+          {
+            "name": "가상 과정 A",
+            "color": "blue"
+          },
+          {
+            "name": "가상 과정 B",
+            "color": "purple"
+          }
+        ]
+      }
+    ]
+  },
+  "target": {
+    "kind": "personal-test",
+    "workspaceId": "10e1f60f-fdfa-8128-b201-00037feeb155",
+    "workspaceName": "지승엽의 워크스페이스",
+    "parentId": "4091f60f-fdfa-818b-b496-ceed30116dc6",
+    "parentTitle": "NB-V2-009A 테스트",
+    "botId": "4081f60f-fdfa-8154-b4cc-002726360706"
+  },
+  "marker": "NB-V2-009A run:nb-v2-009a-basic-001 plan-sha256:5c97427997f9afc9af6f50196f6c6b411f6e07cbeeba3ba5f8cd7f093002f2ab",
+  "requestHash": "4a44b1da2a4921fcc9a33b6955624e1c1d907e50b7d6920f7b55a375a060552a",
+  "createBody": {
+    "parent": {
+      "type": "page_id",
+      "page_id": "4091f60f-fdfa-818b-b496-ceed30116dc6"
+    },
+    "title": [
+      {
+        "type": "text",
+        "text": {
+          "content": "[TEST] NB-V2-009A 기본형 신청"
+        }
+      }
+    ],
+    "description": [
+      {
+        "type": "text",
+        "text": {
+          "content": "NB-V2-009A run:nb-v2-009a-basic-001 plan-sha256:5c97427997f9afc9af6f50196f6c6b411f6e07cbeeba3ba5f8cd7f093002f2ab"
+        }
+      }
+    ],
+    "is_inline": true,
+    "initial_data_source": {
+      "properties": {
+        "선정 상태": {
+          "select": {
+            "options": [
+              {
+                "name": "접수",
+                "color": "blue"
+              },
+              {
+                "name": "선정",
+                "color": "green"
+              },
+              {
+                "name": "대기",
+                "color": "yellow"
+              },
+              {
+                "name": "미선정",
+                "color": "gray"
+              },
+              {
+                "name": "취소",
+                "color": "red"
+              }
+            ]
+          }
+        },
+        "성명": {
+          "title": {}
+        },
+        "이메일": {
+          "email": {}
+        },
+        "연락처": {
+          "phone_number": {}
+        },
+        "신청 동기": {
+          "rich_text": {}
+        },
+        "참여자 유형": {
+          "select": {
+            "options": [
+              {
+                "name": "가상 일반 참가",
+                "color": "purple"
+              },
+              {
+                "name": "가상 학생 참가",
+                "color": "green"
+              }
+            ]
+          }
+        },
+        "신청 과정": {
+          "multi_select": {
+            "options": [
+              {
+                "name": "가상 과정 A",
+                "color": "blue"
+              },
+              {
+                "name": "가상 과정 B",
+                "color": "purple"
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "renameBody": {
+    "title": [
+      {
+        "type": "text",
+        "text": {
+          "content": "[TEST] NB-V2-009A 기본형 신청"
+        }
+      }
+    ]
+  },
+  "scope": {
+    "databases": 1,
+    "dataSources": 1,
+    "createDatabasePosts": 1,
+    "newDataSourceNamePatchesMax": 1,
+    "rows": 0,
+    "newPages": 0,
+    "existingObjectsModified": 0
+  },
+  "networkRequests": 0
+}
