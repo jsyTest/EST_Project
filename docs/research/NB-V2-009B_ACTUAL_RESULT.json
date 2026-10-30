@@ -1,0 +1,865 @@
+{
+  "task": "NB-V2-009B",
+  "runId": "nb-v2-009b-standard-001",
+  "planId": "plan-2c9c6df959adeba9",
+  "planHash": "a25b2f58d230b94997459e4e701a4584daedbb8e36b9455db1b591dad7197440",
+  "requestHash": "c7be20bc6e5c4f0257986b2b113c1b45d8077df797fd94c339a14ee8bcdac7a9",
+  "status": "verified",
+  "startedAt": "2026-10-30T00:30:26.379Z",
+  "verifiedAt": "2026-10-30T00:33:42.577Z",
+  "databases": {
+    "db:people": {
+      "databaseId": "a99088e9-4bd3-4f00-9c20-f1b9e3e60b29",
+      "dataSourceId": "a1380c53-b235-41c4-9af7-7b7ab8ba5007",
+      "createdTime": "2026-10-30T00:30:28.313+00:00"
+    },
+    "db:programs": {
+      "databaseId": "d33a5505-9ebf-4d64-b200-5dc105ccfb19",
+      "dataSourceId": "99942fed-ea80-4b22-b405-5a2dfb643dce",
+      "createdTime": "2026-10-30T00:30:32.285+00:00"
+    },
+    "db:applications": {
+      "databaseId": "ae16116a-6b4f-4ae3-9716-5aa7e8a1a9f3",
+      "dataSourceId": "9b34aee8-b9b0-48e1-963c-e37e9d218b0c",
+      "createdTime": "2026-10-30T00:30:36.856+00:00"
+    }
+  },
+  "propertyBindings": [
+    {
+      "logicalId": "ds:applications:field:base-selection",
+      "sourceId": "ds:applications",
+      "name": "선정 상태",
+      "type": "select",
+      "remoteId": "Dgl%5C"
+    },
+    {
+      "logicalId": "ds:programs:field:base-progress",
+      "sourceId": "ds:programs",
+      "name": "운영 상태",
+      "type": "select",
+      "remoteId": "WHIE"
+    },
+    {
+      "logicalId": "ds:people:field:form-0",
+      "sourceId": "ds:people",
+      "name": "성명",
+      "type": "title",
+      "remoteId": "title"
+    },
+    {
+      "logicalId": "ds:people:field:form-1",
+      "sourceId": "ds:people",
+      "name": "이메일",
+      "type": "email",
+      "remoteId": "kNnr"
+    },
+    {
+      "logicalId": "ds:applications:field:form-2",
+      "sourceId": "ds:applications",
+      "name": "신청 동기",
+      "type": "rich_text",
+      "remoteId": "TDP%5E"
+    },
+    {
+      "logicalId": "ds:programs:operation-type",
+      "sourceId": "ds:programs",
+      "name": "운영 유형",
+      "type": "select",
+      "remoteId": "g%60mz"
+    },
+    {
+      "logicalId": "ds:programs:title",
+      "sourceId": "ds:programs",
+      "name": "프로그램명",
+      "type": "title",
+      "remoteId": "title"
+    },
+    {
+      "logicalId": "ds:applications:title",
+      "sourceId": "ds:applications",
+      "name": "이름",
+      "type": "title",
+      "remoteId": "title"
+    },
+    {
+      "logicalId": "ds:applications:relation:applications:people:사람",
+      "sourceId": "ds:applications",
+      "name": "사람",
+      "type": "relation",
+      "remoteId": "CFMX"
+    },
+    {
+      "logicalId": "ds:people:relation:applications:people:사람:reverse",
+      "sourceId": "ds:people",
+      "name": "신청기록",
+      "type": "relation",
+      "remoteId": "I%3FjF"
+    },
+    {
+      "logicalId": "ds:applications:relation:applications:programs:프로그램",
+      "sourceId": "ds:applications",
+      "name": "프로그램",
+      "type": "relation",
+      "remoteId": "e_TK"
+    },
+    {
+      "logicalId": "ds:programs:relation:applications:programs:프로그램:reverse",
+      "sourceId": "ds:programs",
+      "name": "신청기록",
+      "type": "relation",
+      "remoteId": "LHkG"
+    },
+    {
+      "logicalId": "ds:programs:rollup:applications",
+      "sourceId": "ds:programs",
+      "name": "신청 건수",
+      "type": "rollup",
+      "remoteId": "YoLo"
+    },
+    {
+      "logicalId": "ds:people:formula:applications",
+      "sourceId": "ds:people",
+      "name": "신청 건수",
+      "type": "formula",
+      "remoteId": "q~vn"
+    },
+    {
+      "logicalId": "ds:applications:formula:selected-value",
+      "sourceId": "ds:applications",
+      "name": "선정 값",
+      "type": "formula",
+      "remoteId": "Bfjb"
+    },
+    {
+      "logicalId": "ds:programs:rollup:selected-applications",
+      "sourceId": "ds:programs",
+      "name": "선정 신청 건수",
+      "type": "rollup",
+      "remoteId": "jRGN"
+    }
+  ],
+  "rows": {
+    "P01": {
+      "pageId": "4091f60f-fdfa-8162-8acf-ffd73540e95a",
+      "sourceId": "ds:people"
+    },
+    "P02": {
+      "pageId": "4091f60f-fdfa-8158-8b1e-e2dd0d1b925a",
+      "sourceId": "ds:people"
+    },
+    "C01": {
+      "pageId": "4091f60f-fdfa-81ef-aca4-fa4ce44cf404",
+      "sourceId": "ds:programs"
+    },
+    "C02": {
+      "pageId": "4091f60f-fdfa-8187-bcdc-d56414f9f3dc",
+      "sourceId": "ds:programs"
+    },
+    "AP01": {
+      "pageId": "4091f60f-fdfa-8195-874e-c03b3165e1ef",
+      "sourceId": "ds:applications"
+    },
+    "AP02": {
+      "pageId": "4091f60f-fdfa-812f-a452-dad0eb6557cf",
+      "sourceId": "ds:applications"
+    },
+    "AP03": {
+      "pageId": "4091f60f-fdfa-8172-b5ac-dfc597f0d9c1",
+      "sourceId": "ds:applications"
+    }
+  },
+  "writeAttempts": 18,
+  "completedWrites": [
+    {
+      "key": "db:db:people",
+      "status": "complete"
+    },
+    {
+      "key": "db:db:programs",
+      "status": "complete"
+    },
+    {
+      "key": "db:db:applications",
+      "status": "complete"
+    },
+    {
+      "key": "relation:rel:applications:people:사람",
+      "status": "complete"
+    },
+    {
+      "key": "reverse:rel:applications:people:사람",
+      "status": "complete"
+    },
+    {
+      "key": "relation:rel:applications:programs:프로그램",
+      "status": "complete"
+    },
+    {
+      "key": "reverse:rel:applications:programs:프로그램",
+      "status": "complete"
+    },
+    {
+      "key": "calculation:ds:programs:rollup:applications",
+      "status": "complete"
+    },
+    {
+      "key": "calculation:ds:applications:formula:selected-value",
+      "status": "complete"
+    },
+    {
+      "key": "calculation:ds:programs:rollup:selected-applications",
+      "status": "complete"
+    },
+    {
+      "key": "calculation:ds:people:formula:applications",
+      "status": "complete"
+    },
+    {
+      "key": "row:P01",
+      "status": "complete"
+    },
+    {
+      "key": "row:P02",
+      "status": "complete"
+    },
+    {
+      "key": "row:C01",
+      "status": "complete"
+    },
+    {
+      "key": "row:C02",
+      "status": "complete"
+    },
+    {
+      "key": "row:AP01",
+      "status": "complete"
+    },
+    {
+      "key": "row:AP02",
+      "status": "complete"
+    },
+    {
+      "key": "row:AP03",
+      "status": "complete"
+    }
+  ],
+  "verification": {
+    "ok": true,
+    "checks": [
+      {
+        "name": "exact parent DB IDs",
+        "actual": [
+          "a99088e94bd34f009c20f1b9e3e60b29",
+          "ae16116a6b4f4ae397165aa7e8a1a9f3",
+          "d33a55059ebf4d64b2005dc105ccfb19"
+        ],
+        "expected": [
+          "a99088e94bd34f009c20f1b9e3e60b29",
+          "ae16116a6b4f4ae397165aa7e8a1a9f3",
+          "d33a55059ebf4d64b2005dc105ccfb19"
+        ],
+        "passed": true
+      },
+      {
+        "name": "people: DB name",
+        "actual": "[TEST] NB-V2-009B 사람",
+        "expected": "[TEST] NB-V2-009B 사람",
+        "passed": true
+      },
+      {
+        "name": "people: DS name",
+        "actual": "[TEST] NB-V2-009B 사람",
+        "expected": "[TEST] NB-V2-009B 사람",
+        "passed": true
+      },
+      {
+        "name": "people: property count",
+        "actual": 4,
+        "expected": 4,
+        "passed": true
+      },
+      {
+        "name": "people: Title count",
+        "actual": 1,
+        "expected": 1,
+        "passed": true
+      },
+      {
+        "name": "ds:people:field:form-0: schema/options",
+        "actual": true,
+        "expected": true,
+        "passed": true
+      },
+      {
+        "name": "ds:people:field:form-1: schema/options",
+        "actual": true,
+        "expected": true,
+        "passed": true
+      },
+      {
+        "name": "ds:people:relation:applications:people:사람:reverse: schema/options",
+        "actual": true,
+        "expected": true,
+        "passed": true
+      },
+      {
+        "name": "ds:people:formula:applications: schema/options",
+        "actual": true,
+        "expected": true,
+        "passed": true
+      },
+      {
+        "name": "people: exact row IDs",
+        "actual": [
+          "4091f60ffdfa81588b1ee2dd0d1b925a",
+          "4091f60ffdfa81628acfffd73540e95a"
+        ],
+        "expected": [
+          "4091f60ffdfa81588b1ee2dd0d1b925a",
+          "4091f60ffdfa81628acfffd73540e95a"
+        ],
+        "passed": true
+      },
+      {
+        "name": "P01: title",
+        "actual": "가상 A",
+        "expected": "가상 A",
+        "passed": true
+      },
+      {
+        "name": "P02: title",
+        "actual": "가상 B",
+        "expected": "가상 B",
+        "passed": true
+      },
+      {
+        "name": "programs: DB name",
+        "actual": "[TEST] NB-V2-009B 프로그램",
+        "expected": "[TEST] NB-V2-009B 프로그램",
+        "passed": true
+      },
+      {
+        "name": "programs: DS name",
+        "actual": "[TEST] NB-V2-009B 프로그램",
+        "expected": "[TEST] NB-V2-009B 프로그램",
+        "passed": true
+      },
+      {
+        "name": "programs: property count",
+        "actual": 6,
+        "expected": 6,
+        "passed": true
+      },
+      {
+        "name": "programs: Title count",
+        "actual": 1,
+        "expected": 1,
+        "passed": true
+      },
+      {
+        "name": "ds:programs:field:base-progress: schema/options",
+        "actual": true,
+        "expected": true,
+        "passed": true
+      },
+      {
+        "name": "ds:programs:operation-type: schema/options",
+        "actual": true,
+        "expected": true,
+        "passed": true
+      },
+      {
+        "name": "ds:programs:title: schema/options",
+        "actual": true,
+        "expected": true,
+        "passed": true
+      },
+      {
+        "name": "ds:programs:relation:applications:programs:프로그램:reverse: schema/options",
+        "actual": true,
+        "expected": true,
+        "passed": true
+      },
+      {
+        "name": "ds:programs:rollup:applications: schema/options",
+        "actual": true,
+        "expected": true,
+        "passed": true
+      },
+      {
+        "name": "ds:programs:rollup:selected-applications: schema/options",
+        "actual": true,
+        "expected": true,
+        "passed": true
+      },
+      {
+        "name": "programs: exact row IDs",
+        "actual": [
+          "4091f60ffdfa8187bcdcd56414f9f3dc",
+          "4091f60ffdfa81efaca4fa4ce44cf404"
+        ],
+        "expected": [
+          "4091f60ffdfa8187bcdcd56414f9f3dc",
+          "4091f60ffdfa81efaca4fa4ce44cf404"
+        ],
+        "passed": true
+      },
+      {
+        "name": "C01: title",
+        "actual": "가상 교육",
+        "expected": "가상 교육",
+        "passed": true
+      },
+      {
+        "name": "C02: title",
+        "actual": "가상 해커톤",
+        "expected": "가상 해커톤",
+        "passed": true
+      },
+      {
+        "name": "applications: DB name",
+        "actual": "[TEST] NB-V2-009B 신청기록",
+        "expected": "[TEST] NB-V2-009B 신청기록",
+        "passed": true
+      },
+      {
+        "name": "applications: DS name",
+        "actual": "[TEST] NB-V2-009B 신청기록",
+        "expected": "[TEST] NB-V2-009B 신청기록",
+        "passed": true
+      },
+      {
+        "name": "applications: property count",
+        "actual": 6,
+        "expected": 6,
+        "passed": true
+      },
+      {
+        "name": "applications: Title count",
+        "actual": 1,
+        "expected": 1,
+        "passed": true
+      },
+      {
+        "name": "ds:applications:field:base-selection: schema/options",
+        "actual": true,
+        "expected": true,
+        "passed": true
+      },
+      {
+        "name": "ds:applications:field:form-2: schema/options",
+        "actual": true,
+        "expected": true,
+        "passed": true
+      },
+      {
+        "name": "ds:applications:title: schema/options",
+        "actual": true,
+        "expected": true,
+        "passed": true
+      },
+      {
+        "name": "ds:applications:relation:applications:people:사람: schema/options",
+        "actual": true,
+        "expected": true,
+        "passed": true
+      },
+      {
+        "name": "ds:applications:relation:applications:programs:프로그램: schema/options",
+        "actual": true,
+        "expected": true,
+        "passed": true
+      },
+      {
+        "name": "ds:applications:formula:selected-value: schema/options",
+        "actual": true,
+        "expected": true,
+        "passed": true
+      },
+      {
+        "name": "applications: exact row IDs",
+        "actual": [
+          "4091f60ffdfa812fa452dad0eb6557cf",
+          "4091f60ffdfa8172b5acdfc597f0d9c1",
+          "4091f60ffdfa8195874ec03b3165e1ef"
+        ],
+        "expected": [
+          "4091f60ffdfa812fa452dad0eb6557cf",
+          "4091f60ffdfa8172b5acdfc597f0d9c1",
+          "4091f60ffdfa8195874ec03b3165e1ef"
+        ],
+        "passed": true
+      },
+      {
+        "name": "AP01: title",
+        "actual": "가상 A 교육 신청",
+        "expected": "가상 A 교육 신청",
+        "passed": true
+      },
+      {
+        "name": "AP02: title",
+        "actual": "가상 A 해커톤 신청",
+        "expected": "가상 A 해커톤 신청",
+        "passed": true
+      },
+      {
+        "name": "AP03: title",
+        "actual": "가상 B 교육 신청",
+        "expected": "가상 B 교육 신청",
+        "passed": true
+      },
+      {
+        "name": "rel:applications:people:사람: reciprocal pair",
+        "actual": true,
+        "expected": true,
+        "passed": true
+      },
+      {
+        "name": "rel:applications:people:사람: reverse name",
+        "actual": "신청기록",
+        "expected": "신청기록",
+        "passed": true
+      },
+      {
+        "name": "rel:applications:people:사람: forward stored ID",
+        "actual": true,
+        "expected": true,
+        "passed": true
+      },
+      {
+        "name": "rel:applications:people:사람: reverse stored ID",
+        "actual": true,
+        "expected": true,
+        "passed": true
+      },
+      {
+        "name": "rel:applications:programs:프로그램: reciprocal pair",
+        "actual": true,
+        "expected": true,
+        "passed": true
+      },
+      {
+        "name": "rel:applications:programs:프로그램: reverse name",
+        "actual": "신청기록",
+        "expected": "신청기록",
+        "passed": true
+      },
+      {
+        "name": "rel:applications:programs:프로그램: forward stored ID",
+        "actual": true,
+        "expected": true,
+        "passed": true
+      },
+      {
+        "name": "rel:applications:programs:프로그램: reverse stored ID",
+        "actual": true,
+        "expected": true,
+        "passed": true
+      },
+      {
+        "name": "ds:programs:rollup:applications: calculation definition",
+        "actual": true,
+        "expected": true,
+        "passed": true
+      },
+      {
+        "name": "ds:programs:rollup:selected-applications: calculation definition",
+        "actual": true,
+        "expected": true,
+        "passed": true
+      },
+      {
+        "name": "ds:people:formula:applications: calculation definition",
+        "actual": true,
+        "expected": true,
+        "passed": true
+      },
+      {
+        "name": "ds:applications:formula:selected-value: calculation definition",
+        "actual": true,
+        "expected": true,
+        "passed": true
+      },
+      {
+        "name": "4091f60f-fdfa-8195-874e-c03b3165e1ef:ds:applications:relation:applications:people:사람: relation",
+        "actual": [
+          "4091f60ffdfa81628acfffd73540e95a"
+        ],
+        "expected": [
+          "4091f60ffdfa81628acfffd73540e95a"
+        ],
+        "passed": true
+      },
+      {
+        "name": "4091f60f-fdfa-8195-874e-c03b3165e1ef:ds:applications:relation:applications:programs:프로그램: relation",
+        "actual": [
+          "4091f60ffdfa81efaca4fa4ce44cf404"
+        ],
+        "expected": [
+          "4091f60ffdfa81efaca4fa4ce44cf404"
+        ],
+        "passed": true
+      },
+      {
+        "name": "AP01: selection",
+        "actual": "선정",
+        "expected": "선정",
+        "passed": true
+      },
+      {
+        "name": "AP01: selected Formula",
+        "actual": 1,
+        "expected": 1,
+        "passed": true
+      },
+      {
+        "name": "4091f60f-fdfa-812f-a452-dad0eb6557cf:ds:applications:relation:applications:people:사람: relation",
+        "actual": [
+          "4091f60ffdfa81628acfffd73540e95a"
+        ],
+        "expected": [
+          "4091f60ffdfa81628acfffd73540e95a"
+        ],
+        "passed": true
+      },
+      {
+        "name": "4091f60f-fdfa-812f-a452-dad0eb6557cf:ds:applications:relation:applications:programs:프로그램: relation",
+        "actual": [
+          "4091f60ffdfa8187bcdcd56414f9f3dc"
+        ],
+        "expected": [
+          "4091f60ffdfa8187bcdcd56414f9f3dc"
+        ],
+        "passed": true
+      },
+      {
+        "name": "AP02: selection",
+        "actual": "미선정",
+        "expected": "미선정",
+        "passed": true
+      },
+      {
+        "name": "AP02: selected Formula",
+        "actual": 0,
+        "expected": 0,
+        "passed": true
+      },
+      {
+        "name": "4091f60f-fdfa-8172-b5ac-dfc597f0d9c1:ds:applications:relation:applications:people:사람: relation",
+        "actual": [
+          "4091f60ffdfa81588b1ee2dd0d1b925a"
+        ],
+        "expected": [
+          "4091f60ffdfa81588b1ee2dd0d1b925a"
+        ],
+        "passed": true
+      },
+      {
+        "name": "4091f60f-fdfa-8172-b5ac-dfc597f0d9c1:ds:applications:relation:applications:programs:프로그램: relation",
+        "actual": [
+          "4091f60ffdfa81efaca4fa4ce44cf404"
+        ],
+        "expected": [
+          "4091f60ffdfa81efaca4fa4ce44cf404"
+        ],
+        "passed": true
+      },
+      {
+        "name": "AP03: selection",
+        "actual": "선정",
+        "expected": "선정",
+        "passed": true
+      },
+      {
+        "name": "AP03: selected Formula",
+        "actual": 1,
+        "expected": 1,
+        "passed": true
+      },
+      {
+        "name": "4091f60f-fdfa-8162-8acf-ffd73540e95a:ds:people:relation:applications:people:사람:reverse: relation",
+        "actual": [
+          "4091f60ffdfa812fa452dad0eb6557cf",
+          "4091f60ffdfa8195874ec03b3165e1ef"
+        ],
+        "expected": [
+          "4091f60ffdfa812fa452dad0eb6557cf",
+          "4091f60ffdfa8195874ec03b3165e1ef"
+        ],
+        "passed": true
+      },
+      {
+        "name": "P01: application count Formula",
+        "actual": 2,
+        "expected": 2,
+        "passed": true
+      },
+      {
+        "name": "4091f60f-fdfa-8158-8b1e-e2dd0d1b925a:ds:people:relation:applications:people:사람:reverse: relation",
+        "actual": [
+          "4091f60ffdfa8172b5acdfc597f0d9c1"
+        ],
+        "expected": [
+          "4091f60ffdfa8172b5acdfc597f0d9c1"
+        ],
+        "passed": true
+      },
+      {
+        "name": "P02: application count Formula",
+        "actual": 1,
+        "expected": 1,
+        "passed": true
+      },
+      {
+        "name": "4091f60f-fdfa-81ef-aca4-fa4ce44cf404:ds:programs:relation:applications:programs:프로그램:reverse: relation",
+        "actual": [
+          "4091f60ffdfa8172b5acdfc597f0d9c1",
+          "4091f60ffdfa8195874ec03b3165e1ef"
+        ],
+        "expected": [
+          "4091f60ffdfa8172b5acdfc597f0d9c1",
+          "4091f60ffdfa8195874ec03b3165e1ef"
+        ],
+        "passed": true
+      },
+      {
+        "name": "C01: application count Rollup",
+        "actual": 2,
+        "expected": 2,
+        "passed": true
+      },
+      {
+        "name": "C01: selected count Rollup",
+        "actual": 2,
+        "expected": 2,
+        "passed": true
+      },
+      {
+        "name": "C01: operation type",
+        "actual": "일반 교육",
+        "expected": "일반 교육",
+        "passed": true
+      },
+      {
+        "name": "C01: operation Select state",
+        "actual": "진행 중",
+        "expected": "진행 중",
+        "passed": true
+      },
+      {
+        "name": "4091f60f-fdfa-8187-bcdc-d56414f9f3dc:ds:programs:relation:applications:programs:프로그램:reverse: relation",
+        "actual": [
+          "4091f60ffdfa812fa452dad0eb6557cf"
+        ],
+        "expected": [
+          "4091f60ffdfa812fa452dad0eb6557cf"
+        ],
+        "passed": true
+      },
+      {
+        "name": "C02: application count Rollup",
+        "actual": 1,
+        "expected": 1,
+        "passed": true
+      },
+      {
+        "name": "C02: selected count Rollup",
+        "actual": 0,
+        "expected": 0,
+        "passed": true
+      },
+      {
+        "name": "C02: operation type",
+        "actual": "해커톤",
+        "expected": "해커톤",
+        "passed": true
+      },
+      {
+        "name": "C02: operation Select state",
+        "actual": "예정",
+        "expected": "예정",
+        "passed": true
+      },
+      {
+        "name": "unique synthetic people",
+        "actual": 2,
+        "expected": 2,
+        "passed": true
+      },
+      {
+        "name": "applications distinct from people",
+        "actual": 3,
+        "expected": 3,
+        "passed": true
+      }
+    ],
+    "expected": {
+      "people": 2,
+      "applications": 3,
+      "personApplications": {
+        "P01": 2,
+        "P02": 1
+      },
+      "programs": {
+        "C01": {
+          "applications": 2,
+          "selected": 2,
+          "rate": 100
+        },
+        "C02": {
+          "applications": 1,
+          "selected": 0,
+          "rate": 0
+        }
+      }
+    },
+    "actual": {
+      "people": 2,
+      "applications": 3,
+      "personApplications": {
+        "P01": 2,
+        "P02": 1
+      },
+      "programs": {
+        "C01": {
+          "applications": 2,
+          "selected": 2,
+          "rate": 100
+        },
+        "C02": {
+          "applications": 1,
+          "selected": 0,
+          "rate": 0
+        }
+      }
+    },
+    "selectionRate": {
+      "notionPropertyCreated": false,
+      "notionCalculationVerified": false,
+      "derivedLocallyFromRemoteCounts": {
+        "C01": {
+          "applications": 2,
+          "selected": 2,
+          "rate": 100
+        },
+        "C02": {
+          "applications": 1,
+          "selected": 0,
+          "rate": 0
+        }
+      }
+    },
+    "verifiedAt": "2026-10-30T00:33:42.577Z"
+  },
+  "replay": {
+    "reusedExistingRun": true,
+    "calls": {
+      "get": 46,
+      "readOnlyQueryPost": 3,
+      "mutationAttempts": 0
+    },
+    "writeAttemptsBefore": 18,
+    "writeAttemptsAfter": 18,
+    "remoteWritesBlocked": true
+  }
+}

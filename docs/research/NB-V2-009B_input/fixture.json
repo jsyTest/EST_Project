@@ -1,0 +1,50 @@
+{
+  "kind": "synthetic",
+  "people": [
+    {
+      "key": "P01",
+      "title": "가상 A"
+    },
+    {
+      "key": "P02",
+      "title": "가상 B"
+    }
+  ],
+  "programs": [
+    {
+      "key": "C01",
+      "title": "가상 교육",
+      "operationType": "일반 교육",
+      "state": "진행 중"
+    },
+    {
+      "key": "C02",
+      "title": "가상 해커톤",
+      "operationType": "해커톤",
+      "state": "예정"
+    }
+  ],
+  "applications": [
+    {
+      "key": "AP01",
+      "title": "가상 A 교육 신청",
+      "personKey": "P01",
+      "programKey": "C01",
+      "selection": "선정"
+    },
+    {
+      "key": "AP02",
+      "title": "가상 A 해커톤 신청",
+      "personKey": "P01",
+      "programKey": "C02",
+      "selection": "미선정"
+    },
+    {
+      "key": "AP03",
+      "title": "가상 B 교육 신청",
+      "personKey": "P02",
+      "programKey": "C01",
+      "selection": "선정"
+    }
+  ]
+}

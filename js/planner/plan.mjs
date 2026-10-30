@@ -88,7 +88,7 @@ export function createGenerationPlan(configuration,settings={}){
  if(!input.properties.some(p=>p.included&&p.origin!=='base'))plan.blockingErrors.push(issue('EMPTY_INPUT','분석한 질문·CSV 속성 또는 직접 추가 속성이 필요합니다.'));
  // No synthetic contact/name/date fields. The operational selection default is omitted if explicitly excluded.
  if(!input.properties.some(p=>p.localId==='base-selection'))addProperty('applications',{key:'selection',name:'모집·선정 상태',type:'select',options:SELECTION_OPTIONS});
- if(plan.templateType!=='basic')addProperty('programs',{key:'operation-type',name:'운영 유형',type:'select',options:[{name:plan.educationType==='hackathon'?'해커톤':'일반 교육',color:plan.educationType==='hackathon'?'purple':'blue'}]});
+ if(plan.templateType!=='basic')addProperty('programs',{key:'operation-type',name:'운영 유형',type:'select',options:[{name:plan.educationType==='hackathon'?'해커톤':'일반 교육',color:plan.educationType==='hackathon'?'purple':'blue'},...(settings.includeBothOperationTypes?[{name:plan.educationType==='hackathon'?'일반 교육':'해커톤',color:plan.educationType==='hackathon'?'blue':'purple'}]:[])]});
  if(plan.templateType==='extended')for(const id of enabled)for(const p of MODULES[id].properties)addProperty(p.db,{...p,key:`module:${id}:${p.key}`});
  // Every data source gets exactly one title; user title choices are preserved, duplicates block below.
  for(const key of databaseKeys){if(!plan.properties.some(p=>p.dataSourceId===ds(key)&&p.type==='title')){let name=key==='people'?'사람명':key==='programs'?'프로그램명':'이름';while(plan.properties.some(p=>p.dataSourceId===ds(key)&&keyName(p.name)===keyName(name)))name='_'+name;addProperty(key,{key:'title',name,type:'title'});}}
@@ -117,6 +117,15 @@ export function createGenerationPlan(configuration,settings={}){
   plan.confirmationItems.push(issue('IDENTITY_POLICY_PENDING','사람 식별·중복 제거 기준과 응답 행별 관계 연결은 아직 정하지 않았습니다. 헤더만으로 고유 사람을 확정하지 않습니다.'));
   plan.warnings.push(issue('NO_ROW_VALUES','사람 수·신청 건수·Rollup/Formula 값은 실제 응답 없이 계산 완료로 표시하지 않습니다.'));
  }
+ if(settings.selectionMetrics===true){
+  const selection=plan.properties.find(p=>p.dataSourceId===ds('applications')&&(p.id===pid('applications','selection')||p.sourceRefs.some(s=>s.localId==='base-selection')));
+  const options=plan.selectOptions.find(o=>o.propertyId===selection?.id);
+  if(plan.templateType==='basic'||selection?.type!=='select'||!options?.options.some(o=>o.name==='선정'))plan.blockingErrors.push(issue('SELECTION_METRIC_INPUT','일반형의 명시적인 선정 Select 옵션이 필요합니다.'));
+  else{
+   addFormula({db:'applications',key:'selected-value',name:'선정 값',op:'equals_option',propertyKey:selection.id.slice(ds('applications').length+1),value:'선정'});
+   addRollup({db:'programs',key:'selected-applications',name:'선정 신청 건수',relationName:'신청기록',targetDb:'applications',targetKey:'formula:selected-value',function:'sum'});
+  }
+ }
  if(plan.templateType==='extended')for(const id of enabled){for(const r of MODULES[id].rollups)addRollup(r);for(const f of MODULES[id].formulas)addFormula(f);}
  if(enabled.has('teams'))plan.confirmationItems.push(issue('TEAM_IDENTITY_PENDING','팀 참여기록 수는 고유 인원수가 아닙니다. 동일인의 중복 참여·팀 배치 기준을 확인해야 합니다.'));
  const validation=validateGenerationPlan(plan);plan.blockingErrors.push(...validation.blockingErrors);plan.confirmationItems.push(...validation.confirmationItems);
@@ -130,6 +139,7 @@ export function createGenerationPlan(configuration,settings={}){
   {id:'options',name:'상태·선택 옵션·색상 재조회 검증',logicalIds:plan.selectOptions.concat(plan.statusOptions).map(p=>p.propertyId),note:'옵션은 기본 속성 단계에서 생성하고 이 단계에서 반환값을 검사합니다.'},
   {id:'verify',name:'구조·참조·계산 검증',logicalIds:plan.dataSources.map(p=>p.id),calculatedValues:'requires future rows; not evaluated'}
  ];
+ if(settings.selectionMetrics===true){plan.executionPhases[4]={id:'calculations',name:'의존 순서 계산(선행 Formula → Rollup 포함)',logicalIds:validation.calculationOrder};plan.executionPhases[5]={id:'formula_verification',name:'Formula 표현식 재조회',logicalIds:validation.formulaOrder};}
  for(let i=0;i<plan.executionPhases.length;i++)plan.executionPhases[i].dependsOn=i?[plan.executionPhases[i-1].id]:[];
  plan.unresolvedBindings={parentPage:'page:root',databaseIds:plan.databases.map(p=>p.id),dataSourceIds:plan.dataSources.map(p=>p.id),propertyIds:plan.properties.map(p=>p.id),resolved:false};
  plan.delta=planDelta(settings.previousPlan,plan);
@@ -138,7 +148,7 @@ export function createGenerationPlan(configuration,settings={}){
 }
 
 export function validateGenerationPlan(plan){
- const errors=[],confirmations=[],formulaOrder=[];
+ const errors=[],confirmations=[],formulaOrder=[],calculationOrder=[];
  const fail=(code,message,ref)=>errors.push(issue(code,message,ref));
  if(plan?.planVersion!==1||!['databases','dataSources','properties','relations','rollups','formulas','selectOptions','statusOptions','enabledModules'].every(k=>Array.isArray(plan[k])))return {ok:false,blockingErrors:[issue('PLAN_SHAPE','지원하지 않는 계획 형식입니다.')],confirmationItems:[],formulaOrder:[]};
  const ids=new Set();for(const item of [...plan.databases,...plan.dataSources,...plan.properties,...plan.relations]){if(!item||typeof item.id!=='string'||ids.has(item.id))fail('DUPLICATE_ID','논리 ID가 없거나 중복됩니다.',item?.id);else ids.add(item.id);}
@@ -168,8 +178,9 @@ export function validateGenerationPlan(plan){
   if(definitions.has(r.propertyId))fail('CALCULATION_DUPLICATE','계산 속성 정의가 중복됩니다.',r.propertyId);definitions.set(r.propertyId,r);
   if(p?.type!=='rollup'||relation?.dataSourceId!==p?.dataSourceId||!relations.has(r.relationPropertyId)||target?.dataSourceId!==relations.get(r.relationPropertyId))fail('ROLLUP_TARGET','Rollup의 관계 또는 대상 속성이 올바르지 않습니다.',r.propertyId);
   if(!['sum','average','count_all'].includes(r.function))fail('ROLLUP_FUNCTION','현재 계획기가 지원하지 않는 Rollup 함수입니다.',r.propertyId);
-  if(['formula','rollup'].includes(target?.type))fail('ROLLUP_CALCULATION_UNSUPPORTED','이 계획기는 계산 속성을 다시 Rollup하는 실행 순서를 아직 지원하지 않습니다.',r.propertyId);
-  if(['sum','average'].includes(r.function)&&target?.type!=='number')fail('ROLLUP_NUMBER','숫자 집계에는 숫자 속성이 필요합니다.',r.propertyId);
+  const numericFlag=target?.type==='formula'&&plan.formulas.some(f=>f.propertyId===target.id&&f.ast?.op==='equals_option');
+  if(target?.type==='rollup'||target?.type==='formula'&&!numericFlag)fail('ROLLUP_CALCULATION_UNSUPPORTED','이 계획기는 숫자 equals_option 외의 계산 속성 중첩 Rollup을 지원하지 않습니다.',r.propertyId);
+  if(['sum','average'].includes(r.function)&&target?.type!=='number'&&!numericFlag)fail('ROLLUP_NUMBER','숫자 집계에는 숫자 속성이 필요합니다.',r.propertyId);
   dependencies.set(r.propertyId,[r.targetPropertyId]);
  }
  for(const f of plan.formulas){const p=properties.get(f.propertyId),refs=formulaRefs(f.ast);
@@ -186,7 +197,7 @@ export function validateGenerationPlan(plan){
   dependencies.set(f.propertyId,refs);
  }
  for(const p of plan.properties.filter(p=>['rollup','formula'].includes(p.type)))if(!definitions.has(p.id))fail('CALCULATION_MISSING','계산 속성 정의가 없습니다.',p.id);
- const visited=new Set(),active=new Set();function visit(id){if(active.has(id)){fail('CALCULATION_CYCLE','계산 참조가 순환합니다.',id);return;}if(visited.has(id))return;active.add(id);for(const dep of dependencies.get(id)??[])if(dependencies.has(dep))visit(dep);active.delete(id);visited.add(id);if(properties.get(id)?.type==='formula')formulaOrder.push(id);}for(const id of dependencies.keys())visit(id);
+ const visited=new Set(),active=new Set();function visit(id){if(active.has(id)){fail('CALCULATION_CYCLE','계산 참조가 순환합니다.',id);return;}if(visited.has(id))return;active.add(id);for(const dep of dependencies.get(id)??[])if(dependencies.has(dep))visit(dep);active.delete(id);visited.add(id);calculationOrder.push(id);if(properties.get(id)?.type==='formula')formulaOrder.push(id);}for(const id of dependencies.keys())visit(id);
  const optionIds=new Set();
  for(const [kind,configs]of [['select',plan.selectOptions],['status',plan.statusOptions]])for(const config of configs){const p=properties.get(config.propertyId);
   if(optionIds.has(config.propertyId))fail('OPTION_DUPLICATE','옵션 정의가 중복됩니다.',config.propertyId);optionIds.add(config.propertyId);
@@ -209,7 +220,7 @@ export function validateGenerationPlan(plan){
   for(const r of module.rollups)if(!plan.rollups.some(actual=>actual.propertyId===pid(r.db,`rollup:${r.key}`)))fail('MODULE_ROLLUP','모듈에 필요한 Rollup이 없습니다.',id);
   for(const f of module.formulas)if(!plan.formulas.some(actual=>actual.propertyId===pid(f.db,`formula:${f.key}`)))fail('MODULE_FORMULA','모듈에 필요한 Formula가 없습니다.',id);
  }
- return {ok:!errors.length,blockingErrors:errors,confirmationItems:confirmations,formulaOrder};
+ return {ok:!errors.length,blockingErrors:errors,confirmationItems:confirmations,formulaOrder,calculationOrder};
 }
 function planDelta(previous,plan){
  const valid=previous&&previous.dryRunValid===true&&previous.blockingErrors?.length===0&&validateGenerationPlan(previous).ok;
@@ -238,6 +249,10 @@ function requestTemplates(plan){
  const reconcile=(p,definition)=>({phase:'properties',method:'GET',...path(p.dataSourceId),proposedChange:{propertyId:p.id,name:p.name,definition},requiresRemoteMerge:true,retainUnlistedOptions:true,automaticDeletion:false,executable:false});
  const propose=(p,definition)=>changed(p.id)?reconcile(p,definition):patch(p,definition);
  const reused=plan.databases.filter(d=>plan.delta.reuseDatabases.includes(d.id));
+ const calculations=validateGenerationPlan(plan).calculationOrder.map(id=>{
+  const r=plan.rollups.find(r=>r.propertyId===id);if(r)return {id,definition:{rollup:{relation_property_id:ref(r.relationPropertyId),rollup_property_id:ref(r.targetPropertyId),function:r.function==='count_all'?'count':r.function}}};
+  const f=plan.formulas.find(f=>f.propertyId===id);return {id,definition:{formula:{expression:f.expression}}};
+ });
  return [
   reused.length?{phase:'parent',method:'GET',endpoint:'/v1/pages/{page_id}',page_id:ref('page:root'),requiresExplicitRemoteBinding:true,executable:false}:
    {phase:'parent',method:'POST',endpoint:'/v1/pages',body:{parent:{type:'page_id',page_id:ref('external:parent_page_id')},properties:{title:{type:'title',title:[{type:'text',text:{content:plan.educationType==='hackathon'?'해커톤 운영':'교육 운영'}}]}}},bind:'page:root',executable:false},
@@ -245,8 +260,7 @@ function requestTemplates(plan){
   ...reused.map(d=>({phase:'properties',method:'GET',...path(d.dataSourceId),bindExistingPropertyIds:true,verifyBeforeChanges:true,executable:false})),
   ...plan.properties.filter(p=>!['title','relation','rollup','formula'].includes(p.type)&&(added(p.id)||changed(p.id))).map(p=>propose(p,schema(p))),
   ...plan.relations.filter(r=>added(r.propertyId)||changed(r.propertyId)||changed(r.reversePropertyId)).map(r=>({...propose(pBy(r.propertyId),{relation:{data_source_id:ref(r.targetDataSourceId),type:'dual_property',dual_property:{}}}),bindReverseProperty:r.reversePropertyId,afterCreation:{retrieveBothDataSources:true,renameGeneratedReverseTo:pBy(r.reversePropertyId).name,verifyPair:true}})),
-  ...plan.rollups.filter(r=>added(r.propertyId)||changed(r.propertyId)).map(r=>propose(pBy(r.propertyId),{rollup:{relation_property_id:ref(r.relationPropertyId),rollup_property_id:ref(r.targetPropertyId),function:r.function}})),
-  ...plan.formulas.filter(f=>added(f.propertyId)||changed(f.propertyId)).map(f=>propose(pBy(f.propertyId),{formula:{expression:f.expression}})),
+  ...calculations.filter(c=>added(c.id)||changed(c.id)).map(c=>propose(pBy(c.id),c.definition)),
   ...plan.dataSources.map(s=>({phase:'verify',method:'GET',...path(s.id),verify:['names','types','remote_ids','relation_pairs','options_colors_groups','calculation_definitions'],rowValues:'not_evaluated_without_rows',executable:false}))
  ];
 }

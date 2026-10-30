@@ -1,0 +1,319 @@
+{
+  "task": "NB-V2-009B",
+  "mode": "dry-run",
+  "runId": "nb-v2-009b-standard-001",
+  "spec": {
+    "compilerVersion": 1,
+    "apiVersion": "2026-03-11",
+    "planId": "plan-2c9c6df959adeba9",
+    "planHash": "a25b2f58d230b94997459e4e701a4584daedbb8e36b9455db1b591dad7197440",
+    "databases": [
+      {
+        "logicalId": "db:people",
+        "key": "people",
+        "name": "[TEST] NB-V2-009B 사람",
+        "dataSourceLogicalId": "ds:people"
+      },
+      {
+        "logicalId": "db:programs",
+        "key": "programs",
+        "name": "[TEST] NB-V2-009B 프로그램",
+        "dataSourceLogicalId": "ds:programs"
+      },
+      {
+        "logicalId": "db:applications",
+        "key": "applications",
+        "name": "[TEST] NB-V2-009B 신청기록",
+        "dataSourceLogicalId": "ds:applications"
+      }
+    ],
+    "fields": [
+      {
+        "logicalId": "ds:applications:field:base-selection",
+        "sourceId": "ds:applications",
+        "name": "선정 상태",
+        "type": "select",
+        "options": [
+          {
+            "name": "접수",
+            "color": "blue"
+          },
+          {
+            "name": "선정",
+            "color": "green"
+          },
+          {
+            "name": "대기",
+            "color": "yellow"
+          },
+          {
+            "name": "미선정",
+            "color": "gray"
+          },
+          {
+            "name": "취소",
+            "color": "red"
+          }
+        ]
+      },
+      {
+        "logicalId": "ds:programs:field:base-progress",
+        "sourceId": "ds:programs",
+        "name": "운영 상태",
+        "type": "select",
+        "options": [
+          {
+            "name": "예정",
+            "color": "gray"
+          },
+          {
+            "name": "진행 중",
+            "color": "blue"
+          },
+          {
+            "name": "완료",
+            "color": "green"
+          },
+          {
+            "name": "취소",
+            "color": "red"
+          }
+        ]
+      },
+      {
+        "logicalId": "ds:people:field:form-0",
+        "sourceId": "ds:people",
+        "name": "성명",
+        "type": "title"
+      },
+      {
+        "logicalId": "ds:people:field:form-1",
+        "sourceId": "ds:people",
+        "name": "이메일",
+        "type": "email"
+      },
+      {
+        "logicalId": "ds:applications:field:form-2",
+        "sourceId": "ds:applications",
+        "name": "신청 동기",
+        "type": "rich_text"
+      },
+      {
+        "logicalId": "ds:programs:operation-type",
+        "sourceId": "ds:programs",
+        "name": "운영 유형",
+        "type": "select",
+        "options": [
+          {
+            "name": "일반 교육",
+            "color": "blue"
+          },
+          {
+            "name": "해커톤",
+            "color": "purple"
+          }
+        ]
+      },
+      {
+        "logicalId": "ds:programs:title",
+        "sourceId": "ds:programs",
+        "name": "프로그램명",
+        "type": "title"
+      },
+      {
+        "logicalId": "ds:applications:title",
+        "sourceId": "ds:applications",
+        "name": "이름",
+        "type": "title"
+      },
+      {
+        "logicalId": "ds:applications:relation:applications:people:사람",
+        "sourceId": "ds:applications",
+        "name": "사람",
+        "type": "relation"
+      },
+      {
+        "logicalId": "ds:people:relation:applications:people:사람:reverse",
+        "sourceId": "ds:people",
+        "name": "신청기록",
+        "type": "relation"
+      },
+      {
+        "logicalId": "ds:applications:relation:applications:programs:프로그램",
+        "sourceId": "ds:applications",
+        "name": "프로그램",
+        "type": "relation"
+      },
+      {
+        "logicalId": "ds:programs:relation:applications:programs:프로그램:reverse",
+        "sourceId": "ds:programs",
+        "name": "신청기록",
+        "type": "relation"
+      },
+      {
+        "logicalId": "ds:programs:rollup:applications",
+        "sourceId": "ds:programs",
+        "name": "신청 건수",
+        "type": "rollup"
+      },
+      {
+        "logicalId": "ds:people:formula:applications",
+        "sourceId": "ds:people",
+        "name": "신청 건수",
+        "type": "formula"
+      },
+      {
+        "logicalId": "ds:applications:formula:selected-value",
+        "sourceId": "ds:applications",
+        "name": "선정 값",
+        "type": "formula"
+      },
+      {
+        "logicalId": "ds:programs:rollup:selected-applications",
+        "sourceId": "ds:programs",
+        "name": "선정 신청 건수",
+        "type": "rollup"
+      }
+    ],
+    "relations": [
+      {
+        "logicalId": "rel:applications:people:사람",
+        "sourceId": "ds:applications",
+        "targetId": "ds:people",
+        "propertyId": "ds:applications:relation:applications:people:사람",
+        "reversePropertyId": "ds:people:relation:applications:people:사람:reverse"
+      },
+      {
+        "logicalId": "rel:applications:programs:프로그램",
+        "sourceId": "ds:applications",
+        "targetId": "ds:programs",
+        "propertyId": "ds:applications:relation:applications:programs:프로그램",
+        "reversePropertyId": "ds:programs:relation:applications:programs:프로그램:reverse"
+      }
+    ],
+    "rollups": [
+      {
+        "propertyId": "ds:programs:rollup:applications",
+        "relationPropertyId": "ds:programs:relation:applications:programs:프로그램:reverse",
+        "targetPropertyId": "ds:applications:title",
+        "logicalFunction": "count_all",
+        "apiFunction": "count"
+      },
+      {
+        "propertyId": "ds:programs:rollup:selected-applications",
+        "relationPropertyId": "ds:programs:relation:applications:programs:프로그램:reverse",
+        "targetPropertyId": "ds:applications:formula:selected-value",
+        "logicalFunction": "sum",
+        "apiFunction": "sum"
+      }
+    ],
+    "formulas": [
+      {
+        "propertyId": "ds:people:formula:applications",
+        "ast": {
+          "op": "relation_count",
+          "propertyId": "ds:people:relation:applications:people:사람:reverse"
+        },
+        "expression": "prop(\"신청기록\").length()"
+      },
+      {
+        "propertyId": "ds:applications:formula:selected-value",
+        "ast": {
+          "op": "equals_option",
+          "propertyId": "ds:applications:field:base-selection",
+          "value": "선정"
+        },
+        "expression": "if(prop(\"선정 상태\") == \"선정\", 1, 0)"
+      }
+    ],
+    "calculationOrder": [
+      "ds:programs:rollup:applications",
+      "ds:applications:formula:selected-value",
+      "ds:programs:rollup:selected-applications",
+      "ds:people:formula:applications"
+    ]
+  },
+  "target": {
+    "kind": "personal-test",
+    "workspaceId": "10e1f60f-fdfa-8128-b201-00037feeb155",
+    "workspaceName": "지승엽의 워크스페이스",
+    "botId": "4081f60f-fdfa-8154-b4cc-002726360706",
+    "parentId": "4091f60f-fdfa-8111-88fc-fa1ca8fed352",
+    "parentTitle": "NB-V2-009B 테스트"
+  },
+  "fixture": {
+    "kind": "synthetic",
+    "people": [
+      {
+        "key": "P01",
+        "title": "가상 A"
+      },
+      {
+        "key": "P02",
+        "title": "가상 B"
+      }
+    ],
+    "programs": [
+      {
+        "key": "C01",
+        "title": "가상 교육",
+        "operationType": "일반 교육",
+        "state": "진행 중"
+      },
+      {
+        "key": "C02",
+        "title": "가상 해커톤",
+        "operationType": "해커톤",
+        "state": "예정"
+      }
+    ],
+    "applications": [
+      {
+        "key": "AP01",
+        "title": "가상 A 교육 신청",
+        "personKey": "P01",
+        "programKey": "C01",
+        "selection": "선정"
+      },
+      {
+        "key": "AP02",
+        "title": "가상 A 해커톤 신청",
+        "personKey": "P01",
+        "programKey": "C02",
+        "selection": "미선정"
+      },
+      {
+        "key": "AP03",
+        "title": "가상 B 교육 신청",
+        "personKey": "P02",
+        "programKey": "C01",
+        "selection": "선정"
+      }
+    ]
+  },
+  "fixtureHash": "f69edf4de945b50fc680d9e6020e97e2ec80202ed0ffa4fa37dfa3030e4d3290",
+  "requestHash": "c7be20bc6e5c4f0257986b2b113c1b45d8077df797fd94c339a14ee8bcdac7a9",
+  "scope": {
+    "databases": 3,
+    "dataSources": 3,
+    "relations": 2,
+    "reverseRelations": 2,
+    "rollups": 2,
+    "formulas": 2,
+    "rows": 7,
+    "parentPages": 0,
+    "rowMarkerParagraphs": 7,
+    "maxWrites": 21
+  },
+  "networkRequests": 0,
+  "resolvedConfirmations": [
+    {
+      "code": "IDENTITY_POLICY_PENDING",
+      "basis": "explicit synthetic fixture IDs only; no real identity inference"
+    }
+  ],
+  "selectionRate": {
+    "notionFormulaSupported": false,
+    "localCrossCheckOnly": true
+  }
+}

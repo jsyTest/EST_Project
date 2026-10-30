@@ -1,0 +1,17 @@
+{
+  "command": "node --test scripts/notion-poc/tests/*.test.mjs",
+  "tests": 239,
+  "pass": 239,
+  "fail": 0,
+  "baselineTests": 223,
+  "newTests": 16,
+  "v1Combinations": 256,
+  "liveApiIncluded": false,
+  "summary": [
+    "✔ V1: 256 module combinations still produce consistent schemas and export text (14.103959ms)",
+    "ℹ tests 239",
+    "ℹ pass 239",
+    "ℹ fail 0",
+    "ℹ duration_ms 12721.811042"
+  ]
+}

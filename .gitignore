@@ -3,5 +3,6 @@
 !.env.example
 .notion-poc-state/
 .notion-generation-state/
+.notion-standard-state/
 node_modules/
 public-dist/

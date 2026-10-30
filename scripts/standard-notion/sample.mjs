@@ -1,0 +1,7 @@
+import {emptyConfiguration} from '../../js/drafts/model.mjs';
+import {parseForm,mergeSources} from '../../js/mapping/parse.mjs';
+import {createGenerationPlan} from '../../js/planner/plan.mjs';
+// Explicit synthetic input, not an executor-side conversion of a user's Status.
+export function sampleConfiguration(){const c=emptyConfiguration();c.requirements.educationName='가상 교육';c.mapping.formText='1. 성명\n단답형\n2. 이메일\n단답형\n3. 신청 동기\n장문형';c.mapping.model=mergeSources(parseForm(c.mapping.formText),[],{safeCsvDefaults:true});const state=c.mapping.model.properties.find(p=>p.localId==='base-progress');state.type='select';state.name='운영 상태';state.mappingStatus='confirmed';state.reviewReasons=[];state.options=state.options.map(({group,...o})=>o);return c;}
+export const samplePlan=()=>createGenerationPlan(sampleConfiguration(),{templateType:'standard',includeBothOperationTypes:true,selectionMetrics:true,databaseNames:{people:'[TEST] NB-V2-009B 사람',programs:'[TEST] NB-V2-009B 프로그램',applications:'[TEST] NB-V2-009B 신청기록'}});
+export const sampleFixture=()=>({kind:'synthetic',people:[{key:'P01',title:'가상 A'},{key:'P02',title:'가상 B'}],programs:[{key:'C01',title:'가상 교육',operationType:'일반 교육',state:'진행 중'},{key:'C02',title:'가상 해커톤',operationType:'해커톤',state:'예정'}],applications:[{key:'AP01',title:'가상 A 교육 신청',personKey:'P01',programKey:'C01',selection:'선정'},{key:'AP02',title:'가상 A 해커톤 신청',personKey:'P01',programKey:'C02',selection:'미선정'},{key:'AP03',title:'가상 B 교육 신청',personKey:'P02',programKey:'C01',selection:'선정'}]});

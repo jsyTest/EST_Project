@@ -1,0 +1,186 @@
+{
+  "version": 1,
+  "requirements": {
+    "educationName": "가상 교육",
+    "educationType": "education",
+    "purpose": "",
+    "requirements": "",
+    "basicItems": [
+      "students",
+      "attendance",
+      "schedule"
+    ],
+    "additionalItems": []
+  },
+  "mapping": {
+    "formText": "1. 성명\n단답형\n2. 이메일\n단답형\n3. 신청 동기\n장문형",
+    "encoding": "utf-8",
+    "columns": [],
+    "model": {
+      "version": 1,
+      "source": {
+        "formRaw": "1. 성명\n단답형\n2. 이메일\n단답형\n3. 신청 동기\n장문형",
+        "unparsed": [],
+        "warnings": []
+      },
+      "properties": [
+        {
+          "localId": "base-selection",
+          "name": "선정 상태",
+          "type": "select",
+          "targetDb": "applications",
+          "origin": "base",
+          "questionName": "",
+          "csvColumn": null,
+          "required": null,
+          "options": [
+            {
+              "localId": "option-0",
+              "name": "접수",
+              "color": "blue"
+            },
+            {
+              "localId": "option-1",
+              "name": "선정",
+              "color": "green"
+            },
+            {
+              "localId": "option-2",
+              "name": "대기",
+              "color": "yellow"
+            },
+            {
+              "localId": "option-3",
+              "name": "미선정",
+              "color": "gray"
+            },
+            {
+              "localId": "option-4",
+              "name": "취소",
+              "color": "red"
+            }
+          ],
+          "included": true,
+          "mappingStatus": "automatic",
+          "reviewReasons": []
+        },
+        {
+          "localId": "base-completion",
+          "name": "수료 상태",
+          "type": "select",
+          "targetDb": "enrollments",
+          "origin": "base",
+          "questionName": "",
+          "csvColumn": null,
+          "required": null,
+          "options": [
+            {
+              "localId": "option-0",
+              "name": "수료",
+              "color": "green"
+            },
+            {
+              "localId": "option-1",
+              "name": "미수료",
+              "color": "red"
+            },
+            {
+              "localId": "option-2",
+              "name": "수료 대기",
+              "color": "yellow"
+            }
+          ],
+          "included": true,
+          "mappingStatus": "automatic",
+          "reviewReasons": []
+        },
+        {
+          "localId": "base-progress",
+          "name": "운영 상태",
+          "type": "select",
+          "targetDb": "courses",
+          "origin": "base",
+          "questionName": "",
+          "csvColumn": null,
+          "required": null,
+          "options": [
+            {
+              "localId": "option-0",
+              "name": "예정",
+              "color": "gray"
+            },
+            {
+              "localId": "option-1",
+              "name": "진행 중",
+              "color": "blue"
+            },
+            {
+              "localId": "option-2",
+              "name": "완료",
+              "color": "green"
+            },
+            {
+              "localId": "option-3",
+              "name": "취소",
+              "color": "red"
+            }
+          ],
+          "included": true,
+          "mappingStatus": "confirmed",
+          "reviewReasons": []
+        },
+        {
+          "localId": "form-0",
+          "origin": "form",
+          "questionNumber": "1",
+          "questionName": "성명",
+          "rawText": "1. 성명\n단답형",
+          "csvColumn": null,
+          "name": "성명",
+          "type": "title",
+          "targetDb": "applicants",
+          "required": null,
+          "cardinality": null,
+          "options": [],
+          "included": true,
+          "mappingStatus": "automatic",
+          "reviewReasons": []
+        },
+        {
+          "localId": "form-1",
+          "origin": "form",
+          "questionNumber": "2",
+          "questionName": "이메일",
+          "rawText": "2. 이메일\n단답형",
+          "csvColumn": null,
+          "name": "이메일",
+          "type": "email",
+          "targetDb": "applicants",
+          "required": null,
+          "cardinality": null,
+          "options": [],
+          "included": true,
+          "mappingStatus": "automatic",
+          "reviewReasons": []
+        },
+        {
+          "localId": "form-2",
+          "origin": "form",
+          "questionNumber": "3",
+          "questionName": "신청 동기",
+          "rawText": "3. 신청 동기\n장문형",
+          "csvColumn": null,
+          "name": "신청 동기",
+          "type": "rich_text",
+          "targetDb": "applications",
+          "required": null,
+          "cardinality": null,
+          "options": [],
+          "included": true,
+          "mappingStatus": "automatic",
+          "reviewReasons": []
+        }
+      ]
+    }
+  }
+}
