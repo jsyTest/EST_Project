@@ -3,6 +3,7 @@ import {parseForm,mergeSources,formInputError} from './mapping/parse.mjs';
 import {readCsvHeader,readCsvTextHeader,csvHeaderText} from './mapping/csv.mjs';
 import {createGenerationPlan} from './planner/plan.mjs';
 import {MODULES,TEMPLATE_NAMES} from './planner/catalog.mjs';
+import {normalizePlannerSettings} from './drafts/model.mjs';
 async function initializeMappingPage() {
 if (document.documentElement.dataset.authRequired === 'true' && (!(await window.estAuth?.ready) || document.documentElement.dataset.authState !== 'authenticated')) return;
 const drafts=window.estDraftsReady?await window.estDraftsReady:null;
@@ -13,6 +14,7 @@ const typeNames={title:'제목',rich_text:'텍스트',phone_number:'전화번호
 const colorNames={default:'기본',gray:'회색',brown:'갈색',orange:'주황',yellow:'노랑',green:'초록',blue:'파랑',purple:'보라',pink:'분홍',red:'빨강'};
 const swatches={default:'#ddd',gray:'#999',brown:'#a77954',orange:'#da8c43',yellow:'#d5b23b',green:'#509a6e',blue:'#4b8ec8',purple:'#946ac7',pink:'#cb77aa',red:'#cd6767'};
 let model={version:1,properties:baseProperties()},columns=[],sequence=0,compiled=null,active=true,analysisError='',sourceDirty=false,sourceRevision=0,csvDirty=false,generationPlan=null;
+let hasPreview=false;
 const csvMode=()=>$('csv-mode')?.value==='text'?'text':'file';
 if(drafts){
  const restored=drafts.snapshot().configuration.mapping;
@@ -29,6 +31,13 @@ if(drafts){
   for(const id of ['education-name','education-type'])$(id).addEventListener('input',()=>{if(active)try{drafts.update('requirements',captureRequirements());}catch(error){drafts.showError(error);}});
  }
 }
+const restoredPlanner=normalizePlannerSettings(drafts?.snapshot().configuration.planner);
+$('template-type').value=restoredPlanner.templateType;
+for(const id of Object.keys(MODULES))$(`module-${id}`).checked=restoredPlanner.enabledModules.includes(id);
+for(const key of ['repeatPrograms','personHistory','programStatistics','multipleApplications'])$(
+ {repeatPrograms:'repeat-programs',personHistory:'person-history',programStatistics:'program-statistics',multipleApplications:'multiple-applications'}[key]
+).checked=restoredPlanner[key];
+if(drafts)drafts.register('planner',()=>normalizePlannerSettings(planSettings()));
 $('csv-text').value=csvHeaderText(columns);
 // A saved source edited without reanalysis must not preview the previous mapping.
 try{sourceDirty=JSON.stringify(parseForm($('form-text').value).properties.map(p=>p.rawText))!==JSON.stringify(model.properties.filter(p=>p.origin==='form').map(p=>p.rawText));}catch{sourceDirty=true;}
@@ -42,14 +51,18 @@ $('csv-mode').addEventListener('change',()=>{csvChanged();renderCsvMode();});
 function renderCsvMode(){ $('csv-file-fields').hidden=csvMode()==='text';$('csv-text-fields').hidden=csvMode()!=='text'; }
 function captureMapping(){return {formText:$('form-text').value,encoding:$('encoding').value,columns,model};}
 function nextManualId(){let id;do{id=`manual-${sequence++}`;}while(model.properties.some(p=>p.localId===id||p.options.some(o=>o.localId===`option-${id}`)));return id;}
-function syncDraft(){if(drafts&&active)try{drafts.update('mapping',captureMapping());}catch(error){drafts.showError(error);}}
-window.addEventListener('est-auth-cleared',()=>{active=false;model={version:1,properties:[]};columns=[];compiled=null;generationPlan=null;},{once:true});
+function syncDraft(){if(drafts&&active)try{drafts.update('mapping',captureMapping());drafts.update('planner',planSettings());}catch(error){drafts.showError(error);}}
+window.addEventListener('est-auth-cleared',()=>{active=false;model={version:1,properties:[]};columns=[];compiled=null;generationPlan=null;hasPreview=false;
+ $('template-type').value='basic';for(const id of Object.keys(MODULES))$(`module-${id}`).checked=false;
+ for(const id of ['repeat-programs','person-history','program-statistics','multiple-applications'])$(id).checked=false;
+},{once:true});
 function el(tag,text,cls){const n=document.createElement(tag);if(text!=null)n.textContent=text;if(cls)n.className=cls;return n;}
-function invalidate(){compiled=null;generationPlan=null;$('download-schema').disabled=true;$('download-plan').disabled=true;$('plan-summary').textContent='구성을 확인하려면 DB 구성 미리보기를 눌러 주세요.';$('plan-json').textContent='미리보기 전';$('db-preview').replaceChildren();$('plan-details').replaceChildren();$('schema-preview').textContent='편집 내용이 바뀌었습니다. 다시 검사해 주세요.';$('validation').replaceChildren();syncDraft();renderSummary();}
+function invalidate(){compiled=null;generationPlan=null;$('download-schema').disabled=true;$('download-plan').disabled=true;$('plan-summary').textContent=hasPreview?'설정이 변경되었습니다. DB 구성 미리보기를 다시 눌러 계획을 확인해 주세요.':'구성을 확인하려면 DB 구성 미리보기를 눌러 주세요.';$('plan-json').textContent='미리보기 전';$('db-preview').replaceChildren();$('plan-details').replaceChildren();$('schema-preview').textContent='편집 내용이 바뀌었습니다. 다시 검사해 주세요.';$('validation').replaceChildren();syncDraft();renderSummary();}
 function planSettings(){return {templateType:$('template-type').value||'basic',enabledModules:Object.keys(MODULES).filter(id=>$(`module-${id}`).checked),repeatPrograms:$('repeat-programs').checked,personHistory:$('person-history').checked,programStatistics:$('program-statistics').checked,multipleApplications:$('multiple-applications').checked};}
 function renderGenerationPlan(){
  const current=drafts?.snapshot().configuration??{version:1,requirements:{}};
  generationPlan=createGenerationPlan({...current,requirements:{...current.requirements,educationType:$('education-type').value||'education'},mapping:captureMapping()},planSettings());
+ hasPreview=true;
  const root=$('plan-summary');root.replaceChildren();
  const s=generationPlan.summary;root.append(el('p',`${TEMPLATE_NAMES[generationPlan.templateType]??'잘못된 구성'} · DB ${s.databases}개 · 속성 ${s.properties}개 · 관계 ${s.relations}개 · Rollup ${s.rollups}개 · Formula ${s.formulas}개`));
  root.append(el('p',`자동 계획 항목 ${s.automaticItems}개 · 실제 API 검증 필요 ${s.apiVerificationItems}개 · 확인 사항 ${s.confirmationItems}개 · 차단 오류 ${s.blockingErrors}개`));

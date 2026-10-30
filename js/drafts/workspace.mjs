@@ -1,4 +1,4 @@
-import {WORKSPACE_KEY, DraftError, emptyConfiguration, normalizeConfiguration, normalizeRequirements, normalizeMapping} from './model.mjs';
+import {WORKSPACE_KEY, DraftError, emptyConfiguration, normalizeConfiguration, normalizeRequirements, normalizeMapping, normalizePlannerSettings} from './model.mjs';
 export function createWorkspace({storage, userId}) {
   let state = {id: null, updatedAt: null, dirty: false, configuration: emptyConfiguration()};
   let revision = 0, disposed = false;
@@ -33,8 +33,9 @@ export function createWorkspace({storage, userId}) {
   function snapshot() { assertActive(); return {...clone(state), revision, storageError}; }
   function update(section, value) {
     assertActive();
-    if (!['requirements', 'mapping'].includes(section)) throw new DraftError('invalid_configuration');
-    const next = section === 'requirements' ? normalizeRequirements(value) : normalizeMapping(value);
+    const normalizers = {requirements: normalizeRequirements, mapping: normalizeMapping, planner: normalizePlannerSettings};
+    if (!Object.hasOwn(normalizers, section)) throw new DraftError('invalid_configuration');
+    const next = normalizers[section](value);
     if (JSON.stringify(state.configuration[section]) === JSON.stringify(next)) return;
     state.configuration[section] = next; state.dirty = true; revision++; persist();
   }

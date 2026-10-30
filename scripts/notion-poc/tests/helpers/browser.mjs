@@ -5,6 +5,7 @@ import * as parsing from '../../../../js/mapping/parse.mjs';
 import * as csv from '../../../../js/mapping/csv.mjs';
 import * as planner from '../../../../js/planner/plan.mjs';
 import * as catalog from '../../../../js/planner/catalog.mjs';
+import {normalizePlannerSettings} from '../../../../js/drafts/model.mjs';
 const app=await readFile(new URL('../../../../js/app.js',import.meta.url),'utf8');
 const mock=await readFile(new URL('../../../../js/mock-data.js',import.meta.url),'utf8');
 const mapping=(await readFile(new URL('../../../../js/mapping-ui.mjs',import.meta.url),'utf8')).replace(/^import[^\n]+\n/gm,'');
@@ -31,7 +32,7 @@ export async function screen(page,st=storage(),{valid=true,drafts}={}) {
  form.querySelectorAll=selector=>{const group=selector.includes('basicItems')?basic:extra;return selector.endsWith(':checked')?group.filter(c=>c.checked):group;};
  const walk=nodes=>nodes.flatMap(n=>[n,...walk(n.children)]);
  const document={body:{dataset:{page:page==='unified'?'input':page}},documentElement:{dataset:{authRequired:'true',authState:valid?'authenticated':'anonymous'}},getElementById:node,createElement(tag){const e=new Element(tag);created.push(e);return e;},querySelector(selector){return selector==='[data-drafts-root]'?node('draft-root'):null;},querySelectorAll(selector){return created.filter(e=>e.className.split(' ').includes(selector.slice(1)));}};
- const context={document,sessionStorage:st,URL,Blob,TextDecoder,Promise,...model,...parsing,...csv,...planner,...catalog,navigator:{clipboard:{async writeText(text){copied.push(text);}}},isSecureContext:true,location:{href:'https://education.example/'+(page==='input'?'index.html':page==='result'?'result.html':'mapping.html')},scrollTo(){},setTimeout:()=>1,clearTimeout(){},addEventListener(type,callback){(callbacks[type]??=[]).push(callback);},estAuth:{ready:Promise.resolve(valid)}};
+ const context={document,sessionStorage:st,URL,Blob,TextDecoder,Promise,...model,...parsing,...csv,...planner,...catalog,normalizePlannerSettings,navigator:{clipboard:{async writeText(text){copied.push(text);}}},isSecureContext:true,location:{href:'https://education.example/'+(page==='input'?'index.html':page==='result'?'result.html':'mapping.html')},scrollTo(){},setTimeout:()=>1,clearTimeout(){},addEventListener(type,callback){(callbacks[type]??=[]).push(callback);},estAuth:{ready:Promise.resolve(valid)}};
  if(drafts)context.estDraftsReady=Promise.resolve(drafts);context.window=context;vm.createContext(context);vm.runInContext(mock,context);
  if(page==='mapping'||page==='unified'){node('encoding').value='utf-8';node('csv-mode').value='file';if(page==='unified')vm.runInContext(app,context);vm.runInContext(mapping,context);}else vm.runInContext(app,context);
  async function flush(){for(let i=0;i<8;i++)await Promise.resolve();}

@@ -1,0 +1,54 @@
+{
+  "task": "NB-V2-010A",
+  "status": "local_and_live_verified",
+  "git": {
+    "head": "4ba93c7aabca3110db441c1e9e677490ca59d330",
+    "committed": false,
+    "pushed": false
+  },
+  "configurationVersion": 1,
+  "schemaVersion": 1,
+  "storage": "existing public.education_drafts.configuration.planner",
+  "tests": {
+    "command": "node --test scripts/notion-poc/tests/*.test.mjs",
+    "passed": 255,
+    "failed": 0,
+    "baseline": 239,
+    "added": 16,
+    "v1Combinations": 256,
+    "backend": "mock Auth/Data API; Node DOM test double"
+  },
+  "build": {
+    "allowedFiles": 26,
+    "deploymentSecurityTestsPassed": 2
+  },
+  "liveSupabase": {
+    "structureRead": true,
+    "table": "public.education_drafts",
+    "rlsEnabled": true,
+    "userApproved": true,
+    "dataWrites": 4,
+    "inserts": 2,
+    "updates": 2,
+    "newRows": 2,
+    "newRowIds": {
+      "A": "c829c444-dae7-4809-a9b3-b8cd4ff57da1",
+      "B": "4ed7bd42-0db5-4ae2-a86c-f8a5d93140d1"
+    },
+    "result": "Real browser SDK/repository save and server reopen verified; no mocks",
+    "evidence": "NB-V2-010A_LIVE_RESULT.json",
+    "originalThreeUpdatedAtUnchanged": true
+  },
+  "sqlExecuted": false,
+  "notionRequests": 0,
+  "vercelDeployed": false,
+  "protectedSourceFilesUnchanged": 9,
+  "browserFunctionalTest": "Native Chrome on local public build using approved real Supabase test account; no injected Auth/Data API responses",
+  "knownBehavior": "Module selection retains existing auto-switch to extended; dependencies recomputed, not stored as explicit selections",
+  "notVerified": [
+    "Live account switch/logout",
+    "Live concurrent editing/conflict fault injection",
+    "Physical mobile device",
+    "Production deployment"
+  ]
+}

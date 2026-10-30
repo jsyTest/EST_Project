@@ -1,4 +1,5 @@
 import {COLORS, TYPES, GROUPS, DATABASE_KEYS, baseProperties} from '../mapping/model.mjs';
+import {MODULES, TEMPLATE_NAMES} from '../planner/catalog.mjs';
 
 export const SCHEMA_VERSION = 1;
 export const WORKSPACE_KEY = 'estEducationWorkspaceV1';
@@ -40,6 +41,20 @@ export function normalizeRequirements(value = {}) {
     basicItems: modules(value.basicItems, basic, basic),
     additionalItems: modules(value.additionalItems, additional, [])
   };
+}
+// Persist explicit user choices only. Dependencies and generated plans are recomputed.
+export function normalizePlannerSettings(value = {}) {
+  if (!object(value)) fail('invalid_configuration');
+  const selected = modules(value.enabledModules, Object.keys(MODULES), []);
+  const settings = {
+    templateType: enumValue(value.templateType, Object.keys(TEMPLATE_NAMES), 'basic'),
+    enabledModules: Object.keys(MODULES).filter(id => selected.includes(id))
+  };
+  for (const key of ['repeatPrograms', 'personHistory', 'programStatistics', 'multipleApplications']) {
+    if (value[key] !== undefined && typeof value[key] !== 'boolean') fail('invalid_configuration');
+    settings[key] = value[key] ?? false;
+  }
+  return settings;
 }
 function column(value) {
   if (!object(value) || !Number.isInteger(value.index) || value.index < 0 || value.index > 2047) fail('invalid_configuration');
@@ -95,7 +110,8 @@ export function normalizeConfiguration(value, version = SCHEMA_VERSION) {
     try { value = JSON.parse(value); } catch { fail('invalid_configuration'); }
   }
   if (version !== SCHEMA_VERSION || !object(value) || value.version !== SCHEMA_VERSION) fail('unsupported_version');
-  const normalized = {version: SCHEMA_VERSION, requirements: normalizeRequirements(value.requirements), mapping: normalizeMapping(value.mapping)};
+  const normalized = {version: SCHEMA_VERSION, requirements: normalizeRequirements(value.requirements), mapping: normalizeMapping(value.mapping),
+    planner: normalizePlannerSettings(value.planner)};
   if (new TextEncoder().encode(JSON.stringify(normalized)).length > MAX_BYTES) fail('configuration_too_large');
   return normalized;
 }

@@ -1,0 +1,177 @@
+{
+  "task": "NB-V2-010A",
+  "status": "verified",
+  "approval": "User approved account A, two new synthetic designs, maximum four data writes",
+  "backend": "Real Supabase PPLUS through unchanged browser SDK/repository; no Auth/Data API mocks",
+  "origin": "http://127.0.0.1:8766",
+  "newTitles": [
+    "NB-V2-010A 저장 테스트 A",
+    "NB-V2-010A 저장 테스트 B"
+  ],
+  "writes": [
+    {
+      "step": "A basic INSERT",
+      "status": "confirmed_saved_and_opened_from_server"
+    },
+    {
+      "step": "A standard UPDATE",
+      "status": "confirmed_saved_and_opened_from_server"
+    },
+    {
+      "step": "A extended UPDATE",
+      "status": "confirmed_saved_and_opened_from_server"
+    },
+    {
+      "step": "B basic INSERT via copy save, all modules/recommendations false",
+      "status": "confirmed_saved_and_opened_from_server"
+    }
+  ],
+  "checks": [
+    {
+      "name": "Approved account A logged in",
+      "passed": true
+    },
+    {
+      "name": "Fresh design, no existing row selected",
+      "passed": true
+    },
+    {
+      "name": "Two synthetic form questions and two CSV headers analyzed",
+      "passed": true
+    },
+    {
+      "name": "Choice color pink and confirmation applied",
+      "passed": true
+    },
+    {
+      "name": "Basic preview valid: one DB, no relations/calculations",
+      "passed": true
+    },
+    {
+      "name": "A basic saved to real Supabase and reopened from saved list",
+      "passed": true
+    },
+    {
+      "name": "A standard with four recommendations previews valid 3DB",
+      "passed": true
+    },
+    {
+      "name": "A standard reopened from real server with all four recommendation flags true",
+      "passed": true
+    },
+    {
+      "name": "Attendance and teams auto-switch to extended; derived participation not checked",
+      "passed": true
+    },
+    {
+      "name": "Extended preview valid: six DBs, eight relations, two rollups, three formulas",
+      "passed": true
+    },
+    {
+      "name": "A extended reopened from real server and refreshed",
+      "passed": true
+    },
+    {
+      "name": "Attendance and teams, four recommendation flags restored; derived participation not selected",
+      "passed": true
+    },
+    {
+      "name": "Extended planId before save equals recalculated restored planId",
+      "passed": true
+    },
+    {
+      "name": "Both CSV bindings and pink synthetic option restored",
+      "passed": true
+    },
+    {
+      "name": "B inserted through copy save, distinct saved list entry",
+      "passed": true
+    },
+    {
+      "name": "B to A restores extended plus attendance/teams and four true recommendations",
+      "passed": true
+    },
+    {
+      "name": "A to B restores basic, all modules and recommendations false",
+      "passed": true
+    },
+    {
+      "name": "New design resets empty name, basic, all modules and recommendations false",
+      "passed": true
+    },
+    {
+      "name": "Existing version 1 design read-only opened with basic default before fresh test; no save",
+      "passed": true
+    },
+    {
+      "name": "Remote A/B UUIDs are distinct and schema_version is 1",
+      "passed": true
+    },
+    {
+      "name": "Original three remote row updated_at values unchanged",
+      "passed": true
+    },
+    {
+      "name": "Remote table shows five rows, exactly two new synthetic designs",
+      "passed": true
+    }
+  ],
+  "newRowIds": {
+    "A": "c829c444-dae7-4809-a9b3-b8cd4ff57da1",
+    "B": "4ed7bd42-0db5-4ae2-a86c-f8a5d93140d1"
+  },
+  "existingRowsModified": false,
+  "extendedPlanIdBeforeSave": "plan-d75f72fd9a418a57",
+  "extendedPlanIdAfterRestore": "plan-d75f72fd9a418a57",
+  "dataWrites": 4,
+  "dataWriteKinds": {
+    "insert": 2,
+    "update": 2,
+    "delete": 0
+  },
+  "finalState": {
+    "A": {
+      "templateType": "extended",
+      "enabledModules": [
+        "attendance",
+        "teams"
+      ],
+      "repeatPrograms": true,
+      "personHistory": true,
+      "programStatistics": true,
+      "multipleApplications": true
+    },
+    "B": {
+      "templateType": "basic",
+      "enabledModules": [],
+      "repeatPrograms": false,
+      "personHistory": false,
+      "programStatistics": false,
+      "multipleApplications": false
+    }
+  },
+  "remoteReadback": {
+    "method": "Native Chrome accessibility view of actual Supabase Table Editor, no SQL execution",
+    "dataRowsBefore": 3,
+    "dataRowsAfter": 5,
+    "newRows": 2,
+    "bothSchemaVersion": 1,
+    "originalThreeUpdatedAtUnchanged": true,
+    "A": {
+      "createdAt": "2026-10-30T00:50:54.278876Z",
+      "updatedAt": "2026-10-30T00:53:10.691369Z"
+    },
+    "B": {
+      "createdAt": "2026-10-30T00:55:13.102827Z",
+      "updatedAt": "2026-10-30T00:55:13.1492Z"
+    }
+  },
+  "notVerified": [
+    "Live account switch/logout",
+    "Live concurrent editing/conflict fault injection",
+    "Physical mobile device",
+    "Production deployment"
+  ],
+  "sqlExecuted": false,
+  "notionRequests": 0
+}
