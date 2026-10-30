@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {authUI} from './auth-ui-harness.mjs';
 const signedIn={access_token:'synthetic',user:{id:'user-a',email:'learner@example.invalid'}};
+const accountNodes=s=>{const account=s.header.children[0];return {account,email:account.children.find(n=>n.className==='auth-account-email'),button:account.children.find(n=>n.type==='button'),message:account.children.find(n=>n.className==='auth-account-error')};};
 test('auth UI: anonymous direct protected-page entry redirects without revealing content',async()=>{
  const s=await authUI({protectedPage:true,url:'https://education.example/result.html'});
  assert.equal(s.doc.documentElement.dataset.authState,'anonymous');assert.equal(s.main.cleared,true);assert.equal(s.privateInput.value,'');assert.equal(s.navigations[0],'https://education.example/login.html');assert.equal(await s.context.estAuth.ready,false);
@@ -32,11 +33,11 @@ test('auth UI: cross-tab logout hides email and removes sensitive content and ow
  const s=await authUI({protectedPage:true,url:'https://education.example/mapping.html',session:signedIn,stored:{estAuthDraftOwner:'user-a',aiNotionBuilderRequirements:'synthetic draft'}});
  assert.equal(s.doc.documentElement.dataset.authState,'authenticated');assert.equal(s.storage.get('aiNotionBuilderRequirements'),'synthetic draft');
  s.emit('SIGNED_OUT',null);await s.flush();assert.equal(s.doc.documentElement.dataset.authState,'anonymous');assert.equal(s.main.cleared,true);assert.equal(s.storage.has('aiNotionBuilderRequirements'),false);
- assert.equal(s.header.children[0].children[0].textContent,'');assert.equal(s.navigations.at(-1),'https://education.example/login.html');
+ assert.equal(accountNodes(s).email.textContent,'');assert.equal(s.navigations.at(-1),'https://education.example/login.html');
 });
 test('auth UI: failed local sign-out keeps authenticated screen and shows failure',async()=>{
  const s=await authUI({protectedPage:true,url:'https://education.example/index.html',session:signedIn});s.client.auth.signOut=async()=>({error:{status:403}});
- const [email,button,message]=s.header.children[0].children;await button.fire('click');assert.equal(s.doc.documentElement.dataset.authState,'authenticated');assert.match(message.textContent,/로그아웃하지 못/);assert.equal(button.disabled,false);assert.equal(email.textContent,'learner@example.invalid');assert.equal(s.navigations.length,0);
+ const {email,button,message}=accountNodes(s);await button.fire('click');assert.equal(s.doc.documentElement.dataset.authState,'authenticated');assert.match(message.textContent,/로그아웃하지 못/);assert.equal(button.disabled,false);assert.equal(email.textContent,'learner@example.invalid');assert.equal(s.navigations.length,0);
 });
 test('auth UI: password visibility is accessible and reset after failed login',async()=>{
  const s=await authUI();const n=s.nodes;await s.toggles[0].fire('click');assert.equal(n['auth-password'].type,'text');assert.equal(s.toggles[0].attributes['aria-pressed'],'true');
@@ -53,4 +54,14 @@ test('auth UI: back-forward cache stays hidden until the session is rechecked',a
 test('auth UI: switching accounts removes previous page data before navigation',async()=>{
  const s=await authUI({protectedPage:true,url:'https://education.example/mapping.html',session:signedIn,stored:{estAuthDraftOwner:'user-a',aiNotionBuilderRequirements:'synthetic previous draft'}});
  s.emit('SIGNED_IN',{access_token:'synthetic-second',user:{id:'user-b',email:'other@example.invalid'}});await s.flush();assert.equal(s.storage.has('aiNotionBuilderRequirements'),false);assert.equal(s.main.cleared,true);assert.equal(s.navigations.at(-1),'https://education.example/index.html');
+});
+
+test('auth UI: shared account toolbar has a named group and admin-first keyboard order without exposing permission',async()=>{
+ const s=await authUI({protectedPage:true,url:'https://education.example/index.html',session:signedIn});
+ const {account,email,button}=accountNodes(s);
+ assert.equal(account.attributes.role,'group');assert.equal(account.attributes['aria-label'],'계정 메뉴');
+ const admin=account.children.find(n=>n.textContent==='관리자 페이지');
+ assert.equal(admin.hidden,true);assert.deepEqual(account.children,[admin,email,button,accountNodes(s).message]);
+ assert.equal(email.textContent,'learner@example.invalid');
+ await button.fire('click');assert.equal(s.requests.at(-1)[0],'signout');assert.equal(s.navigations.at(-1),'https://education.example/login.html');
 });

@@ -150,7 +150,7 @@
     const signup = mode === "signup";
     byId("auth-title").textContent = signup ? "회원가입" : "로그인";
     document.title = (signup ? "회원가입" : "로그인") + " | PPLUS";
-    byId("auth-description").textContent = signup ? "나만의 교육 설계를 저장하고 이어서 만들어 보세요." : "저장한 교육 설계를 이어서 만들어 보세요.";
+    byId("auth-description").textContent = "교육 운영을 더 쉽고 체계적으로 관리하세요.";
     byId("confirmation-field").hidden = !signup;
     byId("auth-confirmation").required = signup;
     byId("auth-password").autocomplete = signup ? "new-password" : "current-password";
@@ -230,6 +230,8 @@
     if (!header) return;
     const account = document.createElement("div");
     account.className = "auth-account";
+    account.setAttribute("role", "group");
+    account.setAttribute("aria-label", "계정 메뉴");
     accountEmail = document.createElement("span");
     accountEmail.className = "auth-account-email";
     logoutButton = document.createElement("button");
@@ -239,13 +241,12 @@
     accountError = document.createElement("p");
     accountError.className = "auth-account-error";
     accountError.setAttribute("role", "status");
-    account.append(accountEmail, logoutButton, accountError);
     adminLink = document.createElement("a");
-    adminLink.className = "button button-secondary";
+    adminLink.className = "button button-secondary auth-admin-link";
     adminLink.textContent = "관리자 페이지";
     adminLink.href = core.pageUrl("admin.html", window.location.href);
     adminLink.hidden = true;
-    account.append(adminLink);
+    account.append(adminLink, accountEmail, logoutButton, accountError);
     header.append(account);
     const signOut = async function () {
       if (logoutButton.disabled) return;
