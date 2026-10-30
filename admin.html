@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ko" data-auth-required="true" data-auth-state="checking" data-admin-required="true" data-admin-state="checking">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>관리자 페이지 | PPLUS</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/auth.css">
+  <link rel="stylesheet" href="css/admin.css">
+  <script src="js/auth-bootstrap.js"></script>
+</head>
+<body class="admin-body">
+  <section class="auth-gate" aria-label="로그인 확인">
+    <p id="auth-gate-message" role="status" aria-live="polite">로그인 상태를 확인하고 있어요.</p>
+    <button id="auth-retry" class="button button-secondary" type="button" hidden>다시 시도</button>
+    <a href="login.html">로그인 화면으로 이동</a>
+  </section>
+  <header data-auth-content class="site-header">
+    <a class="brand admin-brand" href="index.html" aria-label="PPLUS 일반 서비스로 이동">
+      <span class="brand-logo-crop" aria-hidden="true"><img class="brand-logo" src="assets/logo_1.png" alt=""></span><strong>PPLUS</strong>
+    </a>
+  </header>
+  <section data-auth-content class="admin-gate" aria-labelledby="admin-gate-title">
+    <p class="eyebrow">PPLUS</p><h1 id="admin-gate-title">관리자 페이지</h1>
+    <p id="admin-access-message" role="status" aria-live="polite">관리자 권한을 확인하고 있어요.</p>
+    <button id="admin-access-retry" class="button button-secondary" type="button">다시 확인</button>
+    <a class="button button-quiet" href="index.html">일반 서비스로 돌아가기</a>
+  </section>
+  <main data-auth-content data-admin-content class="admin-shell">
+    <nav class="admin-nav" aria-label="관리자 메뉴">
+      <p class="admin-nav-label">관리자 공간</p>
+      <button type="button" data-admin-tab="dashboard" aria-current="page" aria-controls="admin-dashboard">대시보드</button>
+      <button type="button" data-admin-tab="members" aria-controls="admin-members">회원 관리</button>
+      <button type="button" data-admin-tab="usage" aria-controls="admin-usage">이용 현황</button>
+      <button type="button" data-admin-tab="settings" aria-controls="admin-settings">설정</button>
+      <a href="index.html">일반 서비스로 돌아가기 ↗</a>
+    </nav>
+    <div class="admin-workspace">
+      <div class="admin-heading"><div><p class="eyebrow">PPLUS ADMIN</p><h1 id="admin-view-name">대시보드</h1></div><span id="admin-session-label" class="admin-badge">관리자 전용</span></div>
+      <section id="admin-dashboard" data-admin-section="dashboard" aria-labelledby="dashboard-title">
+        <h2 id="dashboard-title">서비스를 한눈에</h2><p class="admin-muted">회원과 교육 설계의 운영 현황을 확인하는 공간입니다.</p>
+        <div class="admin-stats">
+          <article class="admin-card"><p>전체 회원</p><strong id="admin-member-count">—</strong><span id="admin-member-note">추후 연결 예정</span></article>
+          <article class="admin-card"><p>교육 설계</p><strong id="admin-draft-count">—</strong><span id="admin-draft-note">추후 연결 예정</span></article>
+          <article class="admin-card"><p>서비스 운영 상태</p><strong class="admin-stat-label">권한 확인</strong><span id="admin-permission-status">확인 대기</span></article>
+        </div>
+        <article class="admin-card admin-notice"><h3>운영 데이터 연결을 준비하고 있어요</h3><p>전체 회원과 교육 설계 통계는 추후 연결 예정입니다. 확인되지 않은 수치는 표시하지 않습니다.</p></article>
+        <article class="admin-card"><h3>기능 연결 현황</h3><dl class="admin-status-list"><div><dt>회원 목록·교육 설계 통계</dt><dd>추후 연결 예정</dd></div><div><dt>Notion 웹 생성</dt><dd>아직 연결되지 않음</dd></div><div><dt>기존 교육 설계</dt><dd>일반 서비스에서 이용</dd></div></dl></article>
+      </section>
+      <section id="admin-members" data-admin-section="members" aria-labelledby="members-title" hidden>
+        <h2 id="members-title">회원 관리</h2><p class="admin-muted" id="admin-members-description">전체 회원 목록은 추후 연결 예정입니다.</p>
+        <div class="admin-card">
+          <div class="admin-filters"><div><label for="admin-member-search">회원 검색</label><input id="admin-member-search" type="search" placeholder="이메일 검색" disabled></div><div><label for="admin-role-filter">계정 역할</label><select id="admin-role-filter" disabled><option value="all">전체 역할</option><option value="user">일반 사용자</option><option value="admin">관리자</option></select></div></div>
+          <div class="admin-actions"><button id="admin-role-manage" class="button button-secondary" type="button" disabled title="역할 관리 기능은 추후 연결 예정입니다.">역할 관리 · 준비 중</button></div>
+          <p id="admin-member-result" class="admin-muted" role="status"></p>
+          <div class="admin-table-scroll" role="region" aria-label="회원 목록" tabindex="0"><table class="admin-table"><thead><tr><th scope="col">이메일</th><th scope="col">가입일</th><th scope="col">역할</th><th scope="col">상태</th><th scope="col">역할 관리</th></tr></thead><tbody id="admin-members-body"><tr><td colspan="5">회원 목록 연결을 준비하고 있어요.</td></tr></tbody></table></div>
+          <p class="admin-muted">역할 변경 기능은 준비 중입니다. 계정 삭제·정지 기능은 제공하지 않습니다.</p>
+        </div>
+      </section>
+      <section id="admin-usage" data-admin-section="usage" aria-labelledby="usage-title" hidden>
+        <h2 id="usage-title">이용 현황</h2>
+        <div class="admin-stats"><article class="admin-card"><h3>교육 설계 저장</h3><p>내 설계 저장·열기는 일반 서비스에서 이용할 수 있어요.</p><span>전체 저장 현황은 추후 연결 예정</span></article><article class="admin-card"><h3>Notion 생성</h3><p>웹 자동 생성은 아직 연결되지 않았어요.</p><span>기존 생성 도구는 별도 로컬 도구</span></article></div>
+        <article class="admin-card"><h3>오류 및 실행 이력</h3><div class="admin-empty"><strong>이력 연결을 준비하고 있어요</strong><p>현재 이 화면에서 조회할 수 있는 운영 이력은 없습니다.</p></div></article>
+      </section>
+      <section id="admin-settings" data-admin-section="settings" aria-labelledby="settings-title" hidden>
+        <h2 id="settings-title">설정</h2>
+        <article class="admin-card"><h3>내 관리자 계정</h3><dl class="admin-status-list"><div><dt>이메일</dt><dd id="admin-viewer-email">—</dd></div><div><dt>역할</dt><dd id="admin-viewer-role">—</dd></div></dl><p class="admin-muted">권한 변경은 승인된 별도 관리 절차가 필요합니다.</p><div class="admin-actions"><a class="button button-primary" href="index.html">일반 서비스로 돌아가기</a><button id="admin-settings-logout" class="button button-secondary" type="button">로그아웃</button></div></article>
+      </section>
+    </div>
+  </main>
+  <noscript><p>관리자 페이지를 이용하려면 JavaScript를 활성화해 주세요.</p></noscript>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="js/supabase-client.js"></script>
+  <script defer src="js/auth-core.js"></script>
+  <script defer src="js/admin-access.js"></script>
+  <script defer src="js/auth.js"></script>
+  <script type="module" src="js/admin-ui.mjs"></script>
+</body>
+</html>

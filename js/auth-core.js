@@ -10,7 +10,8 @@
 
   function validateCredentials(mode, email, password, confirmation) {
     const errors = {};
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) || email.length > 254) {
+    if (!email.trim()) errors.email = "이메일을 입력해 주세요.";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) || email.length > 254) {
       errors.email = "올바른 이메일 주소를 입력해 주세요.";
     }
     if (!password) errors.password = "비밀번호를 입력해 주세요.";
@@ -24,18 +25,20 @@
   function errorMessage(error, operation) {
     const code = error && error.code;
     if (code === "request_in_progress") return "요청을 처리하고 있습니다. 잠시 기다려 주세요.";
-    if (code === "sdk_unavailable") return "인증 연결을 준비하지 못했습니다. 인터넷 연결을 확인하고 새로고침해 주세요.";
+    if (code === "sdk_unavailable") return "로그인 화면을 준비하지 못했습니다. 인터넷 연결을 확인하고 다시 시도해 주세요.";
     if (code === "storage_unavailable") return "브라우저 저장소를 사용할 수 없습니다. 사이트 저장소를 허용한 뒤 다시 시도해 주세요.";
     if (code === "otp_expired" || code === "callback_error") return "인증 링크가 만료되었거나 유효하지 않습니다. 로그인하거나 회원가입 화면에서 다시 진행해 주세요.";
     if (code === "email_not_confirmed") return "이메일 인증을 먼저 완료한 뒤 로그인해 주세요.";
-    if (code === "weak_password") return "프로젝트의 비밀번호 정책을 충족하지 못했습니다. 더 긴 비밀번호와 다양한 문자를 사용해 주세요.";
+    if (code === "weak_password") return "비밀번호 정책을 충족하지 못했습니다. 더 길게 입력하거나 문자·숫자·기호를 함께 사용해 주세요.";
+    if (operation === "signup" && (code === "user_already_exists" || code === "email_exists")) return "가입 요청을 확인했습니다. 이메일 안내를 확인하거나 로그인해 주세요.";
     if (code === "signup_disabled") return "현재 회원가입을 이용할 수 없습니다. 잠시 후 다시 시도해 주세요.";
     if (error && (error.status === 429 || /rate_limit|too_many_requests/.test(code || ""))) return "요청이 너무 많습니다. 잠시 기다린 뒤 다시 시도해 주세요.";
-    if (error && (error.name === "AuthRetryableFetchError" || error.name === "TypeError" || error.name === "AbortError" || code === "network_error")) return "네트워크 연결을 확인한 뒤 다시 시도해 주세요.";
-    if (error && error.status >= 500) return "인증 서비스에 일시적인 문제가 있습니다. 잠시 후 다시 시도해 주세요.";
+    if (error && (error.name === "AuthRetryableFetchError" || error.name === "TypeError" || error.name === "AbortError" || code === "network_error")) return operation === "signin" ? "로그인에 문제가 발생했어요. 잠시 후 다시 시도해 주세요." : "네트워크 연결을 확인한 뒤 다시 시도해 주세요.";
+    if (error && error.status >= 500) return operation === "signin" ? "로그인에 문제가 발생했어요. 잠시 후 다시 시도해 주세요." : "인증 서비스에 일시적인 문제가 있습니다. 잠시 후 다시 시도해 주세요.";
     if (operation === "signout") return "로그아웃하지 못했습니다. 연결을 확인한 뒤 다시 시도해 주세요.";
     if (operation === "signup") return "가입 요청을 완료하지 못했습니다. 입력 정보를 확인하거나 잠시 후 다시 시도해 주세요.";
     if (code === "invalid_credentials" || (error && error.status === 400)) return "이메일 또는 비밀번호를 확인해 주세요.";
+    if (operation === "signin") return "로그인에 문제가 발생했어요. 잠시 후 다시 시도해 주세요.";
     return "인증 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.";
   }
 

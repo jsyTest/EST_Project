@@ -22,7 +22,7 @@
     if (document.documentElement.dataset.authState !== "checking") return;
     document.documentElement.dataset.authState = "error";
     const message = document.getElementById("auth-message") || document.getElementById("auth-gate-message");
-    if (message) message.textContent = "인증 연결이 지연되고 있습니다. 인터넷 연결을 확인하고 다시 시도해 주세요.";
+    if (message) message.textContent = "로그인 확인이 지연되고 있어요. 인터넷 연결을 확인하고 다시 시도해 주세요.";
     const retry = document.getElementById("auth-retry");
     if (retry) {
       retry.hidden = false;

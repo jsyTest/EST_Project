@@ -4,7 +4,7 @@ import {readFile, readdir} from 'node:fs/promises';
 import {createReviewHandler, MAX_REQUEST_BYTES} from '../../../server/drafts-review.mjs';
 import {reviewSavedDraft, timestamp} from '../../../server/review-plan.mjs';
 import {startReviewServer} from '../../development/serve-review.mjs';
-import {buildStatic} from '../../deployment/build-static.mjs';
+import {buildStatic,PUBLIC_FILES} from '../../deployment/build-static.mjs';
 import {emptyConfiguration, normalizeConfiguration} from '../../../js/drafts/model.mjs';
 import {createGenerationPlan} from '../../../js/planner/plan.mjs';
 import {digest, freezeBasicPlan} from '../../basic-notion/plan.mjs';
@@ -243,9 +243,9 @@ test('NB011B: actual localhost HTTP review and static allowlist keep internal so
   for (const path of ['/server/drafts-review.mjs', '/api/drafts/review.mjs', '/scripts/notion-poc/cli.mjs', '/docs/research/NB-V2-011A_REPORT.md', '/.env']) assert.equal((await fetch(origin + path)).status, 404);
   assert.equal(u.calls.filter(c => c.url.hostname.includes('notion')).length, 0); assert.ok(u.calls.every(c => c.options.method === 'GET'));
 });
-test('NB011B: public build still has 26 assets and excludes API/server/CLI sources', async () => {
+test('NB011B: public build follows allowlist and excludes API/server/CLI sources', async () => {
   // Build in the repository using its tested allowlist, inspect output without exposing server code.
-  const result = await buildStatic(); assert.equal(result.count, 26);
+  const result = await buildStatic(); assert.equal(result.count, PUBLIC_FILES.length);
   assert.ok(result.files.every(f => !/^(api|server|scripts|docs)\//.test(f)));
   assert.equal((await readdir(new URL('../../../public-dist/', import.meta.url))).includes('api'), false);
   const source = await readFile(new URL('../../../api/drafts/review.mjs', import.meta.url), 'utf8'); assert.match(source, /createReviewHandler/);

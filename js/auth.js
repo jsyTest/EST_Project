@@ -7,6 +7,7 @@
   const html = document.documentElement;
   const protectedPage = html.dataset.authRequired === "true";
   const loginPage = html.dataset.authPage === "true";
+  const adminPage = html.dataset.adminRequired === "true";
   const byId = function (id) { return document.getElementById(id); };
   const client = window.supabaseClient;
   let authenticatedUser = null;
@@ -16,7 +17,22 @@
   let accountEmail;
   let accountError;
   let controller;
+  let roleController;
+  let adminLink;
   let initialCheck = true;
+
+  function publishRole(result) {
+    window.pplusAdminState = result;
+    html.dataset.adminState = result.state;
+    if (adminLink) adminLink.hidden = result.state !== "authorized";
+    const message = byId("admin-access-message");
+    if (message && adminPage) message.textContent = result.state === "denied"
+      ? "관리자만 이용할 수 있는 페이지입니다."
+      : result.state === "error" ? "권한을 확인하지 못했어요. 잠시 후 다시 시도해 주세요." : "관리자 권한을 확인하고 있어요.";
+    window.dispatchEvent(new Event("pplus-admin-change"));
+  }
+
+  function clearRole() { if (roleController) roleController.clear(); }
 
   function showMessage(text, success) {
     const node = byId(loginPage ? "auth-message" : "auth-gate-message");
@@ -63,6 +79,7 @@
   }
 
   function fail(error) {
+    clearRole();
     clearTimeout(state.watchdog);
     cleanCallbackUrl();
     html.dataset.authState = "error";
@@ -81,6 +98,7 @@
     catch { fail({ code: "storage_unavailable" }); return; }
 
     if (!valid) {
+      clearRole();
       const wasAuthenticated = authenticatedUser !== null;
       authenticatedUser = null;
       html.dataset.authState = "anonymous";
@@ -102,6 +120,7 @@
     }
 
     if (authenticatedUser && authenticatedUser !== userId) {
+      clearRole();
       html.dataset.authState = "checking";
       clearSensitiveUI();
       window.location.replace(core.pageUrl("index.html", window.location.href));
@@ -121,6 +140,8 @@
     }
     if (accountEmail) accountEmail.textContent = session.user.email || "로그인된 계정";
     html.dataset.authState = "authenticated";
+    if (roleController) roleController.refresh(session);
+    else if (adminPage) publishRole({state: "error"});
     state.settle(true);
     initialCheck = false;
   }
@@ -128,13 +149,14 @@
   function renderMode() {
     const signup = mode === "signup";
     byId("auth-title").textContent = signup ? "회원가입" : "로그인";
-    document.title = (signup ? "회원가입" : "로그인") + " | AI 노션 빌더";
-    byId("auth-description").textContent = signup ? "이메일 계정을 만들고 교육 운영 설계를 시작하세요." : "이메일로 로그인하고 교육 운영 설계를 이어가세요.";
+    document.title = (signup ? "회원가입" : "로그인") + " | PPLUS";
+    byId("auth-description").textContent = signup ? "나만의 교육 설계를 저장하고 이어서 만들어 보세요." : "저장한 교육 설계를 이어서 만들어 보세요.";
     byId("confirmation-field").hidden = !signup;
     byId("auth-confirmation").required = signup;
     byId("auth-password").autocomplete = signup ? "new-password" : "current-password";
-    byId("password-help").textContent = signup ? "8자 이상 입력해 주세요. 프로젝트의 추가 비밀번호 정책도 적용됩니다." : "비밀번호는 안전하게 인증 서버로 전송됩니다.";
-    byId("auth-switch").textContent = signup ? "이미 계정이 있나요? 로그인" : "처음이신가요? 회원가입";
+    byId("password-help").textContent = signup ? "8자 이상 입력해 주세요. 문자와 숫자를 함께 사용하면 좋아요." : "";
+    byId("password-help").hidden = !signup;
+    byId("auth-switch").textContent = signup ? "이미 계정이 있으신가요? 로그인" : "계정이 없으신가요? 회원가입";
     ["email", "password", "confirmation"].forEach(function (field) {
       byId("auth-" + field).removeAttribute("aria-invalid");
       byId("auth-" + field + "-error").textContent = "";
@@ -181,16 +203,25 @@
       state.isCallback = false;
       setFormBusy(true);
       showMessage(mode === "signup" ? "가입 요청을 처리하고 있습니다." : "로그인하고 있습니다.");
+      let passwordPolicyFailed = false;
       try {
         const result = mode === "signup"
           ? await controller.signUp(email, byId("auth-password").value, core.confirmationUrl(window.location.href))
           : await controller.signIn(email, byId("auth-password").value);
-        if (result.error) showMessage(core.errorMessage(result.error, mode));
+        if (result.error) {
+          const message = core.errorMessage(result.error, mode);
+          showMessage(message);
+          if (mode === "signup" && result.error.code === "weak_password") {
+            byId("auth-password-error").textContent = message;
+            byId("auth-password").setAttribute("aria-invalid", "true");
+            passwordPolicyFailed = true;
+          }
+        }
         else if (mode === "signup" && !core.hasSession(result.data && result.data.session)) {
           showMessage("가입 요청을 처리했습니다. 이메일 인증이 필요한 경우 받은 메일의 링크를 확인한 뒤 로그인해 주세요. 이미 가입했다면 로그인 화면을 이용해 주세요.", true);
         }
       } catch (error) { showMessage(core.errorMessage(error, mode)); }
-      finally { clearPasswords(); setFormBusy(false); }
+      finally { clearPasswords(); setFormBusy(false); if (passwordPolicyFailed) byId("auth-password").focus(); }
     });
   }
 
@@ -209,8 +240,14 @@
     accountError.className = "auth-account-error";
     accountError.setAttribute("role", "status");
     account.append(accountEmail, logoutButton, accountError);
+    adminLink = document.createElement("a");
+    adminLink.className = "button button-secondary";
+    adminLink.textContent = "관리자 페이지";
+    adminLink.href = core.pageUrl("admin.html", window.location.href);
+    adminLink.hidden = true;
+    account.append(adminLink);
     header.append(account);
-    logoutButton.addEventListener("click", async function () {
+    const signOut = async function () {
       if (logoutButton.disabled) return;
       logoutButton.disabled = true;
       logoutButton.textContent = "로그아웃 중…";
@@ -221,7 +258,9 @@
         logoutButton.disabled = false;
         logoutButton.textContent = "로그아웃";
       }
-    });
+    };
+    logoutButton.addEventListener("click", signOut);
+    window.addEventListener("pplus-logout-request", signOut);
   }
 
   async function checkSession() {
@@ -236,13 +275,22 @@
   if (retry) retry.onclick = function () { window.location.reload(); };
   if (!core || !client || !client.auth) { fail({ code: "sdk_unavailable" }); return; }
   controller = core.createController({ client: client, onSession: handleSession });
+  if (window.PPLUSAdminAccess && typeof window.fetch === "function") roleController = window.PPLUSAdminAccess.create({
+    fetchImpl: window.fetch.bind(window),
+    onClear: function () { publishRole({state: "checking"}); },
+    onResult: publishRole
+  });
+  const adminRetry = byId("admin-access-retry");
+  if (adminRetry && adminPage) adminRetry.onclick = checkSession;
   if (loginPage) { initializeForm(); setFormBusy(true); }
   if (protectedPage) initializeAccount();
   checkSession();
   window.addEventListener("pagehide", function (event) {
+    clearRole();
     if (protectedPage) html.dataset.authState = "checking";
     clearPasswords();
     if (!event.persisted) controller.dispose();
   });
   window.addEventListener("pageshow", function (event) { if (event.persisted) checkSession(); });
+  window.addEventListener("focus", function () { if (adminPage && authenticatedUser) checkSession(); });
 })();

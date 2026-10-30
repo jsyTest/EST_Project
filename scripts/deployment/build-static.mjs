@@ -4,10 +4,10 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 // Only these browser assets belong in the public deployment output.
 export const PUBLIC_FILES = [
-  'index.html', 'login.html', 'result.html', 'mapping.html',
-  'css/style.css', 'css/auth.css', 'css/mapping.css', 'css/drafts.css',
+  'index.html', 'login.html', 'result.html', 'mapping.html', 'admin.html',
+  'css/style.css', 'css/auth.css', 'css/mapping.css', 'css/drafts.css', 'css/admin.css',
   'js/app.js', 'js/mock-data.js', 'js/supabase-client.js',
-  'js/auth-bootstrap.js', 'js/auth-core.js', 'js/auth.js', 'js/mapping-ui.mjs',
+  'js/auth-bootstrap.js', 'js/auth-core.js', 'js/auth.js', 'js/admin-access.js', 'js/admin-ui.mjs', 'js/mapping-ui.mjs',
   'js/mapping/model.mjs', 'js/mapping/parse.mjs', 'js/mapping/csv.mjs',
   'js/planner/catalog.mjs', 'js/planner/plan.mjs',
   'js/drafts-bootstrap.js', 'js/drafts/model.mjs', 'js/drafts/repository.mjs',

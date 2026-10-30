@@ -22,7 +22,7 @@ test('auth UI: duplicate submit is ignored while pending, successful login navig
  complete({data:{session:signedIn},error:null});await pending;assert.equal(s.navigations[0],'https://education.example/index.html');assert.equal(n['auth-password'].value,'');
 });
 test('auth UI: missing SDK fails closed with actionable retry and no app access',async()=>{
- const s=await authUI({missingSdk:true});assert.equal(s.doc.documentElement.dataset.authState,'error');assert.match(s.nodes['auth-message'].textContent,/인증 연결/);assert.equal(s.nodes['auth-submit'].disabled,true);assert.equal(s.nodes['auth-retry'].hidden,false);
+ const s=await authUI({missingSdk:true});assert.equal(s.doc.documentElement.dataset.authState,'error');assert.match(s.nodes['auth-message'].textContent,/로그인 화면/);assert.equal(s.nodes['auth-submit'].disabled,true);assert.equal(s.nodes['auth-retry'].hidden,false);
 });
 test('auth UI: expired confirmation link is sanitized and shown as safe Korean error',async()=>{
  const s=await authUI({url:'https://education.example/login.html#error=access_denied&error_code=otp_expired&error_description=PRIVATE_DESCRIPTION'});

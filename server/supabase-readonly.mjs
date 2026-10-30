@@ -35,12 +35,21 @@ export function createReadonlySupabase({configuration, token, fetchImpl = fetch,
       reject(502, 'upstream_unavailable');
     }
   }
+  async function verifiedUser() {
+    const user = await get('/auth/v1/user', 'auth');
+    if (!UUID.test(user?.id ?? '') || user.is_anonymous === true) reject(401, 'invalid_session');
+    return user;
+  }
   return {
     // Same Auth /user request used by auth-js getUser(jwt); never decode-and-trust a JWT.
     async getUser() {
-      const user = await get('/auth/v1/user', 'auth');
-      if (!UUID.test(user?.id ?? '') || user.is_anonymous === true) reject(401, 'invalid_session');
+      const user = await verifiedUser();
       return {id: user.id.toLowerCase()};
+    },
+    async getAdminIdentity() {
+      const user = await verifiedUser();
+      return {id: user.id.toLowerCase(), email: typeof user.email === 'string' ? user.email : '',
+        role: user.app_metadata?.pplus_role === 'admin' ? 'admin' : 'user'};
     },
     async getDraft(draftId, userId) {
       const query = new URLSearchParams({
