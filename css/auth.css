@@ -12,15 +12,16 @@ html[data-auth-state="authenticated"] .auth-gate { display: none; }
   --secondary: #DCD6FF;
   --accent: #0D9488;
 }
-.pplus-brand { display: inline-flex; align-items: center; gap: 10px; flex-shrink: 0; color: #211A36; text-decoration: none; }
-.pplus-brand strong { font-size: 20px; font-weight: 800; letter-spacing: -.04em; line-height: 1; }
-.pplus-brand .brand-logo-crop { width: 46px; height: 34px; flex-shrink: 0; }
-.pplus-brand .brand-logo { width: 132px; top: -5px; left: -5px; }
+.pplus-brand { display: inline-flex; align-items: center; flex-shrink: 0; color: #211A36; text-decoration: none; }
+/* A white inset joins the JPEG corners to the page without cropping the logo. */
+.pplus-brand .brand-logo-frame { display: grid; place-items: center; flex-shrink: 0; width: 44px; height: 44px; padding: 3px; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+.pplus-brand .brand-logo { position: static; display: block; width: 100%; max-width: 100%; height: auto; aspect-ratio: 1; object-fit: contain; }
+.auth-brand .brand-logo-frame { width: 64px; height: 64px; padding: 0; border: 0; border-radius: 0; }
 
 /* Auto block margins center a short card and become zero when content is taller. */
 .auth-page { min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; align-items: center; padding: 32px 20px; }
 .auth-card { flex-shrink: 0; width: 100%; max-width: 424px; margin-block: auto; padding: 32px; background: #fff; border: 1px solid var(--line); border-radius: 20px; box-shadow: 0 8px 28px rgb(33 26 54 / 5%); }
-.auth-brand { justify-content: center; width: 100%; margin-bottom: 24px; }
+.auth-brand { justify-content: center; width: 100%; margin-bottom: 20px; }
 .auth-card h1 { margin: 0 0 8px; text-align: center; font-size: 28px; letter-spacing: -.04em; line-height: 1.3; }
 .auth-card #auth-description { margin: 0 0 28px; color: var(--text-muted); text-align: center; font-size: 14px; line-height: 1.6; }
 .auth-card form { display: grid; gap: 12px; }
@@ -84,6 +85,7 @@ html[data-auth-state="authenticated"] .auth-gate { display: none; }
 @media (max-width: 680px) {
   .site-header { width: calc(100% - 32px); min-height: 72px; padding: 14px 0; gap: 12px; }
   .site-header-leading { width: 100%; justify-content: space-between; }
+  .site-header .brand-logo-frame { width: 40px; height: 40px; border-radius: 11px; }
   .site-header .prototype-badge { padding: 4px 8px; }
   .auth-account { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; width: 100%; gap: 8px; padding-top: 12px; border-top: 1px solid var(--line); }
   .auth-account .auth-admin-link { grid-column: 1; grid-row: 1; }
@@ -97,7 +99,8 @@ html[data-auth-state="authenticated"] .auth-gate { display: none; }
 @media (max-width: 480px) {
   .auth-page { padding: 24px 16px; }
   .auth-card { padding: 28px 24px; border-radius: 18px; }
-  .auth-brand { margin-bottom: 20px; }
+  .auth-brand { margin-bottom: 16px; }
+  .auth-brand .brand-logo-frame { width: 56px; height: 56px; }
   .auth-card #auth-description { margin-bottom: 24px; }
   .auth-card h1 { font-size: 26px; }
 }

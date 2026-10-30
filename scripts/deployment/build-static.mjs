@@ -12,7 +12,7 @@ export const PUBLIC_FILES = [
   'js/planner/catalog.mjs', 'js/planner/plan.mjs',
   'js/drafts-bootstrap.js', 'js/drafts/model.mjs', 'js/drafts/repository.mjs',
   'js/drafts/workspace.mjs', 'js/drafts/ui.mjs',
-  'assets/logo_1.png'
+  'assets/logo_1.jpeg'
 ];
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 

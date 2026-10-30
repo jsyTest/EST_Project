@@ -8,7 +8,7 @@ import adminEntry from '../../api/admin/overview.mjs';
 import {PUBLIC_FILES} from '../deployment/build-static.mjs';
 
 const ROOT = fileURLToPath(new URL('../../public-dist/', import.meta.url));
-const mime = {'.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.mjs': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.png': 'image/png'};
+const mime = {'.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.mjs': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg'};
 export async function startReviewServer({port = 8787, reviewHandler = entry.fetch, adminHandler = adminEntry.fetch, publicRoot = ROOT, enableAdminDemo = false} = {}) {
   const server = createServer(async (req, res) => {
     try {
