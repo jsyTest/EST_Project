@@ -76,6 +76,14 @@ html[data-admin-state="authorized"] .admin-gate { display: none; }
   .admin-section-intro { font-size: 13px; margin-bottom: 20px; }
   .admin-stats, #admin-usage .admin-stats { grid-template-columns: minmax(0, 1fr); gap: 12px; margin-bottom: 16px; }
   .admin-card { padding: 20px; margin-bottom: 16px; }
+  #admin-dashboard .admin-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #admin-dashboard .admin-stats > .admin-card { padding: 16px; }
+  #admin-dashboard .admin-stats > .admin-card > p:first-child { margin-bottom: 8px; }
+  #admin-dashboard .admin-stats > .admin-card > strong { margin-bottom: 8px; font-size: 28px; line-height: 1.2; }
+  #admin-dashboard .admin-stats > .admin-card:last-child { display: grid; grid-column: 1 / -1; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: center; }
+  #admin-dashboard .admin-stats > .admin-card:last-child > p:first-child { margin: 0; }
+  #admin-dashboard .admin-stats > .admin-card:last-child > strong { margin: 0; font-size: 18px; line-height: 1.4; }
+  #admin-dashboard .admin-stats > .admin-card:last-child > span { grid-column: 1 / -1; margin-top: 0; }
   .admin-status-list > div { flex-direction: column; gap: 6px; }
   .admin-status-list dd { text-align: left; }
 }
