@@ -18,7 +18,9 @@ export async function authUI({protectedPage=false,adminPage=false,url='https://e
  const toggles=[new Element(),new Element()];toggles[0].dataset.passwordToggle='auth-password';toggles[1].dataset.passwordToggle='auth-confirmation';
  get('auth-form').controls=[get('auth-email'),get('auth-password'),get('auth-confirmation'),get('auth-submit'),...toggles];
  const header=new Element(),main=new Element();const privateInput=new Element();privateInput.value='synthetic private draft';
- const doc={documentElement:{dataset:protectedPage?{authRequired:'true',authState:'checking',...(adminPage?{adminRequired:'true',adminState:'checking'}:{})}:{authPage:'true',authState:'checking'}},title:'',getElementById:get,createElement:()=>new Element(),querySelector:()=>header,querySelectorAll:selector=>selector==='[data-password-toggle]'?toggles:selector==='main[data-auth-content]'?[main]:selector.includes('[data-auth-content]')?[privateInput]:[]};
+ let existingAccount=null;
+ if(adminPage){existingAccount=new Element();existingAccount.className='auth-account';const back=new Element('admin-service-return');back.className='button button-secondary auth-service-link';back.textContent='서비스로 돌아가기';back.href='/index.html';existingAccount.append(back);header.append(existingAccount);}
+ const doc={documentElement:{dataset:protectedPage?{authRequired:'true',authState:'checking',...(adminPage?{adminRequired:'true',adminState:'checking'}:{})}:{authPage:'true',authState:'checking'}},title:'',getElementById:get,createElement:()=>new Element(),querySelector:selector=>selector==='.site-header'?header:selector==='.site-header .auth-account'?existingAccount:null,querySelectorAll:selector=>selector==='[data-password-toggle]'?toggles:selector==='main[data-auth-content]'?[main]:selector.includes('[data-auth-content]')?[privateInput]:[]};
  const pending=[],listeners={},navigations=[],requests=[],map=new Map(Object.entries(stored));let authCallback;
  const client={auth:{
   onAuthStateChange(fn){authCallback=fn;return {data:{subscription:{unsubscribe(){}}}};},

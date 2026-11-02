@@ -80,22 +80,22 @@ test('UI001 navigation: admin link stays hidden until the server confirms identi
 test('UI001 navigation: late admin response after logout cannot restore menu or content',async()=>{
   let complete;const s=await authUI({protectedPage:true,adminPage:true,url:'https://education.example/admin.html',session,roleFetch:()=>new Promise(r=>complete=r)});
   s.emit('SIGNED_OUT',null);await s.flush();complete(authorized());await s.flush();
-  assert.equal(adminLink(s).hidden,true);assert.notEqual(s.doc.documentElement.dataset.adminState,'authorized');assert.equal(s.main.cleared,true);
+  assert.equal(adminLink(s),undefined);assert.notEqual(s.doc.documentElement.dataset.adminState,'authorized');assert.equal(s.main.cleared,true);
 });
 test('UI001 guard: anonymous admin URL redirects and ordinary account remains denied',async()=>{
   const anonymous=await authUI({protectedPage:true,adminPage:true,url:'https://education.example/admin.html'});
   assert.equal(anonymous.navigations.at(-1),'https://education.example/login.html');
   const ordinary=await authUI({protectedPage:true,adminPage:true,url:'https://education.example/admin.html',session});
-  assert.equal(ordinary.doc.documentElement.dataset.adminState,'denied');assert.match(ordinary.nodes['admin-access-message'].textContent,/관리자만/);assert.equal(adminLink(ordinary).hidden,true);
+  assert.equal(ordinary.doc.documentElement.dataset.adminState,'denied');assert.match(ordinary.nodes['admin-access-message'].textContent,/관리자만/);assert.equal(adminLink(ordinary),undefined);
 });
 test('UI001 guard: role failure hides privileged UI while the ordinary app stays authenticated',async()=>{
   const s=await authUI({protectedPage:true,session,roleFetch:async()=>{throw new Error('PRIVATE_AUTH_DETAIL');}});
   assert.equal(s.doc.documentElement.dataset.authState,'authenticated');assert.equal(s.doc.documentElement.dataset.adminState,'error');assert.equal(adminLink(s).hidden,true);
 });
-test('UI001 guard: admin page focus rechecks role and revocation hides the menu',async()=>{
+test('UI001 guard: admin page focus rechecks role and revocation denies content without a self-link',async()=>{
   let admin=true;const s=await authUI({protectedPage:true,adminPage:true,url:'https://education.example/admin.html',session,roleFetch:async()=>admin?authorized():{status:403,ok:false}});
-  assert.equal(adminLink(s).hidden,false);admin=false;s.context.dispatchEvent(new Event('focus'));await s.flush();
-  assert.equal(adminLink(s).hidden,true);assert.equal(s.doc.documentElement.dataset.adminState,'denied');
+  assert.equal(adminLink(s),undefined);assert.equal(s.doc.documentElement.dataset.adminState,'authorized');admin=false;s.context.dispatchEvent(new Event('focus'));await s.flush();
+  assert.equal(adminLink(s),undefined);assert.equal(s.doc.documentElement.dataset.adminState,'denied');
 });
 test('UI001 login: exact input and temporary-error messages, existing short passwords still work',async()=>{
   const s=await authUI(), n=s.nodes;
@@ -151,4 +151,29 @@ test('UI001 local demo is opt-in, no Auth SDK, excluded from public output; admi
   const real=await(await fetch(onURL+'/admin.html?demo=1&role=admin')).text();assert.match(real,/data-admin-required="true"/);assert.doesNotMatch(real,/admin-demo.mjs/);
   assert.equal((await fetch(onURL+'/api/admin/overview')).status,401);
   for(const path of ['/server/admin-overview.mjs','/scripts/development/admin-demo.mjs','/.env'])assert.equal((await fetch(onURL+path)).status,404);
+});
+
+for(const page of ['index','mapping','result'])test(`UI007: ${page} keeps one admin link hidden until verified`,async()=>{
+ let complete;const s=await authUI({protectedPage:true,url:`https://education.example/${page}.html`,session,roleFetch:()=>new Promise(r=>complete=r)});
+ const account=s.header.children[0];assert.equal(adminLink(s).hidden,true);assert.equal(account.children.filter(n=>n.textContent==='서비스로 돌아가기').length,0);
+ complete(authorized());await s.flush();assert.equal(adminLink(s).hidden,false);assert.equal(account.children.filter(n=>n.textContent==='관리자 페이지').length,1);
+ assert.equal(account.children[0],adminLink(s));assert.equal(account.children[1].className,'auth-account-email');assert.equal(account.children[2].textContent,'로그아웃');
+});
+test('UI007: admin account slot is reused once, with return/email/logout and no self-link',async()=>{
+ let calls=0;const s=await authUI({protectedPage:true,adminPage:true,url:'https://education.example/admin.html',session,roleFetch:async()=>{calls++;return authorized();}});
+ const account=s.header.children[0];assert.equal(s.header.children.length,1);assert.equal(account.children.length,4);assert.equal(account.children[0].id,'admin-service-return');
+ assert.equal(account.children[0].href,'/index.html');assert.equal(account.children[1].className,'auth-account-email');assert.equal(account.children[2].textContent,'로그아웃');assert.equal(adminLink(s),undefined);
+ s.context.dispatchEvent(new Event('focus'));await s.flush();assert.ok(calls>=2);assert.equal(s.header.children.length,1);assert.equal(account.children.length,4);assert.equal(s.doc.documentElement.dataset.adminState,'authorized');
+ await account.children[2].fire('click');assert.equal(s.doc.documentElement.dataset.authState,'anonymous');assert.equal(account.children[1].textContent,'');assert.equal(s.main.cleared,true);assert.equal(s.navigations.at(-1),'https://education.example/login.html');
+});
+test('UI007: return link remains available on role failure while private admin content fails closed',async()=>{
+ const s=await authUI({protectedPage:true,adminPage:true,url:'https://education.example/admin.html',session,roleFetch:async()=>{throw Error('unavailable');}});
+ assert.equal(s.doc.documentElement.dataset.adminState,'error');assert.equal(adminLink(s),undefined);assert.equal(s.header.children[0].children[0].href,'/index.html');
+});
+test('UI007: admin markup centralizes explicit return navigation and retains four menu controls',async()=>{
+ const html=await readFile(new URL('../../../admin.html',import.meta.url),'utf8');
+ const header=/<header\b[\s\S]*?<\/header>/.exec(html)[0],nav=/<nav\b[\s\S]*?<\/nav>/.exec(html)[0];
+ assert.equal((html.match(/id="admin-service-return"/g)??[]).length,1);assert.match(header,/data-auth-content/);assert.match(header,/class="auth-account" role="group" aria-label="계정 메뉴"/);
+ assert.match(header,/id="admin-service-return"[^>]*href="\/index.html">서비스로 돌아가기/);assert.doesNotMatch(html,/header-service-link|일반 서비스로 돌아가기/);
+ assert.doesNotMatch(nav,/<a\b/);assert.deepEqual([...nav.matchAll(/data-admin-tab="([^"]+)"/g)].map(m=>m[1]),['dashboard','members','usage','settings']);assert.match(html,/id="admin-settings-logout"/);
 });

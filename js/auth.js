@@ -228,7 +228,8 @@
   function initializeAccount() {
     const header = document.querySelector(".site-header");
     if (!header) return;
-    const account = document.createElement("div");
+    const existingAccount = document.querySelector(".site-header .auth-account");
+    const account = existingAccount || document.createElement("div");
     account.className = "auth-account";
     account.setAttribute("role", "group");
     account.setAttribute("aria-label", "계정 메뉴");
@@ -241,13 +242,16 @@
     accountError = document.createElement("p");
     accountError.className = "auth-account-error";
     accountError.setAttribute("role", "status");
-    adminLink = document.createElement("a");
-    adminLink.className = "button button-secondary auth-admin-link";
-    adminLink.textContent = "관리자 페이지";
-    adminLink.href = core.pageUrl("admin.html", window.location.href);
-    adminLink.hidden = true;
-    account.append(adminLink, accountEmail, logoutButton, accountError);
-    header.append(account);
+    if (!adminPage) {
+      adminLink = document.createElement("a");
+      adminLink.className = "button button-secondary auth-admin-link";
+      adminLink.textContent = "관리자 페이지";
+      adminLink.href = core.pageUrl("admin.html", window.location.href);
+      adminLink.hidden = true;
+      account.append(adminLink);
+    }
+    account.append(accountEmail, logoutButton, accountError);
+    if (!existingAccount) header.append(account);
     const signOut = async function () {
       if (logoutButton.disabled) return;
       logoutButton.disabled = true;

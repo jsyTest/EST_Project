@@ -67,13 +67,11 @@ html[data-auth-state="authenticated"] .auth-gate { display: none; }
 }
 .site-header-leading { display: flex; align-items: center; gap: 20px; min-width: 0; }
 .site-header .prototype-badge { color: var(--text-muted); border-color: var(--line); background: #fff; font-size: 11px; font-weight: 500; }
-.header-service-link { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: var(--text-muted); font-size: 13px; text-decoration: none; }
-.header-service-link:hover { color: var(--primary); }
 .auth-account { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 8px; min-width: 0; max-width: 100%; margin-left: auto; }
 .auth-account-email { min-width: 0; max-width: 200px; margin: 0 8px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 12px; color: var(--text-muted); }
 .auth-account .button { flex-shrink: 0; min-height: 44px; padding: 0 12px; border-radius: 9px; font-size: 12px; font-weight: 600; white-space: nowrap; }
-.auth-account .auth-admin-link { border-color: var(--line); background: #fff; color: var(--text); }
-.auth-account .auth-admin-link:hover { border-color: var(--secondary); background: var(--primary-soft); }
+.auth-account .auth-admin-link, .auth-account .auth-service-link { border-color: var(--line); background: #fff; color: var(--text); }
+.auth-account .auth-admin-link:hover, .auth-account .auth-service-link:hover { border-color: var(--secondary); background: var(--primary-soft); }
 .auth-account .button-quiet { color: var(--text-muted); }
 .auth-account .button:hover { transform: none; }
 .auth-account-error { flex-basis: 100%; min-width: 0; margin: 0; color: var(--danger); text-align: right; font-size: 12px; overflow-wrap: anywhere; }
@@ -90,7 +88,7 @@ html[data-auth-state="authenticated"] .auth-gate { display: none; }
   .site-header .brand-logo-frame { width: 40px; height: 40px; border-radius: 11px; }
   .site-header .prototype-badge { padding: 4px 8px; }
   .auth-account { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; width: 100%; gap: 8px; padding-top: 12px; border-top: 1px solid var(--line); }
-  .auth-account .auth-admin-link { grid-column: 1; grid-row: 1; }
+  .auth-account .auth-admin-link, .auth-account .auth-service-link { grid-column: 1; grid-row: 1; }
   .auth-account-email { grid-column: 2; grid-row: 1; max-width: none; margin: 0; }
   .auth-account > button { grid-column: 3; grid-row: 1; }
   .auth-account-error { grid-column: 1 / -1; grid-row: 2; text-align: left; }
