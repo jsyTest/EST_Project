@@ -251,7 +251,7 @@ test('NB012: public assets include only browser preview; server source stays pri
   t.after(() => rm(root, {recursive: true, force: true}));
   const repository = fileURLToPath(new URL('../../../', import.meta.url));
   for (const file of PUBLIC_FILES) { await mkdir(dirname(join(root, file)), {recursive: true}); await copyFile(join(repository, file), join(root, file)); }
-  const build = await buildStatic(root); assert.equal(build.count, 31); assert.ok(PUBLIC_FILES.includes('js/notion-preview.mjs'));
+  const build = await buildStatic(root); assert.equal(build.count, 32); assert.ok(PUBLIC_FILES.includes('js/notion-preview.mjs'));
   assert.ok(!PUBLIC_FILES.some(p => p.startsWith('server/') || p.startsWith('api/')));
   for (const name of ['index', 'mapping', 'result']) {
     const html = await readFile(new URL(`../../../${name}.html`, import.meta.url), 'utf8');

@@ -1,3 +1,5 @@
+import {mountTestConnection} from './notion-test-connection.mjs';
+
 const FLAGS = {webExecutionReady: false, notionExecution: 'not_executed', notionRequests: 0, supabaseWrites: 0, targetVerified: false};
 const OPTION_COLORS = {default: '#787774', gray: '#787774', brown: '#9F6B53', orange: '#D9730D', yellow: '#C29243', green: '#448361', blue: '#337EA9', purple: '#9065B0', pink: '#C14C8A', red: '#D44C47'};
 const fail = code => Object.assign(new Error(code), {code});
@@ -121,7 +123,9 @@ export function mountPreview({root, drafts, getSession, fetchImpl, doc = documen
   const button = make('button', '저장된 설계 검토'); button.type = 'button'; button.className = 'button button-secondary';
   const status = make('p', '저장한 설계를 기준으로 검토합니다. 변경한 내용은 먼저 저장해 주세요.'); status.setAttribute('role', 'status'); status.setAttribute('aria-live', 'polite');
   const output = make('div', ''); output.className = 'notion-preview-output';
-  root.append(summary, notice, button, status, output);
+  const connectionRoot = make('section', ''); connectionRoot.className = 'notion-test-connection';
+  root.append(summary, notice, connectionRoot, button, status, output);
+  const connection = mountTestConnection({root: connectionRoot, getSession, fetchImpl, drafts, doc, win});
   const controller = createPreviewController({drafts, getSession, fetchImpl, onChange(state) {
     output.replaceChildren(); button.disabled = state.status === 'loading' || state.blocked === true;
     if (state.status === 'cleared') { root.replaceChildren(); cleanup(); return; }
@@ -132,7 +136,7 @@ export function mountPreview({root, drafts, getSession, fetchImpl, doc = documen
   }});
   const edit = event => { if (!root.contains(event.target)) controller.invalidate({editing: true}); };
   const clear = () => controller.dispose();
-  function cleanup() { doc.removeEventListener('input', edit); doc.removeEventListener('change', edit); win.removeEventListener('est-auth-cleared', clear); }
+  function cleanup() { connection.dispose(); doc.removeEventListener('input', edit); doc.removeEventListener('change', edit); win.removeEventListener('est-auth-cleared', clear); }
   doc.addEventListener('input', edit); doc.addEventListener('change', edit); win.addEventListener('est-auth-cleared', clear);
   button.addEventListener('click', () => controller.review());
   controller.invalidate();

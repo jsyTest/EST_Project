@@ -11,7 +11,7 @@ export const PUBLIC_FILES = [
   'js/mapping/model.mjs', 'js/mapping/parse.mjs', 'js/mapping/csv.mjs',
   'js/planner/catalog.mjs', 'js/planner/plan.mjs',
   'js/drafts-bootstrap.js', 'js/drafts/model.mjs', 'js/drafts/repository.mjs',
-  'js/drafts/workspace.mjs', 'js/drafts/ui.mjs', 'js/notion-preview.mjs',
+  'js/drafts/workspace.mjs', 'js/drafts/ui.mjs', 'js/notion-preview.mjs', 'js/notion-test-connection.mjs',
   'assets/logo_1.jpeg'
 ];
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
