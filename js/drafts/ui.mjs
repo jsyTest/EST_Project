@@ -99,6 +99,8 @@ export async function initializeDrafts() {
   }, {once: true});
   const api = {
     snapshot: () => workspace.snapshot(),
+    subscribe: listener => workspace.subscribe(listener),
+    captureForReview() { capture(true); return workspace.snapshot(); },
     register(section, read) { if (!disposed) captures.set(section, read); },
     update(section, value) { if (!disposed) workspace.update(section, value); },
     showError(error) { show(errorMessage(error), true); }

@@ -141,7 +141,7 @@ test('UI001 local example view: menus, search/filter, disabled role actions and 
   await d.node('admin-settings-logout').fire('click');assert.equal(logouts,1);
 });
 test('UI001 local demo is opt-in, no Auth SDK, excluded from public output; admin API remains protected',async t=>{
-  const build=await buildStatic();assert.equal(build.count,30);assert.ok(!PUBLIC_FILES.some(p=>p.includes('demo')||p.startsWith('server/')||p.startsWith('api/')));
+  const build=await buildStatic();assert.equal(build.count,31);assert.ok(!PUBLIC_FILES.some(p=>p.includes('demo')||p.startsWith('server/')||p.startsWith('api/')));
   const off=await startReviewServer({port:0}), on=await startReviewServer({port:0,enableAdminDemo:true});
   t.after(async()=>{for(const s of [off,on]){s.closeAllConnections();await new Promise(r=>s.close(r));}});
   const offURL=`http://127.0.0.1:${off.address().port}`, onURL=`http://127.0.0.1:${on.address().port}`;

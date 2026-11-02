@@ -12,3 +12,11 @@
 .draft-list small { color: var(--text-muted); }
 .draft-panel button:disabled { opacity: .6; cursor: wait; }
 @media (max-width: 600px) { .draft-panel { width: calc(100% - 24px); padding: 16px; } .draft-actions .button { flex: 1 1 140px; } }
+.notion-preview { overflow-wrap: anywhere; }
+.notion-preview > summary { font-size: 1.2rem; font-weight: 700; }
+.notion-preview-output details { margin: 12px 0; padding: 12px; border: 1px solid var(--line); border-radius: 12px; }
+.notion-preview-output ul { padding-inline-start: 22px; }
+.notion-preview-output li { margin-block: 8px; }
+.notion-option { display: inline-block; margin: 4px 4px 0; padding: 2px 8px; border: 1px solid var(--line); border-radius: 6px; font-size: .85rem; }
+.notion-option::before { content: ''; display: inline-block; width: .65em; height: .65em; margin-inline-end: .4em; border-radius: 50%; background: var(--notion-option-color, #787774); }
+.notion-hash { font: .75rem/1.6 monospace; white-space: pre-wrap; overflow-wrap: anywhere; }

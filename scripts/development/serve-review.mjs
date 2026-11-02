@@ -5,21 +5,23 @@ import {fileURLToPath, pathToFileURL} from 'node:url';
 import {join} from 'node:path';
 import entry from '../../api/drafts/review.mjs';
 import adminEntry from '../../api/admin/overview.mjs';
+import notionPreviewEntry from '../../api/notion/plans/review.mjs';
 import {PUBLIC_FILES} from '../deployment/build-static.mjs';
 
 const ROOT = fileURLToPath(new URL('../../public-dist/', import.meta.url));
 const mime = {'.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.mjs': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg'};
-export async function startReviewServer({port = 8787, reviewHandler = entry.fetch, adminHandler = adminEntry.fetch, publicRoot = ROOT, enableAdminDemo = false} = {}) {
+export async function startReviewServer({port = 8787, reviewHandler = entry.fetch, adminHandler = adminEntry.fetch, notionPreviewHandler = notionPreviewEntry.fetch, publicRoot = ROOT, enableAdminDemo = false} = {}) {
   const server = createServer(async (req, res) => {
     try {
       const origin = `http://127.0.0.1:${server.address().port}`;
       const url = new URL(req.url, origin);
-      if (url.pathname === '/api/drafts/review' || url.pathname === '/api/admin/overview') {
+      if (['/api/drafts/review', '/api/admin/overview', '/api/notion/plans/review'].includes(url.pathname)) {
         const abort = new AbortController();
         req.once('aborted', () => abort.abort());
         const request = new Request(url, {method: req.method, headers: req.headers, signal: abort.signal,
           ...(!['GET', 'HEAD'].includes(req.method) ? {body: Readable.toWeb(req), duplex: 'half'} : {})});
-        const result = await (url.pathname === '/api/admin/overview' ? adminHandler : reviewHandler)(request);
+        const handler = url.pathname === '/api/admin/overview' ? adminHandler : url.pathname === '/api/notion/plans/review' ? notionPreviewHandler : reviewHandler;
+        const result = await handler(request);
         res.writeHead(result.status, Object.fromEntries(result.headers));
         res.end(Buffer.from(await result.arrayBuffer()));
         return;
