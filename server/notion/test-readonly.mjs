@@ -6,7 +6,7 @@ export const MAX_NOTION_RESPONSE_BYTES = 131072;
 // There is deliberately no generic request(path, method) or mutation method.
 // Default construction cannot contact Notion even if a machine has existing credentials.
 export function createTestNotionReader({configuration, fetchImpl, allowNetwork = false, signal}) {
-  let requests = 0;
+  let requests = 0, started = false;
   async function getFixed(path) {
     if (allowNetwork !== true || typeof fetchImpl !== 'function') reject(503, 'notion_remote_read_disabled');
     const allowed = ['/v1/users/me', `/v1/pages/${configuration.parentId}`];
@@ -38,6 +38,9 @@ export function createTestNotionReader({configuration, fetchImpl, allowNetwork =
   return {
     get requestCount() { return requests; },
     async reviewTarget() {
+      // Claim synchronously, including failures and concurrent calls. A reader is never reusable.
+      if (started) reject(409, 'notion_read_already_attempted');
+      started = true;
       const self = await getFixed('/v1/users/me');
       if (self?.object !== 'user' || self.type !== 'bot' || notionId(self.id) !== configuration.botId) reject(403, 'notion_bot_mismatch');
       if (notionId(self.bot?.workspace_id) !== configuration.workspaceId) reject(403, 'notion_workspace_mismatch');
@@ -51,8 +54,7 @@ export function createTestNotionReader({configuration, fetchImpl, allowNetwork =
       if (page.public_url !== null) reject(403, 'notion_target_privacy_unconfirmed');
       const parent = page.parent;
       if (!(parent?.type === 'workspace' && parent.workspace === true) && !(parent?.type === 'page_id' && notionId(parent.page_id))) reject(422, 'notion_target_not_standalone_page');
-      return {workspaceId: configuration.workspaceId, botId: configuration.botId, parentPageId: configuration.parentId,
-        pageUrl: `https://www.notion.so/${configuration.parentId.replaceAll('-', '')}`,
+      return {botMatched: true, workspaceMatched: true, parentMatched: true,
         archived: false, inTrash: false, lockStatus: page.is_locked === false ? 'unlocked' : 'unknown',
         publishStatus: 'not_published', privacyVerified: false, creationPermissionVerified: false, targetReadVerified: true};
     }

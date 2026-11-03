@@ -15,7 +15,7 @@ const messages = {
   auth_required: '로그인한 뒤 연결 상태를 확인해 주세요.', invalid_session: '다시 로그인한 뒤 확인해 주세요.',
   notion_unauthorized: 'Notion이 연결 자격 증명을 거절했습니다.', notion_access_denied: 'Notion 읽기 접근이 거절됐습니다.',
   notion_target_not_found: '승인된 테스트 페이지를 찾을 수 없거나 연결에 공유되지 않았습니다.',
-  notion_rate_limited: 'Notion 요청 한도에 도달했습니다. 잠시 후 직접 다시 확인해 주세요.'
+  notion_rate_limited: 'Notion 요청 한도에 도달했습니다. 자동 재시도하지 않습니다. 새 승인 전에는 다시 실행하지 마세요.'
 };
 function respond(status, value, notionRequests, headers = {}) {
   return Response.json({connectionVersion: 1, notionApiVersion: NOTION_VERSION, ...value, ...flags, notionRequests}, {
@@ -60,10 +60,14 @@ export function createTestConnectionHandler({target = false, env = process.env, 
       const configuration = readTestConfiguration(env, user.id);
       // The entrypoints never opt in. Tests inject synthetic adapters; future live opt-in needs separate approval.
       const remoteReadEnabled = allowNotionNetwork === true && typeof notionFetch === 'function';
-      if (!target) return respond(200, {connectionStatus: 'configured', configured: true, remoteReadEnabled, targetReadVerified: false}, 0);
+      if (!target) return respond(200, {connectionStatus: 'configured', approvedUser: true, configured: true, remoteReadEnabled, targetReadVerified: false}, 0);
       reader = createTestNotionReader({configuration, fetchImpl: notionFetch, allowNetwork: remoteReadEnabled, signal: request.signal});
       const result = await reader.reviewTarget();
-      return respond(200, {connectionStatus: 'read_verified', configured: true, remoteReadEnabled, targetReadVerified: true, target: result,
+      // Explicit projection: never return raw upstream/configuration objects or target identifiers.
+      const summary = {botMatched: result.botMatched, workspaceMatched: result.workspaceMatched, parentMatched: result.parentMatched,
+        archived: result.archived, inTrash: result.inTrash, lockStatus: result.lockStatus, publishStatus: result.publishStatus,
+        privacyVerified: false, creationPermissionVerified: false, targetReadVerified: true};
+      return respond(200, {connectionStatus: 'read_verified', approvedUser: true, configured: true, remoteReadEnabled, targetReadVerified: true, target: summary,
         limitations: ['읽기 성공은 생성 권한의 증명이 아닙니다.', '비공개 전체 공유 권한은 사용자가 별도로 확인해야 합니다.',
           ...(result.lockStatus === 'unknown' ? ['잠금 상태는 응답에서 확인할 수 없습니다.'] : [])]}, reader.requestCount);
     } catch (error) {

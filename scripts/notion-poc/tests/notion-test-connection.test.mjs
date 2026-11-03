@@ -61,7 +61,8 @@ test('NB013: configured owner status is local-only; target read verifies only fi
   const b = await result(await m.handler(true)(request(true)), 200);
   assert.equal(b.connectionStatus, 'read_verified'); assert.equal(b.targetReadVerified, true); assert.equal(b.target.lockStatus, 'unlocked');
   assert.equal(b.notionRequests, 2); assert.deepEqual(m.notionCalls, ['/v1/users/me', `/v1/pages/${PARENT}`]);
-  assert.equal(b.target.parentPageId, PARENT); assert.match(b.target.pageUrl, /^https:\/\/www.notion.so\/[a-f0-9]{32}$/);
+  assert.equal(b.target.botMatched, true); assert.equal(b.target.workspaceMatched, true); assert.equal(b.target.parentMatched, true);
+  assert.doesNotMatch(JSON.stringify(b), new RegExp(`${WORKSPACE}|${BOT}|${PARENT}|notion\\.so|pageUrl|parentPageId|workspaceId|botId`));
 });
 test('NB013: default factory never contacts Notion even with complete configuration and an injected adapter', async () => {
   const m = mock();
@@ -190,7 +191,7 @@ test('NB013 UI: target POST sends empty object; missing lock remains explicitly 
   const f = uiFixture(), states = [], calls = [];
   const c = createConnectionController({getSession: f.getSession, onChange: s => states.push(s), fetchImpl: async (path, options) => {
     calls.push({path, options}); return Response.json({connectionStatus: 'read_verified', targetReadVerified: true, webExecutionReady: false, notionExecution: 'not_executed', notionWrites: 0, supabaseWrites: 0,
-      creationPermissionVerified: false, privacyVerified: false, target: {lockStatus: 'unknown', creationPermissionVerified: false, privacyVerified: false}});
+    creationPermissionVerified: false, privacyVerified: false, target: {lockStatus: 'unknown', botMatched: true, workspaceMatched: true, parentMatched: true, creationPermissionVerified: false, privacyVerified: false}});
   }});
   await c.check(true); assert.equal(calls[0].options.body, '{}'); assert.equal(calls[0].options.method, 'POST'); assert.equal(states.at(-1).lockStatus, 'unknown');
   c.dispose(); f.controller.dispose();

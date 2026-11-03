@@ -41,7 +41,7 @@ export function createConnectionController({getSession, fetchImpl = fetch, draft
       if (!target && value.connectionStatus === 'configured' && value.targetReadVerified === false) {
         onChange({status: 'configured', remoteReadEnabled: value.remoteReadEnabled === true}); return;
       }
-      if (target && value.connectionStatus === 'read_verified' && value.targetReadVerified === true && value.target?.creationPermissionVerified === false && value.target?.privacyVerified === false) {
+      if (target && value.connectionStatus === 'read_verified' && value.targetReadVerified === true && value.target?.botMatched === true && value.target?.workspaceMatched === true && value.target?.parentMatched === true && value.target?.creationPermissionVerified === false && value.target?.privacyVerified === false) {
         onChange({status: 'read_verified', lockStatus: value.target.lockStatus}); return;
       }
       throw {code: 'network_error'};
