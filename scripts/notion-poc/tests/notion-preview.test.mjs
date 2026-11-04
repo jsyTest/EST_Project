@@ -6,6 +6,7 @@ import {tmpdir} from 'node:os';
 import {fileURLToPath} from 'node:url';
 import {compilePreview, MAX_PREVIEW_BYTES, PREVIEW_FLAGS} from '../../../server/notion/preview-plan.mjs';
 import {createNotionPreviewHandler} from '../../../server/notion/preview-handler.mjs';
+import {OWNERSHIP_VERIFICATION} from '../../../server/draft-ownership.mjs';
 import {reviewSavedDraft} from '../../../server/review-plan.mjs';
 import {emptyConfiguration, normalizeConfiguration} from '../../../js/drafts/model.mjs';
 import {createPreviewController, renderPreview, mountPreview} from '../../../js/notion-preview.mjs';
@@ -169,16 +170,16 @@ function controllerFixture() {
   const w = createWorkspace({storage: storage(), userId: USER_A});
   w.open({id: A, updatedAt: UPDATED, configuration: configuration()});
   const drafts = {...w, captureForReview: () => w.snapshot()};
-  let user = USER_A, delay = null, failure = null; const states = [], calls = [];
+  let user = USER_A, token = 'SYNTHETIC', delay = null, failure = null; const states = [], calls = [];
   const fetchImpl = async (path, options) => {
     calls.push({path, body: JSON.parse(options.body)});
-    if (path === '/api/drafts/review') return Response.json({draftId: w.snapshot().id, updatedAt: UPDATED, planHash: reviewSavedDraft(row()).planHash});
+    if (path === '/api/drafts/review') return Response.json({draftId: w.snapshot().id, updatedAt: UPDATED, planHash: reviewSavedDraft(row()).planHash, ...OWNERSHIP_VERIFICATION});
     if (delay) await delay;
     if (failure) return Response.json({error: {code: failure, message: 'PRIVATE_ERROR'}}, {status: 409});
-    return Response.json(compilePreview(row()));
+    return Response.json({...compilePreview(row()), ...OWNERSHIP_VERIFICATION});
   };
-  const c = createPreviewController({drafts, fetchImpl, getSession: async () => ({data: {session: user ? {user: {id: user}, access_token: 'SYNTHETIC'} : null}}), onChange: s => states.push(s)});
-  return {w, drafts, c, states, calls, setUser: id => {user = id;}, hold(p) {delay = p;}, fail(code) {failure = code;}};
+  const c = createPreviewController({drafts, fetchImpl, getSession: async () => ({data: {session: user ? {user: {id: user}, access_token: token} : null}}), onChange: s => states.push(s)});
+  return {w, drafts, c, states, calls, setUser: id => {user = id;}, setToken: value => {token = value;}, hold(p) {delay = p;}, fail(code) {failure = code;}};
 }
 test('NB012 UI: two read-only requests bind the saved snapshot without auto-save', async () => {
   const f = controllerFixture(); await f.c.review();
@@ -195,13 +196,14 @@ test('NB012 UI: unsaved, dirty and pending CSV inputs cannot request server prev
     await f.c.review(); assert.equal(f.calls.length, 0); assert.equal(f.states.at(-1).status, 'error'); f.c.dispose();
   }
 });
-for (const mode of ['draft', 'edit', 'logout', 'account']) test(`NB012 UI: delayed result is discarded after ${mode}`, async () => {
+for (const mode of ['draft', 'edit', 'logout', 'account', 'same-user-token']) test(`NB012 UI: delayed result is discarded after ${mode}`, async () => {
   const f = controllerFixture(); let release; f.hold(new Promise(r => {release = r;}));
   const pending = f.c.review(); while (f.calls.length < 2) await Promise.resolve();
   if (mode === 'draft') f.w.open({id: B, updatedAt: UPDATED, configuration: configuration()});
   if (mode === 'edit') f.w.update('requirements', {educationName: '편집됨'});
   if (mode === 'logout') f.c.dispose();
   if (mode === 'account') f.setUser(USER_B);
+  if (mode === 'same-user-token') f.setToken('SYNTHETIC_NEW');
   release(); await pending; assert.ok(!f.states.some(s => s.status === 'ready')); f.c.dispose();
 });
 test('NB012 UI: 409 and network errors preserve editors; saving invalidates an existing preview', async () => {
@@ -240,7 +242,7 @@ test('NB012 UI: mount clears all rendered content on auth-cleared without creden
   const f = controllerFixture(), events = {}, root = new Element('details'); root.contains = () => false;
   const eventTarget = {addEventListener: (k, fn) => {events[k] = fn;}, removeEventListener: k => {delete events[k];}};
   const controller = mountPreview({root, drafts: f.drafts, getSession: async () => ({data: {session: {user: {id: USER_A}, access_token: 'SYNTHETIC'}}}),
-    fetchImpl: async path => Response.json(path.includes('/drafts/') ? {draftId: A, updatedAt: UPDATED, planHash: reviewSavedDraft(row()).planHash} : compilePreview(row())),
+    fetchImpl: async path => Response.json({... (path.includes('/drafts/') ? {draftId: A, updatedAt: UPDATED, planHash: reviewSavedDraft(row()).planHash} : compilePreview(row())), ...OWNERSHIP_VERIFICATION}),
     doc: {...eventTarget, createElement: tag => new Element(tag)}, win: eventTarget});
   await controller.review(); assert.match(root.textContent, /가상 교육/); assert.doesNotMatch(root.textContent, /SYNTHETIC/);
   events['est-auth-cleared'](); assert.equal(root.textContent, ''); f.c.dispose();

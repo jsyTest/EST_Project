@@ -1,5 +1,6 @@
 import {ReviewError, readLimited, reject} from './review-errors.mjs';
 import {UUID, readConfiguration, createReadonlySupabase} from './supabase-readonly.mjs';
+import {readVerifiedOwnedDraft, OWNERSHIP_VERIFICATION} from './draft-ownership.mjs';
 import {REVIEW_VERSION, EXECUTION_FLAGS, timestamp, reviewSavedDraft, assertCurrentSnapshot} from './review-plan.mjs';
 
 export const MAX_REQUEST_BYTES = 2048;
@@ -49,14 +50,13 @@ export function createReviewHandler({fetchImpl = fetch, env = process.env} = {})
       if (!match) reject(401, 'auth_required');
       const input = await inputBody(request);
       const client = createReadonlySupabase({configuration: readConfiguration(env), token: match[1], fetchImpl, signal: request.signal});
-      const user = await client.getUser();
-      const row = await client.getDraft(input.draftId, user.id);
+      const row = await readVerifiedOwnedDraft(client, input.draftId, request.signal);
       if (timestamp(row.updated_at) === null) reject(502, 'invalid_upstream_response');
       const result = reviewSavedDraft(row);
       const changed = assertCurrentSnapshot(input, result);
       if (changed.length) return response(409, {error: {code: 'saved_draft_changed', message: MESSAGES.saved_draft_changed},
         reviewStatus: 'stale', changed, draftId: result.draftId, updatedAt: result.updatedAt, planHash: result.planHash});
-      return response(result.planValidation.status === 'structural_error' ? 422 : 200, result);
+      return response(result.planValidation.status === 'structural_error' ? 422 : 200, {...result, ...OWNERSHIP_VERIFICATION});
     } catch (error) {
       const known = error instanceof ReviewError;
       const code = known ? error.code : 'internal_error';

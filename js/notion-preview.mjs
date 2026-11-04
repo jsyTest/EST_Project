@@ -43,9 +43,10 @@ export function createPreviewController({drafts, getSession, fetchImpl = fetch, 
       if (result?.error || !session?.user?.id || !session.access_token) throw fail('auth_required');
       if (owner && owner !== session.user.id) { dispose(); return; }
       owner = session.user.id;
+      const capturedToken = session.access_token;
       async function post(path, body) {
         const response = await fetchImpl(path, {method: 'POST', cache: 'no-store', signal,
-          headers: {'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}`}, body: JSON.stringify(body)});
+          headers: {'Content-Type': 'application/json', Authorization: `Bearer ${capturedToken}`}, body: JSON.stringify(body)});
         if (!current()) return null;
         const text = await response.text();
         if (text.length > 524288) throw fail('network_error');
@@ -55,12 +56,18 @@ export function createPreviewController({drafts, getSession, fetchImpl = fetch, 
       }
       const first = await post('/api/drafts/review', {draftId: snapshot.id, expectedUpdatedAt: snapshot.updatedAt});
       if (!current() || !first) return;
+      if (first.serverAuthVerified !== true || first.draftOwnerVerified !== true) throw fail('network_error');
       if (first.draftId !== snapshot.id || first.updatedAt !== snapshot.updatedAt || !/^[a-f0-9]{64}$/i.test(first.planHash)) throw fail('saved_draft_changed');
+      const beforePreview = await getSession();
+      if (!current()) return;
+      if (beforePreview?.error || beforePreview?.data?.session?.user?.id !== owner ||
+          beforePreview?.data?.session?.access_token !== capturedToken) { dispose(); return; }
       const preview = await post('/api/notion/plans/review', {draftId: snapshot.id, expectedUpdatedAt: snapshot.updatedAt, expectedPlanHash: first.planHash});
       if (!current() || !preview) return;
       const latest = await getSession();
       if (!current()) return;
-      if (latest?.error || latest?.data?.session?.user?.id !== owner) { dispose(); return; }
+      if (latest?.error || latest?.data?.session?.user?.id !== owner || latest?.data?.session?.access_token !== capturedToken) { dispose(); return; }
+      if (preview.serverAuthVerified !== true || preview.draftOwnerVerified !== true) throw fail('network_error');
       if (preview.draftId !== snapshot.id || preview.updatedAt !== snapshot.updatedAt || preview.planHash !== first.planHash ||
         Object.entries(FLAGS).some(([k, v]) => preview[k] !== v) || !preview.preview || !preview.coverage) throw fail('network_error');
       onChange({status: 'ready', result: preview});
@@ -130,7 +137,7 @@ export function mountPreview({root, drafts, getSession, fetchImpl, doc = documen
     output.replaceChildren(); button.disabled = state.status === 'loading' || state.blocked === true;
     if (state.status === 'cleared') { root.replaceChildren(); cleanup(); return; }
     if (state.status === 'loading') status.textContent = '저장된 설계를 서버에서 검토하고 있습니다…';
-    else if (state.status === 'ready') { status.textContent = '저장본 검토를 마쳤습니다. 실제 Notion 요청과 저장소 쓰기는 발생하지 않았습니다.'; renderPreview(output, state.result, doc); }
+    else if (state.status === 'ready') { status.textContent = '서버 로그인 확인 · 저장된 설계의 소유자 일치. Notion 실행 없이 검토를 마쳤습니다.'; renderPreview(output, state.result, doc); }
     else if (state.status === 'error') status.textContent = state.message;
     else status.textContent = '저장한 설계를 기준으로 검토합니다. 변경한 내용은 먼저 저장해 주세요.';
   }});

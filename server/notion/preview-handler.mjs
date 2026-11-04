@@ -1,5 +1,6 @@
 import {ReviewError, readLimited, reject} from '../review-errors.mjs';
 import {UUID, readConfiguration, createReadonlySupabase} from '../supabase-readonly.mjs';
+import {readVerifiedOwnedDraft, OWNERSHIP_VERIFICATION} from '../draft-ownership.mjs';
 import {timestamp, reviewSavedDraft, assertCurrentSnapshot} from '../review-plan.mjs';
 import {compilePreview, PREVIEW_FLAGS, ADAPTER_VERSION, EXECUTION_PLAN_VERSION} from './preview-plan.mjs';
 
@@ -42,13 +43,12 @@ export function createNotionPreviewHandler({env = process.env, fetchImpl = fetch
       const bearer = /^Bearer ([A-Za-z0-9._~-]{1,8192})$/i.exec(request.headers.get('authorization') ?? '');
       if (!bearer) reject(401, 'auth_required');
       const client = createReadonlySupabase({configuration: readConfiguration(env), token: bearer[1], fetchImpl, signal: request.signal});
-      const user = await client.getUser();
-      const row = await client.getDraft(input.draftId, user.id);
+      const row = await readVerifiedOwnedDraft(client, input.draftId, request.signal);
       if (timestamp(row.updated_at) === null) reject(502, 'invalid_upstream_response');
       const review = reviewSavedDraft(row);
       if (!review.planValidation.valid) reject(422, 'invalid_saved_plan');
       if (assertCurrentSnapshot(input, review).length) reject(409, 'saved_draft_changed');
-      return response(200, compilePreview(row));
+      return response(200, {...compilePreview(row), ...OWNERSHIP_VERIFICATION});
     } catch (error) {
       const known = error instanceof ReviewError;
       return response(known ? error.status : 500, {error: {code: known ? error.code : 'internal_error',
