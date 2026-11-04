@@ -1,4 +1,4 @@
-import {createReadonlySupabase, readConfiguration} from '../supabase-readonly.mjs';
+import {authenticateTestUser} from './test-auth.mjs';
 import {readLimited, reject, ReviewError} from '../review-errors.mjs';
 import {readTestConfiguration} from './test-configuration.mjs';
 import {createTestNotionReader} from './test-readonly.mjs';
@@ -17,20 +17,20 @@ const messages = {
   notion_target_not_found: '승인된 테스트 페이지를 찾을 수 없거나 연결에 공유되지 않았습니다.',
   notion_rate_limited: 'Notion 요청 한도에 도달했습니다. 자동 재시도하지 않습니다. 새 승인 전에는 다시 실행하지 마세요.'
 };
-function respond(status, value, notionRequests, headers = {}) {
+export function respond(status, value, notionRequests, headers = {}) {
   return Response.json({connectionVersion: 1, notionApiVersion: NOTION_VERSION, ...value, ...flags, notionRequests}, {
     status, headers: {'Cache-Control': 'private, no-store, max-age=0', 'CDN-Cache-Control': 'no-store', 'Vercel-CDN-Cache-Control': 'no-store',
       Vary: 'Authorization, Origin', 'X-Content-Type-Options': 'nosniff', ...headers}
   });
 }
-function originCheck(request, env) {
+export function originCheck(request, env) {
   if (request.headers.get('sec-fetch-site') === 'cross-site') reject(403, 'origin_not_allowed');
   const origin = request.headers.get('origin'); if (!origin) return;
   const url = new URL(request.url), allowed = (env.REVIEW_ALLOWED_ORIGINS ?? 'https://pplus-rouge.vercel.app').split(',').map(s => s.trim());
   if (['localhost', '127.0.0.1', '[::1]'].includes(url.hostname)) allowed.push(url.origin);
   if (origin !== url.origin || !allowed.includes(origin)) reject(403, 'origin_not_allowed');
 }
-async function checkInput(request, target) {
+export async function checkInput(request, target) {
   const url = new URL(request.url); if (url.search) reject(400, 'invalid_test_request');
   const size = request.headers.get('content-length');
   if (size !== null && (!/^\d+$/.test(size) || Number(size) > MAX_CONNECTION_REQUEST_BYTES)) reject(413, 'body_too_large');
@@ -53,10 +53,7 @@ export function createTestConnectionHandler({target = false, env = process.env, 
       const method = target ? 'POST' : 'GET';
       if (request.method !== method) return respond(405, {error: {code: 'method_not_allowed', message: `${method} 요청을 사용해 주세요.`}}, 0, {Allow: method});
       originCheck(request, env); await checkInput(request, target);
-      const bearer = /^Bearer ([A-Za-z0-9._~-]{1,8192})$/i.exec(request.headers.get('authorization') ?? '');
-      if (!bearer) reject(401, 'auth_required');
-      const client = createReadonlySupabase({configuration: readConfiguration(env), token: bearer[1], fetchImpl: authFetch, signal: request.signal});
-      const user = await client.getUser();
+      const user = await authenticateTestUser({request, env, fetchImpl: authFetch});
       const configuration = readTestConfiguration(env, user.id);
       // The entrypoints never opt in. Tests inject synthetic adapters; future live opt-in needs separate approval.
       const remoteReadEnabled = allowNotionNetwork === true && typeof notionFetch === 'function';

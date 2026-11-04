@@ -8,7 +8,8 @@ import {NOTION_VERSION} from '../../js/planner/catalog.mjs';
 
 // Local-only tombstone, NOT a web execution ledger or proof of human approval.
 // No runId, caller-supplied approval ID, token, or timestamp can change the binding.
-const POLICY = 'pplus-personal-fixed-read-once-v1';
+export const LOCAL_READ_POLICY = 'pplus-personal-fixed-read-once-v1';
+const POLICY = LOCAL_READ_POLICY;
 export async function consumeLocalApproval({directory, userId, configuration}) {
   const user = notionId(userId);
   const ids = ['workspaceId', 'botId', 'parentId'].map(k => notionId(configuration[k]));

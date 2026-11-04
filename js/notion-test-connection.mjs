@@ -25,17 +25,18 @@ export function createConnectionController({getSession, fetchImpl = fetch, draft
       const result = await getSession(); if (!current()) return;
       const session = result?.data?.session;
       if (result?.error || !session?.user?.id || !session.access_token) throw {code: 'auth_required'};
+      const requestToken = session.access_token;
       if (owner && owner !== session.user.id) { dispose(); return; } owner = session.user.id;
       const response = await fetchImpl(target ? '/api/notion/test-target/review' : '/api/notion/test-connection', {
         method: target ? 'POST' : 'GET', cache: 'no-store', signal: AbortSignal.any([abort.signal, AbortSignal.timeout(12000)]),
-        headers: {Authorization: `Bearer ${session.access_token}`, ...(target ? {'Content-Type': 'application/json'} : {})},
+        headers: {Authorization: `Bearer ${requestToken}`, ...(target ? {'Content-Type': 'application/json'} : {})},
         ...(target ? {body: '{}'} : {})
       });
       if (!current()) return;
       const text = await response.text(); if (text.length > 16384) throw {code: 'network_error'};
       let value; try { value = JSON.parse(text); } catch { throw {code: 'network_error'}; }
       const latest = await getSession(); if (!current()) return;
-      if (latest?.error || latest?.data?.session?.user?.id !== owner) { dispose(); return; }
+      if (latest?.error || latest?.data?.session?.user?.id !== owner || latest?.data?.session?.access_token !== requestToken) { dispose(); return; }
       if (!response.ok) throw {code: value.error?.code ?? 'network_error'};
       if (value.webExecutionReady !== false || value.notionExecution !== 'not_executed' || value.notionWrites !== 0 || value.supabaseWrites !== 0 || value.creationPermissionVerified !== false || value.privacyVerified !== false) throw {code: 'network_error'};
       if (!target && value.connectionStatus === 'configured' && value.targetReadVerified === false) {
