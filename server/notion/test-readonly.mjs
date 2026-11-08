@@ -5,7 +5,7 @@ import {notionId} from './test-configuration.mjs';
 export const MAX_NOTION_RESPONSE_BYTES = 131072;
 // There is deliberately no generic request(path, method) or mutation method.
 // Default construction cannot contact Notion even if a machine has existing credentials.
-export function createTestNotionReader({configuration, fetchImpl, allowNetwork = false, signal}) {
+export function createTestNotionReader({configuration, fetchImpl, allowNetwork = false, signal, strictInternalIdentity = false}) {
   let requests = 0, started = false;
   async function getFixed(path) {
     if (allowNetwork !== true || typeof fetchImpl !== 'function') reject(503, 'notion_remote_read_disabled');
@@ -44,6 +44,10 @@ export function createTestNotionReader({configuration, fetchImpl, allowNetwork =
       const self = await getFixed('/v1/users/me');
       if (self?.object !== 'user' || self.type !== 'bot' || notionId(self.id) !== configuration.botId) reject(403, 'notion_bot_mismatch');
       if (notionId(self.bot?.workspace_id) !== configuration.workspaceId) reject(403, 'notion_workspace_mismatch');
+      // Additional response-shape fence, NOT proof of credential origin or token kind.
+      // PATs also return bot users. Unknown/person-owned shapes never reach the parent.
+      if (strictInternalIdentity && (self.bot?.owner?.type !== 'workspace' || self.bot.owner.workspace !== true ||
+          Object.hasOwn(self.bot.owner, 'user') || Object.hasOwn(self, 'person'))) reject(403, 'notion_internal_identity_unconfirmed');
       const page = await getFixed(`/v1/pages/${configuration.parentId}`);
       if (page?.object !== 'page' || notionId(page.id) !== configuration.parentId) reject(403, 'notion_parent_mismatch');
       if (page.archived === true) reject(410, 'notion_target_archived');

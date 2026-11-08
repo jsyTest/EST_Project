@@ -10,7 +10,15 @@ import {NOTION_VERSION} from '../../js/planner/catalog.mjs';
 // No runId, caller-supplied approval ID, token, or timestamp can change the binding.
 export const LOCAL_READ_POLICY = 'pplus-personal-fixed-read-once-v1';
 const POLICY = LOCAL_READ_POLICY;
-export async function consumeLocalApproval({directory, userId, configuration}) {
+export async function consumeLocalApproval({directory, userId, configuration, audit, io = {mkdir,lstat,open}}) {
+  // Optional audit data is validated before any store access. It NEVER changes the stable key.
+  if (audit !== undefined && (!audit || Object.getPrototypeOf(audit) !== Object.prototype ||
+      Object.keys(audit).length !== 3 ||
+      ['packageDigest','codeDigest','approvalRef'].some(k=>!Object.hasOwn(audit,k)) ||
+      Object.values(Object.getOwnPropertyDescriptors(audit)).some(d=>!Object.hasOwn(d,'value')) ||
+      !/^[a-f0-9]{64}$/.test(audit.packageDigest ?? '') ||
+      !/^[a-f0-9]{64}$/.test(audit.codeDigest ?? '') ||
+      typeof audit.approvalRef !== 'string' || !/^approval-[a-z0-9-]{1,48}$/.test(audit.approvalRef))) reject(503, 'local_approval_invalid');
   const user = notionId(userId);
   const ids = ['workspaceId', 'botId', 'parentId'].map(k => notionId(configuration[k]));
   if (!user || ids.some(id => !id) || new Set(ids).size !== 3 || !isAbsolute(directory ?? '')) reject(503, 'local_approval_invalid');
@@ -19,15 +27,16 @@ export async function consumeLocalApproval({directory, userId, configuration}) {
   const digest = createHash('sha256').update(binding).digest('hex');
   let directoryHandle, record;
   try {
-    await mkdir(directory, {mode: 0o700}).catch(e => {if (e.code !== 'EEXIST') throw e;});
-    const info = await lstat(directory);
+    await io.mkdir(directory, {mode: 0o700}).catch(e => {if (e.code !== 'EEXIST') throw e;});
+    const info = await io.lstat(directory);
     if (!info.isDirectory() || info.isSymbolicLink() || (info.mode & 0o077) || info.uid !== process.getuid?.()) reject(503, 'local_approval_store_unsafe');
-    directoryHandle = await open(directory, constants.O_RDONLY | constants.O_DIRECTORY | constants.O_NOFOLLOW);
+    directoryHandle = await io.open(directory, constants.O_RDONLY | constants.O_DIRECTORY | constants.O_NOFOLLOW);
     const held = await directoryHandle.stat();
     if (held.ino !== info.ino || held.dev !== info.dev) reject(503, 'local_approval_store_unsafe');
     // O_EXCL is the cross-process claim. Even an empty/crashed record denies reuse.
-    record = await open(join(directory, `${digest}.consumed`), constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL | constants.O_NOFOLLOW, 0o600);
-    await record.writeFile(JSON.stringify({version: 1, policy: POLICY, consumed: true, maximumGets: 2}) + '\n');
+    record = await io.open(join(directory, `${digest}.consumed`), constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL | constants.O_NOFOLLOW, 0o600);
+    await record.writeFile(JSON.stringify({version: 1, policy: POLICY, consumed: true, maximumGets: 2,
+      ...(audit ? {audit:{packageDigest:audit.packageDigest,codeDigest:audit.codeDigest,approvalRef:audit.approvalRef}} : {})}) + '\n');
     await record.sync();
     await directoryHandle.sync();
   } catch (error) {
